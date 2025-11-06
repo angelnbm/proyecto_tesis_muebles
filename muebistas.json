@@ -1,0 +1,6 @@
+{
+  "_id": "ObjectId('...aaa...')",
+  "nombre": "Juan Pérez",
+  "email": "juan.perez@muebles.com",
+  "contrasena": "hash_de_bcrypt_muy_seguro_..."
+}

@@ -1,0 +1,29 @@
+{
+  "_id": "ObjectId('...ddd...')",
+  "mueblista_id": "ObjectId('...aaa...')"
+  "mueble_id": "ObjectId('...ccc...')",   
+  "estado": "Pendiente",
+  "fecha_inicio": "ISODate('2025-10-29T10:00:00Z')",
+  "fecha_termino": null,
+  "precio_total": 149.99,
+  "lista_cortes": [
+    {
+      "material": "Melamina Blanca 18mm",
+      "dimension": "180x30cm",
+      "cantidad": 2
+    },
+    {
+      "material": "Melamina Blanca 18mm",
+      "dimension": "56.4x30cm",
+      "cantidad": 5
+    }
+  ],
+  "materiales_resumen": [
+    {
+      "material_id": "ObjectId('...bbb...')",
+      "nombre": "Melamina Blanca 18mm",
+      "cantidad_planchas": 1.5,
+      "subtotal": 68.99
+    }
+  ]
+}

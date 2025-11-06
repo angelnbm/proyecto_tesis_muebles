@@ -1,0 +1,29 @@
+{
+  "_id": "ObjectId('...ccc...')",
+  "nombre": "Biblioteca 5 estantes",
+  "dimensiones_generales": "180x60x30cm",
+  "mueblista_id": "ObjectId('...aaa...')", 
+  "componentes": [
+    {
+      "_id": "ObjectId('...comp1...')", 
+      "nombre": "Lateral Izquierdo",
+      "dimensiones": "180x30cm",
+      "posicion": "A1",
+      "material_id": "ObjectId('...bbb...')"
+    },
+    {
+      "_id": "ObjectId('...comp2...')",
+      "nombre": "Estante",
+      "dimensiones": "56.4x30cm",
+      "posicion": "B1",
+      "material_id": "ObjectId('...bbb...')"
+    },
+    {
+      "_id": "ObjectId('...comp3...')",
+      "nombre": "Estante",
+      "dimensiones": "56.4x30cm",
+      "posicion": "B2",
+      "material_id": "ObjectId('...bbb...')" 
+    }
+  ]
+}

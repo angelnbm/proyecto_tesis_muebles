@@ -1,0 +1,8 @@
+{
+  "_id": "ObjectId('...bbb...')",
+  "nombre": "Melamina Blanca 18mm",
+  "precio": 45.99,
+  "dimensiones": "244x122cm",
+  "grosor": 1.8,
+  "tipo": "MDF"
+}

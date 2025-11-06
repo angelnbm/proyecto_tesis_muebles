@@ -1,0 +1,1295 @@
+/* Reset y base */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #3a3f47;
+  color: #e8eaed;
+  overflow-x: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Layout principal - Desktop */
+.app-root {
+  display: grid;
+  grid-template-columns: 160px 1fr 240px;
+  grid-template-rows: 1fr;
+  gap: 0;
+  height: 100vh;
+  width: 100vw;
+  background: #3a3f47;
+  overflow: hidden;
+}
+
+/* Barra lateral izquierda - Desktop */
+.left-toolbar {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: #3a3f47;
+  overflow-y: auto;
+  border-right: 1px solid #2a2d32;
+}
+
+.left-toolbar > div:first-child {
+  padding: 12px;
+  background: #2e3239;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Botones de módulos - Desktop */
+.tool-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 100px;
+  padding: 12px 8px;
+  border-radius: 12px;
+  background: #525253;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.tool-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+.tool-btn.active {
+  border-color: #4A90E2;
+  background: #2b2b2b;
+}
+
+.tool-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+  border-radius: 8px;
+  border: 1px solid #d0d0d0;
+}
+
+.tool-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #d2e1f0;
+  text-align: center;
+}
+
+/* Área del canvas - Desktop */
+.canvas-area {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px; /* Reducir padding */
+  background: #2e3239;
+  overflow: hidden;
+}
+
+/* Tabs del canvas */
+.canvas-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px; /* Reducir padding vertical */
+  background: #3a3f47;
+  border-radius: 10px;
+  margin-bottom: 8px; /* Reducir margen */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  position: relative;
+  flex-shrink: 0; /* No se comprime */
+}
+
+.canvas-tab {
+  padding: 8px 20px;
+  background: transparent;
+  color: #9aa0a6;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.canvas-tab:hover {
+  background: rgba(255,255,255,0.05);
+  color: #e8eaed;
+}
+
+.canvas-tab.active {
+  background: #4A90E2;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(74,144,226,0.3);
+}
+
+/* Contenedor de botones a la derecha */
+.canvas-buttons-container {
+  position: absolute;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Botón nuevo diseño - Desktop */
+.new-btn-desktop {
+  padding: 8px 16px;
+  background: #6c757d;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s;
+  box-shadow: 0 2px 6px rgba(108,117,125,0.3);
+}
+
+.new-btn-desktop:hover {
+  background: #5a6268;
+}
+
+/* Botón guardar - Desktop */
+.save-btn-desktop {
+  padding: 8px 16px;
+  background: #4A90E2;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background 0.2s;
+  box-shadow: 0 2px 6px rgba(74,144,226,0.3);
+}
+
+.save-btn-desktop:hover {
+  background: #3a7fc2;
+}
+
+/* Panel inferior - debajo del canvas */
+.bottom-panel {
+  background: #2e3239;
+  border-top: 1px solid #3a3f47;
+  padding: 12px 16px;
+  border-radius: 0 0 12px 12px;
+}
+
+.measure-section h3 {
+  font-size: 14px;
+  color: #e8eaed;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.measure-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  align-items: end;
+}
+
+.measure-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.measure-field label {
+  font-size: 11px;
+  color: #9aa0a6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.measure-field input {
+  background: #3a3f47;
+  border: 1px solid #4a4f57;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #e8eaed;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.measure-field input:focus {
+  border-color: #4A90E2;
+}
+
+.delete-shape-btn {
+  background: #ff4444;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.2s;
+  height: 38px; /* Misma altura que los inputs */
+}
+
+.delete-shape-btn:hover {
+  background: #ff2222;
+}
+
+/* Panel derecho - Desktop */
+.right-sidebar {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px;
+  background: #3a3f47;
+  border-left: 1px solid #2a2d32;
+  overflow-y: auto;
+}
+
+/* Panel de medidas en sidebar */
+.sidebar-measures {
+  background: #2e3239;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.sidebar-measures h3 {
+  font-size: 13px;
+  color: #e8eaed;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.sidebar-measure-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.sidebar-measure-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sidebar-measure-item label {
+  font-size: 10px;
+  color: #9aa0a6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.sidebar-measure-item input {
+  background: #3a3f47;
+  border: 1px solid #4a4f57;
+  border-radius: 6px;
+  padding: 8px 12px;
+  color: #e8eaed;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.sidebar-measure-item input:focus {
+  border-color: #4A90E2;
+}
+
+.sidebar-delete-btn {
+  width: 100%;
+  background: #ff4444;
+  color: #fff;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.sidebar-delete-btn:hover {
+  background: #ff2222;
+}
+
+/* Diseños recientes */
+.recent-designs {
+  background: #2e3239;
+  padding: 12px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+.recent-designs h3 {
+  font-size: 13px;
+  color: #e8eaed;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.recent-designs .empty-message {
+  color: #9aa0a6;
+  font-size: 11px;
+  text-align: center;
+  padding: 12px 0;
+}
+
+.designs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.design-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  margin-bottom: 6px;
+  background: #3a3f47;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.design-item:hover {
+  background: #444a52;
+}
+
+.design-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.design-name {
+  font-size: 12px;
+  color: #e8eaed;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.design-date {
+  font-size: 10px;
+  color: #9aa0a6;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 4px 8px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  flex-shrink: 0;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+}
+
+/* ============================================
+   RESPONSIVE - TABLET (768px - 1024px)
+   ============================================ */
+@media (max-width: 1024px) {
+  .app-root {
+    grid-template-columns: 140px 1fr 200px;
+  }
+
+  .tool-btn {
+    min-height: 80px;
+    padding: 8px 6px;
+  }
+
+  .tool-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .tool-label {
+    font-size: 10px;
+  }
+
+  .canvas-area {
+    padding: 12px;
+  }
+
+  .right-sidebar {
+    padding: 10px;
+  }
+
+  .measure-panel {
+    padding: 10px;
+  }
+
+  .recent-designs h3 {
+    font-size: 12px;
+  }
+
+  .design-name {
+    font-size: 11px;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - TABLET PEQUEÑA (601px - 768px)
+   ============================================ */
+@media (max-width: 768px) and (min-width: 601px) {
+  .app-root {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    height: 100vh;
+  }
+
+  .left-toolbar {
+    grid-column: 1;
+    grid-row: 1;
+    flex-direction: row;
+    padding: 10px;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid #2a2d32;
+  }
+
+  .left-toolbar > div:first-child {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 0;
+    padding: 8px 12px;
+  }
+
+  .left-toolbar > div:first-child p {
+    margin: 0 !important;
+  }
+
+  .toolbar {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .tool-btn {
+    min-width: 80px;
+    min-height: 80px;
+    flex-shrink: 0;
+  }
+
+  .canvas-area {
+    grid-column: 1;
+    grid-row: 2;
+    padding: 12px;
+  }
+
+  .right-sidebar {
+    grid-column: 1;
+    grid-row: 3;
+    flex-direction: row;
+    padding: 10px;
+    border-left: none;
+    border-top: 1px solid #2a2d32;
+    max-height: 180px;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .measure-panel {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .recent-designs {
+    flex: 1;
+    min-width: 300px;
+    margin-top: 0;
+    padding-top: 0;
+    padding-left: 16px;
+    border-top: none;
+    border-left: 1px solid #2a2d32;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - MÓVIL (hasta 600px)
+   ============================================ */
+@media (max-width: 600px) {
+  .app-root {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: 100vh;
+    background: #202226;
+    overflow: hidden; /* Prevenir scroll en el root */
+  }
+
+  /* Toolbar superior horizontal */
+  .left-toolbar {
+    grid-row: 1;
+    grid-column: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    background: linear-gradient(180deg, #2b2f34, #222528);
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    flex-shrink: 0; /* No se comprime */
+  }
+
+  /* Info de usuario compacta */
+  .left-toolbar > div:first-child {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: transparent;
+    border-radius: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    flex-shrink: 0;
+  }
+
+  .left-toolbar > div:first-child p:first-of-type {
+    display: none;
+  }
+
+  .left-toolbar > div:first-child p:last-of-type {
+    margin: 0 !important;
+    font-size: 13px !important;
+  }
+
+  .left-toolbar > div:first-child button {
+    padding: 4px 12px !important;
+    font-size: 11px !important;
+    background: rgba(255,255,255,0.1) !important;
+  }
+
+  /* Módulos horizontales */
+  .toolbar {
+    flex-direction: row;
+    gap: 8px;
+    padding: 8px 12px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tool-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-width: 70px;
+    min-height: 70px;
+    max-width: 70px;
+    padding: 6px;
+    border-radius: 12px;
+    background: transparent;
+    border: none;
+    flex-shrink: 0;
+  }
+
+  .tool-btn .tool-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #3a3f45, #2a2e33);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    border: 1px solid rgba(255,255,255,0.03);
+  }
+
+  .tool-btn.active .tool-icon {
+    background: linear-gradient(180deg, #6c7cff, #4f5cff);
+    box-shadow: 0 6px 16px rgba(79,92,255,0.3);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .tool-label {
+    font-size: 9px;
+    opacity: 0.85;
+    color: #e6e9ee;
+  }
+
+  /* Canvas móvil - AHORA CON SCROLL */
+  .canvas-area {
+    grid-row: 2;
+    grid-column: 1;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto; /* Scroll vertical */
+    overflow-x: hidden;
+    background: #1a1d21;
+    height: 100%; /* Usar toda la altura disponible */
+  }
+
+  /* Tabs pegados arriba */
+  .canvas-tabs {
+    background: #2a2e34;
+    padding: 8px 12px;
+    margin-bottom: 0;
+    border-radius: 0;
+    gap: 4px;
+    flex-shrink: 0;
+    position: sticky; /* Mantener tabs fijos al hacer scroll */
+    top: 0;
+    z-index: 5;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .canvas-tab {
+    font-size: 11px;
+    padding: 6px 10px;
+    min-width: auto;
+  }
+
+  .canvas-tabs button[style*="marginLeft"] {
+    font-size: 11px;
+    padding: 6px 10px !important;
+  }
+
+  /* Konva wrapper móvil - ALTURA FIJA */
+  .konva-wrapper {
+    background: #1b1e22;
+    padding: 8px;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: none;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+    height: 400px; /* Altura fija para el canvas */
+    flex-shrink: 0; /* No se comprime */
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  /* Panel de medidas móvil - DEBAJO del canvas (scrolleable) */
+  .bottom-panel {
+    background: #1b1e22;
+    padding: 12px;
+    border-radius: 0;
+    border-top: none;
+    box-shadow: none;
+    flex-shrink: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .measure-section h3 {
+    font-size: 13px;
+    margin-bottom: 10px;
+    color: #e8eaed;
+  }
+
+  .measure-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .measure-field label {
+    font-size: 10px;
+  }
+
+  .measure-field input {
+    padding: 8px 10px;
+    font-size: 13px;
+    background: #2a2e34;
+    border: 1px solid #3a3f47;
+  }
+
+  .delete-shape-btn {
+    grid-column: 1 / -1;
+    height: auto;
+    padding: 10px;
+    font-size: 12px;
+    background: #e74c3c;
+    margin-top: 4px;
+  }
+
+  /* Ocultar sidebar derecho de desktop en móvil */
+  .desktop-only-sidebar {
+    display: none !important;
+  }
+
+  /* Diseños recientes DEBAJO de medidas (scrolleable) */
+  .mobile-recent-designs {
+    display: flex !important;
+    flex-direction: column;
+    padding: 12px;
+    margin-top: 0;
+    background: #1b1e22;
+    border-left: none;
+    overflow-y: visible;
+    max-height: none;
+    flex-shrink: 0;
+  }
+
+  .mobile-recent-designs .recent-designs {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .mobile-recent-designs .recent-designs h3 {
+    font-size: 13px;
+    margin-bottom: 10px;
+    color: #e8eaed;
+  }
+
+  .mobile-recent-designs .recent-designs .empty-message {
+    font-size: 11px;
+    padding: 12px 0;
+    color: #9aa0a6;
+  }
+
+  .mobile-recent-designs .design-item {
+    padding: 10px;
+    margin-bottom: 6px;
+    background: #2a2e34;
+    border-radius: 6px;
+  }
+
+  .mobile-recent-designs .design-name {
+    font-size: 11px;
+    color: #e8eaed;
+  }
+
+  .mobile-recent-designs .design-date {
+    font-size: 9px;
+    color: #9aa0a6;
+  }
+
+  .mobile-recent-designs .delete-btn {
+    font-size: 14px;
+  }
+
+  /* Panel de cubicación móvil */
+  .cubicacion-panel {
+    background: #1b1e22;
+    padding: 12px;
+    border-radius: 0;
+    box-shadow: none;
+    flex: 1;
+    overflow-y: visible; /* Permitir scroll natural del contenedor padre */
+    min-height: calc(100vh - 200px); /* Altura mínima */
+  }
+
+  .cubicacion-panel h2 {
+    font-size: 15px;
+    color: #e6e9ee;
+    margin-bottom: 12px;
+  }
+
+  .cubicacion-panel .cut-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .cubicacion-panel .cut-list li {
+    background: #2a2e34;
+    padding: 10px;
+    margin-bottom: 6px;
+    font-size: 11px;
+    color: #dfe6ee;
+    border-left: 3px solid #6c7cff;
+    border-radius: 4px;
+  }
+
+  .cubicacion-panel .empty-message {
+    color: #9aa0a6;
+    font-size: 12px;
+    text-align: center;
+    padding: 20px;
+  }
+}
+
+/* ============================================
+   RESPONSIVE - MÓVIL PEQUEÑO (hasta 400px)
+   ============================================ */
+@media (max-width: 400px) {
+  .measure-grid {
+    grid-template-columns: 1fr; /* 1 columna en pantallas muy pequeñas */
+    gap: 8px;
+  }
+
+  .measure-field label {
+    font-size: 9px;
+  }
+
+  .measure-field input {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+
+  /* ...existing code (resto móvil pequeño) ... */
+}
+
+/* ============================================
+   LANDSCAPE MODE (móvil horizontal)
+   ============================================ */
+@media (max-height: 500px) and (orientation: landscape) {
+  .app-root {
+    grid-template-rows: 60px 1fr;
+  }
+
+  .left-toolbar > div:first-child {
+    padding: 4px 12px;
+  }
+
+  .toolbar {
+    padding: 4px 12px;
+  }
+
+  .tool-btn {
+    min-height: 50px;
+    max-width: 50px;
+  }
+
+  .tool-btn .tool-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .tool-label {
+    font-size: 8px;
+  }
+
+  .canvas-area {
+    padding: 6px;
+  }
+
+  .konva-wrapper {
+    min-height: 200px;
+  }
+}
+
+/* ============================================
+   ESTILOS ESPECÍFICOS PARA VISTA MÓVIL
+   ============================================ */
+.app-root-mobile {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #1a1d21;
+  overflow: hidden; /* Prevenir scroll en el root */
+}
+
+.mobile-header {
+  background: #2a2e34;
+  padding: 8px 16px;
+  border-bottom: 1px solid #3a3f47;
+  flex-shrink: 0;
+}
+
+.mobile-user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-user-info span {
+  color: #e8eaed;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.mobile-logout-btn {
+  background: transparent;
+  color: #9aa0a6;
+  border: none;
+  padding: 4px 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.mobile-logout-btn:hover {
+  color: #e8eaed;
+}
+
+.mobile-toolbar {
+  background: #2a2e34;
+  padding: 12px;
+  border-bottom: 1px solid #3a3f47;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  flex-shrink: 0;
+}
+
+.mobile-toolbar .toolbar {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  min-width: max-content;
+}
+
+.mobile-toolbar .tool-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 60px;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  flex-shrink: 0;
+}
+
+.mobile-toolbar .tool-btn .tool-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #3a3f47;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+}
+
+.mobile-toolbar .tool-btn.active .tool-icon {
+  background: #4A90E2;
+  border-color: #6CB0FF;
+}
+
+.mobile-toolbar .tool-btn .tool-label {
+  font-size: 10px;
+  color: #9aa0a6;
+  font-weight: 500;
+}
+
+.mobile-tabs {
+  display: flex;
+  background: #2a2e34;
+  padding: 8px 12px;
+  gap: 8px;
+  border-bottom: 1px solid #3a3f47;
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.mobile-tabs button {
+  flex: 1;
+  padding: 8px 12px;
+  background: transparent;
+  color: #9aa0a6;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.mobile-tabs button.active {
+  background: #4A90E2;
+  color: #fff;
+}
+
+.save-btn-mobile {
+  flex: 0 0 auto !important;
+  min-width: 44px !important;
+  background: #4A90E2 !important;
+  color: #fff !important;
+  font-size: 16px !important;
+}
+
+/* Botón nuevo diseño - Móvil */
+.new-btn-mobile {
+  flex: 0 0 auto !important;
+  min-width: 44px !important;
+  background: #6c757d !important;
+  color: #fff !important;
+  font-size: 16px !important;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+.mobile-content {
+  flex: 1;
+  overflow-y: auto; /* SCROLL VERTICAL */
+  overflow-x: hidden;
+  padding: 0;
+  background: #1a1d21;
+  display: flex;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch; /* Smooth scroll en iOS */
+}
+
+.mobile-canvas {
+  background: #fff;
+  border-radius: 0;
+  padding: 0;
+  box-shadow: none;
+  height: 400px; /* Altura fija */
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.mobile-measures {
+  background: #2a2e34;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.mobile-measures h4 {
+  color: #e8eaed;
+  font-size: 14px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.mobile-measure-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.mobile-measure-grid > div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mobile-measure-grid label {
+  font-size: 11px;
+  color: #9aa0a6;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.mobile-measure-grid input {
+  background: #1a1d21;
+  border: 1px solid #3a3f47;
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: #e8eaed;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.mobile-measure-grid input:focus {
+  border-color: #4A90E2;
+}
+
+.mobile-delete-btn {
+  width: 100%;
+  padding: 10px;
+  background: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background 0.2s;
+}
+
+.mobile-delete-btn:active {
+  background: #c0392b;
+}
+
+.mobile-recent {
+  background: #2a2d34;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.mobile-recent h4 {
+  color: #e8eaed;
+  font-size: 14px;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.mobile-recent ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-recent li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: #1a1d21;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mobile-recent li:active {
+  background: #22262c;
+}
+
+.mobile-recent li span {
+  color: #e8eaed;
+  font-size: 13px;
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mobile-recent li button {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  padding: 4px 8px;
+  cursor: pointer;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.mobile-recent .empty {
+  color: #9aa0a6;
+  font-size: 12px;
+  text-align: center;
+  padding: 20px;
+}
+
+.konva-wrapper {
+  flex: 1;
+  background: #2a2d32;
+  padding: 4px; /* Reducir padding interno */
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  min-height: 0;
+}
+
+/* Panel de cubicación - también usar toda la altura */
+.cubicacion-panel {
+  flex: 1;
+  background: #2a2d32;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+  overflow-y: auto;
+  min-height: 0;
+}
+
+.cubicacion-panel h2 {
+  font-size: 16px;
+  color: #e8eaed;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.cubicacion-panel .empty-message {
+  color: #9aa0a6;
+  font-size: 13px;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.cubicacion-panel .cut-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cubicacion-panel .cut-list li {
+  background: #3a3f47;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 6px;
+  border-left: 3px solid #4A90E2;
+  color: #e8eaed;
+  font-size: 13px;
+  line-height: 1.5;
+}
