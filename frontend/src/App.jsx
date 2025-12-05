@@ -14,16 +14,39 @@ function computeAllCuts(shapes) {
     const w = Math.round(shape.width)
     const h = Math.round(shape.height)
     const d = Math.round(shape.depth || 20)
-    // Usar 3 por defecto si numCajones es null/undefined/0
-    const numCajones = shape.numCajones && shape.numCajones > 0 ? shape.numCajones : 3
     
     switch (shape.type) {
       case 'cajonera':
+        const numCajones = shape.numCajones && shape.numCajones > 0 ? shape.numCajones : 3
         const drawerHeight = Math.round(h / numCajones)
         cuts.push(`- ${shape.type} (${numCajones} cajones) | Frente: ${w}x${drawerHeight} CM (x${numCajones})`)
         cuts.push(`- ${shape.type} | Laterales: ${d}x${h} CM (x2)`)
         cuts.push(`- ${shape.type} | Fondo: ${w}x${d} CM`)
         break
+      
+      case 'modular':
+        // IMPORTANTE: Guardar valores aunque sean 0
+        const numEstantes = shape.numEstantes !== undefined && shape.numEstantes !== null ? shape.numEstantes : 0
+        const numDivisores = shape.numDivisores !== undefined && shape.numDivisores !== null ? shape.numDivisores : 0
+        const numPuertas = shape.numPuertas !== undefined && shape.numPuertas !== null ? shape.numPuertas : 0
+        
+        cuts.push(`- ${shape.type} | Marco: ${w}x${h} CM`)
+        cuts.push(`- ${shape.type} | Laterales: ${d}x${h} CM (x2)`)
+        cuts.push(`- ${shape.type} | Fondo: ${w}x${h} CM`)
+        
+        if (numEstantes > 0) {
+          cuts.push(`- ${shape.type} | Estantes: ${w}x${d} CM (x${numEstantes})`)
+        }
+        if (numDivisores > 0) {
+          const divisorHeight = Math.round(h / (numDivisores + 1))
+          cuts.push(`- ${shape.type} | Divisores: ${w}x${divisorHeight} CM (x${numDivisores})`)
+        }
+        if (numPuertas > 0) {
+          const puertaWidth = Math.round(w / numPuertas)
+          cuts.push(`- ${shape.type} | Puertas: ${puertaWidth}x${h} CM (x${numPuertas})`)
+        }
+        break
+      
       case 'estante':
         cuts.push(`- ${shape.type} | Estante: ${w}x${d} CM`)
         break
@@ -92,10 +115,7 @@ export default function App() {
 
   // Guardar diseño actual con validaciones
   const handleSave = async () => {
-    // Obtener el diseño actual si existe
     const currentDesign = designs.find(d => d._id === currentDesignId)
-    
-    // Sugerir nombre actual si hay un diseño cargado
     const defaultName = currentDesign ? currentDesign.nombre : ''
     const name = prompt('Nombre del diseño:', defaultName)
     
@@ -105,60 +125,69 @@ export default function App() {
       return
     }
 
-    // Buscar si existe un diseño con ese nombre
+    // AGREGAR: Log para verificar qué se está guardando
+    console.log('💾 Guardando diseño con shapes:', JSON.stringify(shapes, null, 2))
+
     const existingDesign = designs.find(d => d.nombre === name.trim())
 
-    // CASO 1: Sobrescribir el diseño actual que fue cargado
+    // Actualizar diseño existente
     if (currentDesignId && currentDesign && currentDesign.nombre === name.trim()) {
       if (!confirm(`¿Sobrescribir el diseño "${name}"?`)) return
       
       try {
+        console.log('📝 Actualizando diseño:', currentDesignId)
         const updated = await updateFurniture(currentDesignId, { 
           nombre: name.trim(), 
           shapes 
         })
+        console.log('✅ Diseño actualizado:', updated)
         setDesigns(prev => prev.map(d => d._id === currentDesignId ? updated : d))
         alert('Diseño actualizado correctamente')
       } catch (err) {
+        console.error('❌ Error al actualizar:', err)
         alert('Error al actualizar: ' + err.message)
       }
       return
     }
 
-    // CASO 2: Ya existe un diseño con ese nombre (pero NO es el actual)
+    // Sobrescribir diseño con mismo nombre
     if (existingDesign) {
       const shouldOverwrite = confirm(
         `Ya existe un diseño llamado "${name}".\n¿Deseas sobrescribirlo?`
       )
       
       if (!shouldOverwrite) {
-        // Volver a pedir el nombre
         handleSave()
         return
       }
 
-      // Sobrescribir el diseño existente
       try {
+        console.log('📝 Sobrescribiendo diseño:', existingDesign._id)
         const updated = await updateFurniture(existingDesign._id, { 
           nombre: name.trim(), 
           shapes 
         })
+        console.log('✅ Diseño sobrescrito:', updated)
         setDesigns(prev => prev.map(d => d._id === existingDesign._id ? updated : d))
         setCurrentDesignId(existingDesign._id)
         alert('Diseño sobrescrito correctamente')
       } catch (err) {
+        console.error('❌ Error al sobrescribir:', err)
         alert('Error al sobrescribir: ' + err.message)
       }
       return
     }
 
-    // CASO 3: Guardar como nuevo diseño
+    // Crear nuevo diseño
     try {
+      console.log('Creando nuevo diseño')
       const saved = await saveFurniture(name.trim(), shapes)
+      console.log('Diseño creado:', saved)
       setDesigns(prev => [saved, ...prev])
       setCurrentDesignId(saved._id)
       alert('Diseño guardado correctamente')
     } catch (err) {
+      console.error('Error al guardar:', err)
       alert('Error al guardar: ' + err.message)
     }
   }
@@ -168,13 +197,13 @@ export default function App() {
     setUser(null)
     setShapes([])
     setDesigns([])
-    setCurrentDesignId(null) // NUEVO: Limpiar diseño actual
+    setCurrentDesignId(null)
   }
 
   const updateSelectedShape = (key, value) => {
     if (!selected) return
     
-    if (key === 'numCajones') {
+    if (key === 'numCajones' || key === 'numEstantes' || key === 'numDivisores' || key === 'numPuertas') {
       const numValue = value === '' ? null : Number(value)
       setShapes(prev => prev.map(s => 
         s.id === selected.id ? { ...s, [key]: numValue } : s
@@ -271,7 +300,6 @@ export default function App() {
         <main className="mobile-content">
           {activeTab === 'diseno' && (
             <>
-              {/* Canvas - altura fija */}
               <div className="mobile-canvas">
                 <KonvaStage
                   shapes={shapes}
@@ -283,7 +311,6 @@ export default function App() {
                 />
               </div>
 
-              {/* Panel de medidas - DEBAJO del canvas */}
               {selected && (
                 <div className="bottom-panel">
                   <div className="measure-section">
@@ -314,7 +341,7 @@ export default function App() {
                         />
                       </div>
                       
-                      {/* Campo de cajones en móvil */}
+                      {/* Campo de cajones para cajonera */}
                       {selected.type === 'cajonera' && (
                         <div className="measure-field">
                           <label>Nº Cajones</label>
@@ -325,7 +352,6 @@ export default function App() {
                             value={selected.numCajones === null || selected.numCajones === undefined ? '' : selected.numCajones}
                             onChange={e => updateSelectedShape('numCajones', e.target.value)}
                             onBlur={e => {
-                              // Al perder el foco, si está vacío, poner 3 por defecto
                               if (e.target.value === '' || Number(e.target.value) < 1) {
                                 updateSelectedShape('numCajones', '3')
                               }
@@ -333,6 +359,60 @@ export default function App() {
                             placeholder="Ej: 3"
                           />
                         </div>
+                      )}
+
+                      {/* NUEVO: Campos para módulo modular */}
+                      {selected.type === 'modular' && (
+                        <>
+                          <div className="measure-field">
+                            <label>Nº Estantes</label>
+                            <input
+                              type="number"
+                              min="0"
+                              max="10"
+                              value={selected.numEstantes === null || selected.numEstantes === undefined ? '' : selected.numEstantes}
+                              onChange={e => updateSelectedShape('numEstantes', e.target.value)}
+                              onBlur={e => {
+                                if (e.target.value === '') {
+                                  updateSelectedShape('numEstantes', '0')
+                                }
+                              }}
+                              placeholder="Ej: 2"
+                            />
+                          </div>
+                          <div className="measure-field">
+                            <label>Nº Divisores</label>
+                            <input
+                              type="number"
+                              min="0"
+                              max="10"
+                              value={selected.numDivisores === null || selected.numDivisores === undefined ? '' : selected.numDivisores}
+                              onChange={e => updateSelectedShape('numDivisores', e.target.value)}
+                              onBlur={e => {
+                                if (e.target.value === '') {
+                                  updateSelectedShape('numDivisores', '0')
+                                }
+                              }}
+                              placeholder="Ej: 1"
+                            />
+                          </div>
+                          <div className="measure-field">
+                            <label>Nº Puertas</label>
+                            <input
+                              type="number"
+                              min="0"
+                              max="6"
+                              value={selected.numPuertas === null || selected.numPuertas === undefined ? '' : selected.numPuertas}
+                              onChange={e => updateSelectedShape('numPuertas', e.target.value)}
+                              onBlur={e => {
+                                if (e.target.value === '') {
+                                  updateSelectedShape('numPuertas', '0')
+                                }
+                              }}
+                              placeholder="Ej: 2"
+                            />
+                          </div>
+                        </>
                       )}
                       
                       <button 
@@ -472,7 +552,6 @@ export default function App() {
       </main>
 
       <aside className="right-sidebar">
-        {/* Panel de medidas ARRIBA */}
         {selected && (
           <div className="sidebar-measures">
             <h3>Editando: {selected.type}</h3>
@@ -507,7 +586,7 @@ export default function App() {
                 />
               </div>
               
-              {/* Campo de número de cajones solo para cajoneras */}
+              {/* Campo de cajones para cajonera */}
               {selected.type === 'cajonera' && (
                 <div className="sidebar-measure-item">
                   <label>Nº CAJONES</label>
@@ -518,7 +597,6 @@ export default function App() {
                     value={selected.numCajones === null || selected.numCajones === undefined ? '' : selected.numCajones}
                     onChange={e => updateSelectedShape('numCajones', e.target.value)}
                     onBlur={e => {
-                      // Al perder el foco, si está vacío, poner 3 por defecto
                       if (e.target.value === '' || Number(e.target.value) < 1) {
                         updateSelectedShape('numCajones', '3')
                       }
@@ -526,6 +604,60 @@ export default function App() {
                     placeholder="Ej: 3"
                   />
                 </div>
+              )}
+
+              {/* NUEVO: Campos para módulo modular en desktop */}
+              {selected.type === 'modular' && (
+                <>
+                  <div className="sidebar-measure-item">
+                    <label>Nº ESTANTES</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      value={selected.numEstantes === null || selected.numEstantes === undefined ? '' : selected.numEstantes}
+                      onChange={e => updateSelectedShape('numEstantes', e.target.value)}
+                      onBlur={e => {
+                        if (e.target.value === '') {
+                          updateSelectedShape('numEstantes', '0')
+                        }
+                      }}
+                      placeholder="Ej: 2"
+                    />
+                  </div>
+                  <div className="sidebar-measure-item">
+                    <label>Nº DIVISORES</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="10"
+                      value={selected.numDivisores === null || selected.numDivisores === undefined ? '' : selected.numDivisores}
+                      onChange={e => updateSelectedShape('numDivisores', e.target.value)}
+                      onBlur={e => {
+                        if (e.target.value === '') {
+                          updateSelectedShape('numDivisores', '0')
+                        }
+                      }}
+                      placeholder="Ej: 1"
+                    />
+                  </div>
+                  <div className="sidebar-measure-item">
+                    <label>Nº PUERTAS</label>
+                    <input
+                      type="number"
+                      min="0"
+                      max="6"
+                      value={selected.numPuertas === null || selected.numPuertas === undefined ? '' : selected.numPuertas}
+                      onChange={e => updateSelectedShape('numPuertas', e.target.value)}
+                      onBlur={e => {
+                        if (e.target.value === '') {
+                          updateSelectedShape('numPuertas', '0')
+                        }
+                      }}
+                      placeholder="Ej: 2"
+                    />
+                  </div>
+                </>
               )}
             </div>
             <button 

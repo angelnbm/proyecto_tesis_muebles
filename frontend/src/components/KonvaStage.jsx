@@ -1,16 +1,24 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Stage, Layer, Rect, Group, Text } from 'react-konva'
+import { Stage, Layer, Rect, Group, Text, Line } from 'react-konva'
 
 const defaultSizes = {
-  estante: { width: 120, height: 20, depth: 30 },
-  cajonera: { width: 120, height: 140, depth: 40, numCajones: 3 }, // NUEVO: número de cajones por defecto
-  base: { width: 140, height: 12, depth: 40 },
-  divisor: { width: 4, height: 120, depth: 2 },
-  cubierta: { width: 140, height: 6, depth: 60 },
-  puerta: { width: 60, height: 120, depth: 2 },
+  estante: { width: 100, height: 1.5, depth: 70 },
+  cajonera: { width: 100, height: 70, depth: 70, numCajones: 3 },
+  modular: { 
+    width: 100, 
+    height: 70, 
+    depth: 70, 
+    numEstantes: 2, 
+    numDivisores: 1, 
+    numPuertas: 2 
+  },
+  base: { width: 600, height: 10, depth: 65 },
+  divisor: { width: 1.5, height: 30, depth: 70 },
+  cubierta: { width: 110, height: 3, depth: 70 },
+  puerta: { width: 70, height: 70, depth: 1.5 },
 }
 
-// Detecta si dos rectángulos se solapan
+
 function checkCollision(rect1, rect2) {
   return !(
     rect1.x + rect1.width <= rect2.x ||
@@ -301,8 +309,12 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
       height: base.height,
       depth: base.depth,
       rotation: 0,
-      // NUEVO: Agregar numCajones si es cajonera
-      ...(selectedModule === 'cajonera' && { numCajones: base.numCajones || 3 })
+      ...(selectedModule === 'cajonera' && { numCajones: base.numCajones || 3 }),
+      ...(selectedModule === 'modular' && { 
+        numEstantes: base.numEstantes !== undefined ? base.numEstantes : 2,
+        numDivisores: base.numDivisores !== undefined ? base.numDivisores : 1,
+        numPuertas: base.numPuertas !== undefined ? base.numPuertas : 2
+      })
     }
 
     const hasCollision = shapes.some(s => checkCollision(candidateShape, s))
@@ -526,44 +538,26 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
             listening={false}
           />
           <Text 
-            x={18} 
-            y={18} 
-            text={window.innerWidth > 600 ? "Rueda del mouse para zoom" : "Arrastra módulos aquí"}
-            fontSize={window.innerWidth > 600 ? 12 : 10}
-            fill='#666' 
+            x={18}
+            y={18}
+            text='Canvas de diseño'
+            fontSize={14}
+            fill='#333'
+            listening={false}
           />
 
           {ghostShape && (
-            <Group
+            <Rect
               x={ghostShape.x}
               y={ghostShape.y}
-              opacity={0.4}
+              width={ghostShape.width}
+              height={ghostShape.height}
+              fill='rgba(74, 144, 226, 0.3)'
+              stroke='#4A90E2'
+              strokeWidth={2}
+              dash={[10, 5]}
               listening={false}
-            >
-              {ghostShape.type === 'cubierta' ? (
-                <Rect 
-                  x={0} 
-                  y={0} 
-                  width={ghostShape.width} 
-                  height={ghostShape.height} 
-                  fill={ghostShape.isCentered ? "#4A90E2" : "#d4d4d4"}
-                  stroke={ghostShape.isCentered ? "#6CB0FF" : "#888"}
-                  strokeWidth={2}
-                  dash={[5, 5]}
-                />
-              ) : (
-                <Rect 
-                  x={0} 
-                  y={0} 
-                  width={ghostShape.width} 
-                  height={ghostShape.height} 
-                  fill={ghostShape.isAboveCubierta ? "#22c55e" : "#4A90E2"} 
-                  stroke={ghostShape.isAboveCubierta ? "#16a34a" : "#6CB0FF"}
-                  strokeWidth={2}
-                  dash={[5, 5]}
-                />
-              )}
-            </Group>
+            />
           )}
 
           {shapes.map(s => (
@@ -577,89 +571,166 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
               onClick={() => setSelectedId(s.id)}
               onTap={() => setSelectedId(s.id)}
             >
+              {/* ESTANTE */}
               {s.type === 'estante' && (
-                <>
-                  <Rect 
-                    x={0} 
-                    y={0} 
-                    width={s.width} 
-                    height={s.height} 
-                    fill="#e8e8e8" 
-                    stroke={selectedId === s.id ? '#4A90E2' : '#999'} 
-                    strokeWidth={selectedId === s.id ? 3 : 2}
-                    shadowColor="black"
-                    shadowBlur={4}
-                    shadowOpacity={0.3}
-                    shadowOffsetY={2}
-                  />
-                  <Rect x={4} y={s.height/2 - 1} width={s.width - 8} height={2} fill="#bbb" />
-                </>
+                <Rect 
+                  x={0} 
+                  y={0} 
+                  width={s.width} 
+                  height={s.height} 
+                  fill="#e8e8e8" 
+                  stroke={selectedId === s.id ? '#4A90E2' : '#999'} 
+                  strokeWidth={selectedId === s.id ? 3 : 2}
+                  shadowColor="black"
+                  shadowBlur={4}
+                  shadowOpacity={0.3}
+                  shadowOffsetY={2}
+                />
               )}
 
-              {/* CAJONERA - ACTUALIZADO CON NÚMERO DINÁMICO DE CAJONES */}
-              {s.type === 'cajonera' && (
-                <>
-                  <Rect 
-                    x={0} 
-                    y={0} 
-                    width={s.width} 
-                    height={s.height} 
-                    fill="#f5f5f5" 
-                    stroke={selectedId === s.id ? '#4A90E2' : '#888'}
-                    strokeWidth={selectedId === s.id ? 3 : 2}
-                    shadowColor="black"
-                    shadowBlur={6}
-                    shadowOpacity={0.3}
-                    shadowOffsetY={3}
-                  />
-                  {Array.from({ length: s.numCajones || 3 }).map((_, i) => {
-                    // Usar 3 por defecto si numCajones es null/undefined/0
-                    const numCajones = s.numCajones && s.numCajones > 0 ? s.numCajones : 3
-                    const totalPadding = 8 + 8
-                    const totalGaps = (numCajones - 1) * 4
-                    const drawerHeight = (s.height - totalPadding - totalGaps) / numCajones
-                    const drawerY = 8 + i * (drawerHeight + 4)
-                    return (
-                      <Group key={i}>
-                        <Rect 
-                          x={6} 
-                          y={drawerY} 
-                          width={s.width - 12} 
-                          height={drawerHeight} 
-                          fill="#fff" 
-                          stroke="#ccc"
+              {/* CAJONERA */}
+              {s.type === 'cajonera' && (() => {
+                const numCajones = s.numCajones && s.numCajones > 0 ? s.numCajones : 3
+                const drawerHeight = s.height / numCajones
+                return (
+                  <>
+                    <Rect 
+                      x={0} 
+                      y={0} 
+                      width={s.width} 
+                      height={s.height} 
+                      fill="#d9d9d9" 
+                      stroke={selectedId === s.id ? '#4A90E2' : '#777'}
+                      strokeWidth={selectedId === s.id ? 3 : 2}
+                      shadowColor="black"
+                      shadowBlur={5}
+                      shadowOpacity={0.4}
+                      shadowOffsetY={3}
+                    />
+                    {Array.from({ length: numCajones }).map((_, i) => (
+                      <React.Fragment key={i}>
+                        <Line
+                          points={[0, (i + 1) * drawerHeight, s.width, (i + 1) * drawerHeight]}
+                          stroke="#555"
                           strokeWidth={1}
                         />
                         <Rect
-                          x={s.width/2 - 12}
-                          y={drawerY + drawerHeight/2 - 3}
-                          width={24}
+                          x={s.width / 2 - 15}
+                          y={i * drawerHeight + drawerHeight / 2 - 3}
+                          width={30}
                           height={6}
-                          fill="#333"
-                          cornerRadius={2}
+                          fill="#444"
+                          cornerRadius={3}
                         />
-                      </Group>
-                    )
-                  })}
-                </>
-              )}
+                      </React.Fragment>
+                    ))}
+                  </>
+                )
+              })()}
 
+              {/* MÓDULO MODULAR */}
+              {s.type === 'modular' && (() => {
+                // IMPORTANTE: Usar valores por defecto si son undefined
+                const numEstantes = s.numEstantes !== undefined && s.numEstantes !== null ? s.numEstantes : 0
+                const numDivisores = s.numDivisores !== undefined && s.numDivisores !== null ? s.numDivisores : 0
+                const numPuertas = s.numPuertas !== undefined && s.numPuertas !== null ? s.numPuertas : 0
+                
+                const estanteSpacing = numEstantes > 0 ? s.height / (numEstantes + 1) : 0
+                const divisorSpacing = numDivisores > 0 ? s.width / (numDivisores + 1) : 0
+                const puertaWidth = numPuertas > 0 ? s.width / numPuertas : 0
+                
+                return (
+                  <>
+                    <Rect 
+                      x={0} 
+                      y={0} 
+                      width={s.width} 
+                      height={s.height} 
+                      fill="#f5f5f5" 
+                      stroke={selectedId === s.id ? '#4A90E2' : '#888'}
+                      strokeWidth={selectedId === s.id ? 3 : 2}
+                      shadowColor="black"
+                      shadowBlur={5}
+                      shadowOpacity={0.3}
+                      shadowOffsetY={2}
+                    />
+                    
+                    {Array.from({ length: numEstantes }).map((_, i) => (
+                      <Line
+                        key={`estante-${i}`}
+                        points={[0, (i + 1) * estanteSpacing, s.width, (i + 1) * estanteSpacing]}
+                        stroke="#999"
+                        strokeWidth={3}
+                      />
+                    ))}
+                    
+                    {Array.from({ length: numDivisores }).map((_, i) => (
+                      <Line
+                        key={`divisor-${i}`}
+                        points={[(i + 1) * divisorSpacing, 0, (i + 1) * divisorSpacing, s.height]}
+                        stroke="#777"
+                        strokeWidth={3}
+                      />
+                    ))}
+                    
+                    {/* PUERTAS CON MANIJAS ALTERNAS */}
+                    {Array.from({ length: numPuertas }).map((_, i) => {
+                      // Determinar si la manija va a la izquierda o derecha
+                      // Si el índice es par (0, 2, 4...) → manija derecha
+                      // Si el índice es impar (1, 3, 5...) → manija izquierda
+                      const manijaIzquierda = i % 2 === 1
+                      
+                      return (
+                        <React.Fragment key={`puerta-${i}`}>
+                          {/* Cuerpo de la puerta */}
+                          <Rect
+                            x={i * puertaWidth + 2}
+                            y={2}
+                            width={puertaWidth - 4}
+                            height={s.height - 4}
+                            fill="rgba(255,255,255,0.6)"
+                            stroke="#555"
+                            strokeWidth={2}
+                            cornerRadius={4}
+                          />
+                          
+                          {/* Manija de puerta - ALTERNADA */}
+                          <Rect
+                            x={manijaIzquierda 
+                              ? i * puertaWidth + 8  // Manija a la izquierda
+                              : i * puertaWidth + puertaWidth - 12  // Manija a la derecha
+                            }
+                            y={s.height / 2 - 15}
+                            width={4}
+                            height={30}
+                            fill="#333"
+                            cornerRadius={2}
+                          />
+                        </React.Fragment>
+                      )
+                    })}
+                  </>
+                )
+              })()}
+
+              {/* BASE */}
               {s.type === 'base' && (
                 <Rect 
                   x={0} 
                   y={0} 
                   width={s.width} 
                   height={s.height} 
-                  fill="#a0a0a0" 
+                  fill="#c8c8c8" 
                   stroke={selectedId === s.id ? '#4A90E2' : '#666'}
                   strokeWidth={selectedId === s.id ? 3 : 2}
                   shadowColor="black"
                   shadowBlur={3}
-                  shadowOpacity={0.4}
-                  shadowOffsetY={2}
+                  shadowOpacity={0.2}
+                  shadowOffsetY={1}
                 />
               )}
 
+              {/* DIVISOR */}
               {s.type === 'divisor' && (
                 <Rect 
                   x={0} 
@@ -672,22 +743,24 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
                 />
               )}
 
+              {/* CUBIERTA */}
               {s.type === 'cubierta' && (
                 <Rect 
                   x={0} 
                   y={0} 
                   width={s.width} 
                   height={s.height} 
-                  fill="#d4d4d4" 
-                  stroke={selectedId === s.id ? '#4A90E2' : '#888'}
+                  fill="#f0f0f0" 
+                  stroke={selectedId === s.id ? '#4A90E2' : '#999'}
                   strokeWidth={selectedId === s.id ? 3 : 2}
                   shadowColor="black"
                   shadowBlur={4}
-                  shadowOpacity={0.25}
+                  shadowOpacity={0.3}
                   shadowOffsetY={2}
                 />
               )}
 
+              {/* PUERTA */}
               {s.type === 'puerta' && (
                 <>
                   <Rect 
@@ -713,6 +786,14 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
                   />
                 </>
               )}
+
+              <Text 
+                x={5} 
+                y={5} 
+                text={`${Math.round(s.width)}x${Math.round(s.height)}`} 
+                fontSize={10} 
+                fill={selectedId === s.id ? '#4A90E2' : '#666'} 
+              />
             </Group>
           ))}
         </Layer>

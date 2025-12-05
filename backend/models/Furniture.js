@@ -1,33 +1,33 @@
 const mongoose = require('mongoose')
 
-const componenteSchema = new mongoose.Schema({
-  nombre: { type: String, required: true },
-  dimensiones: { type: String, required: true },
-  posicion: String,
-  material_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Material' },
-})
-
-const shapeSchema = new mongoose.Schema({
-  id: Number,
-  type: String,
-  x: Number,
-  y: Number,
-  width: Number,
-  height: Number,
-  depth: Number,
+const ShapeSchema = new mongoose.Schema({
+  id: { type: Number, required: true },
+  type: { type: String, required: true },
+  x: { type: Number, required: true },
+  y: { type: Number, required: true },
+  width: { type: Number, required: true },
+  height: { type: Number, required: true },
+  depth: { type: Number, default: 20 },
   rotation: { type: Number, default: 0 },
-  numCajones: { type: Number, default: 3 }, // NUEVO: número de cajones
+  numCajones: { type: Number, default: null },
+  numEstantes: { type: Number, default: null },
+  numDivisores: { type: Number, default: null },
+  numPuertas: { type: Number, default: null }
+}, { _id: false }) 
+
+const FurnitureSchema = new mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
+  nombre: {
+    type: String,
+    required: true
+  },
+  shapes: [ShapeSchema]
+}, {
+  timestamps: true
 })
 
-const furnitureSchema = new mongoose.Schema(
-  {
-    nombre: { type: String, required: true },
-    dimensiones_generales: String,
-    mueblista_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Mueblista', required: true },
-    shapes: [shapeSchema],
-    componentes: [componenteSchema],
-  },
-  { timestamps: true }
-)
-
-module.exports = mongoose.model('Furniture', furnitureSchema)
+module.exports = mongoose.model('Furniture', FurnitureSchema)

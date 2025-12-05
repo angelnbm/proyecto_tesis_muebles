@@ -8,8 +8,11 @@ function authenticateToken(req, res, next) {
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secreto_super_seguro')
-    req.user = decoded // contiene { id, email }
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'password')
+    
+    req.user = decoded 
+    req.userId = decoded.id 
+    
     next()
   } catch (err) {
     res.status(403).json({ error: 'Token inválido o expirado' })

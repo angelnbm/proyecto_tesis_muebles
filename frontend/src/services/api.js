@@ -1,44 +1,82 @@
 import { getToken } from './auth.js'
 
-const API_URL = 'http://localhost:5000/api/furniture'
+//const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+const API_URL = import.meta.env.VITE_API_URL || 'https://zlls9tpr-5000.brs.devtunnels.ms/api'
 
-function getHeaders() {
+export const saveFurniture = async (nombre, shapes) => {
   const token = getToken()
-  return {
-    'Content-Type': 'application/json',
-    ...(token && { Authorization: `Bearer ${token}` }),
-  }
-}
-
-export async function saveFurniture(name, shapes) {
-  const res = await fetch(API_URL, {
+  
+  console.log('Enviando al servidor:', { nombre, shapes })
+  
+  const res = await fetch(`${API_URL}/furniture`, {
     method: 'POST',
-    headers: getHeaders(),
-    body: JSON.stringify({ nombre: name, shapes }),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ nombre, shapes })
   })
-  if (!res.ok) throw new Error('Error al guardar')
-  return res.json()
+  
+  if (!res.ok) {
+    const error = await res.json()
+    throw new Error(error.message || 'Error al guardar')
+  }
+  
+  const data = await res.json()
+  console.log('Respuesta del servidor:', data)
+  return data
 }
 
-export async function loadFurniture() {
-  const res = await fetch(API_URL, { headers: getHeaders() })
-  if (!res.ok) throw new Error('Error al cargar')
-  return res.json()
-}
-
-export async function updateFurniture(id, data) {
-  const res = await fetch(`${API_URL}/${id}`, {
+export const updateFurniture = async (id, { nombre, shapes }) => {
+  const token = getToken()
+  
+  console.log('Actualizando en servidor:', { id, nombre, shapes })
+  
+  const res = await fetch(`${API_URL}/furniture/${id}`, {
     method: 'PUT',
-    headers: getHeaders(),
-    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ nombre, shapes })
   })
-  if (!res.ok) throw new Error('Error al actualizar')
-  return res.json()
+  
+  if (!res.ok) {
+    const error = await res.json()
+    throw new Error(error.message || 'Error al actualizar')
+  }
+  
+  const data = await res.json()
+  console.log('Respuesta del servidor:', data)
+  return data
 }
 
-export async function deleteFurniture(id) {
-  const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE', headers: getHeaders() })
+export const loadFurniture = async () => {
+  const token = getToken()
+  const res = await fetch(`${API_URL}/furniture`, {
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  
+  if (!res.ok) throw new Error('Error al cargar diseños')
+  
+  const data = await res.json()
+  console.log('Diseños cargados del servidor:', data)
+  return data
+}
+
+export const deleteFurniture = async (id) => {
+  const token = getToken()
+  const res = await fetch(`${API_URL}/furniture/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  })
+  
   if (!res.ok) throw new Error('Error al eliminar')
-  return res.json()
+  
+  return await res.json()
 }
 

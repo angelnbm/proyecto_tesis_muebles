@@ -3,6 +3,7 @@ import React from 'react'
 const MODULES = [
   { key: 'estante', label: 'Estante' },
   { key: 'cajonera', label: 'Cajonera' },
+  { key: 'modular', label: 'Modular' }, // NUEVO
   { key: 'base', label: 'Base' },
   { key: 'divisor', label: 'Divisor' },
   { key: 'cubierta', label: 'Cubierta' },
