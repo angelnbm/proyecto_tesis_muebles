@@ -71,13 +71,14 @@ function computeAllCuts(shapes) {
 
 export default function App() {
   const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true) // ← NUEVO: Estado de carga
   const [selectedModule, setSelectedModule] = useState(null)
   const [shapes, setShapes] = useState([])
   const [selectedId, setSelectedId] = useState(null)
   const [activeTab, setActiveTab] = useState('diseno')
   const [designs, setDesigns] = useState([])
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600)
-  const [currentDesignId, setCurrentDesignId] = useState(null) // NUEVO: ID del diseño actual si fue cargado
+  const [currentDesignId, setCurrentDesignId] = useState(null)
 
   const selected = shapes.find(s => s.id === selectedId) || null
   const allCuts = computeAllCuts(shapes)
@@ -91,16 +92,35 @@ export default function App() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Verificar token al cargar
+  // Verificar token al cargar - ACTUALIZADO
   useEffect(() => {
     const token = getToken()
+    const startTime = Date.now()
+    
     if (token) {
+      console.log('🔐 Verificando token...')
       verifyToken(token)
-        .then(data => setUser(data.user))
-        .catch(() => {
+        .then(data => {
+          console.log('✅ Token válido:', data.user)
+          
+          // Esperar al menos 500ms para evitar parpadeo
+          const elapsed = Date.now() - startTime
+          const delay = Math.max(0, 500 - elapsed)
+          
+          setTimeout(() => {
+            setUser(data.user)
+            setLoading(false)
+          }, delay)
+        })
+        .catch(err => {
+          console.log('❌ Token inválido:', err)
           removeToken()
           setUser(null)
+          setLoading(false)
         })
+    } else {
+      console.log('ℹ️ No hay token guardado')
+      setLoading(false)
     }
   }, [])
 
@@ -200,18 +220,29 @@ export default function App() {
     setCurrentDesignId(null)
   }
 
+  // AGREGAR: Función para actualizar un shape específico
+  const updateShape = (id, updates) => {
+    setShapes(prev => prev.map(s => 
+      s.id === id ? { ...s, ...updates } : s
+    ))
+  }
+
+  // AGREGAR: Función para eliminar un shape
+  const deleteShape = (id) => {
+    setShapes(prev => prev.filter(s => s.id !== id))
+    if (selectedId === id) {
+      setSelectedId(null)
+    }
+  }
+
   const updateSelectedShape = (key, value) => {
     if (!selected) return
     
     if (key === 'numCajones' || key === 'numEstantes' || key === 'numDivisores' || key === 'numPuertas') {
       const numValue = value === '' ? null : Number(value)
-      setShapes(prev => prev.map(s => 
-        s.id === selected.id ? { ...s, [key]: numValue } : s
-      ))
+      updateShape(selected.id, { [key]: numValue })
     } else {
-      setShapes(prev => prev.map(s => 
-        s.id === selected.id ? { ...s, [key]: Number(value) } : s
-      ))
+      updateShape(selected.id, { [key]: Number(value) })
     }
   }
 
@@ -248,9 +279,44 @@ export default function App() {
     setActiveTab('diseno')
   }
 
-  // Si no hay usuario, mostrar login
+  // NUEVO: Pantalla de carga mientras verifica token
+  if (loading) {
+    return (
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        backgroundColor: '#1e1e1e',
+        color: '#e8eaed',
+        flexDirection: 'column',
+        gap: '16px'
+      }}>
+        <div style={{
+          width: '50px',
+          height: '50px',
+          border: '4px solid #4A90E2',
+          borderTop: '4px solid transparent',
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }}></div>
+        <p>Cargando...</p>
+        <style>{`
+          @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
+      </div>
+    )
+  }
+
+  // Si no hay usuario (después de verificar), mostrar login
   if (!user) {
-    return <AuthForm onLogin={setUser} />
+    return <AuthForm onLogin={(userData) => {
+      setUser(userData)
+      setLoading(false)
+    }} />
   }
 
   // ============================================
@@ -308,6 +374,8 @@ export default function App() {
                   setSelectedModule={setSelectedModule}
                   selectedId={selectedId}
                   setSelectedId={setSelectedId}
+                  updateShape={updateShape}
+                  deleteShape={deleteShape}
                 />
               </div>
 
@@ -533,6 +601,8 @@ export default function App() {
               setSelectedModule={setSelectedModule}
               selectedId={selectedId}
               setSelectedId={setSelectedId}
+              updateShape={updateShape}
+              deleteShape={deleteShape}
             />
           </div>
         )}

@@ -27,6 +27,22 @@ export default function AuthForm({ onLogin }) {
     }
   }
 
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    setError('')
+    
+    try {
+      const data = await login(email, contrasena)
+      saveToken(data.token)
+      
+      // Verificar el token inmediatamente después de guardarlo
+      const verified = await verifyToken(data.token)
+      onLogin(verified.user) // ← Pasar el usuario verificado
+    } catch (err) {
+      setError(err.message)
+    }
+  }
+
   return (
     <div style={{ maxWidth: '400px', margin: '100px auto', padding: '24px', background: '#2e3239', borderRadius: '12px' }}>
       <h2 style={{ textAlign: 'center', color: '#e8eaed', marginBottom: '24px' }}>

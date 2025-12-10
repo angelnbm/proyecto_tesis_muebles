@@ -12,12 +12,20 @@ const defaultSizes = {
     numDivisores: 1, 
     numPuertas: 2 
   },
-  base: { width: 600, height: 10, depth: 65 },
+  base: { width: 70, height: 10, depth: 65 },
   divisor: { width: 1.5, height: 30, depth: 70 },
   cubierta: { width: 110, height: 3, depth: 70 },
   puerta: { width: 70, height: 70, depth: 1.5 },
 }
 
+// ========== GRUPOS DE COLISIÓN ==========
+const COLLISION_GROUPS = {
+  INTERNOS: ['puerta', 'estante', 'divisor'],
+  HORIZONTALES: ['base', 'cubierta'],
+  PRINCIPALES: ['cajonera', 'modular']
+}
+
+// ========== FUNCIONES AUXILIARES ==========
 
 function checkCollision(rect1, rect2) {
   return !(
@@ -28,8 +36,67 @@ function checkCollision(rect1, rect2) {
   )
 }
 
-// Encuentra la mejor posición sin colisión
-function findSnapPosition(newShape, existingShapes, canvasWidth, canvasHeight) {
+function isInside(rect1, rect2) {
+  return (
+    rect1.x >= rect2.x &&
+    rect1.y >= rect2.y &&
+    rect1.x + rect1.width <= rect2.x + rect2.width &&
+    rect1.y + rect1.height <= rect2.y + rect2.height
+  )
+}
+
+function findContainingModular(shape, modulares) {
+  const centerX = shape.x + shape.width / 2
+  const centerY = shape.y + shape.height / 2
+  
+  for (const modular of modulares) {
+    if (
+      centerX >= modular.x &&
+      centerX <= modular.x + modular.width &&
+      centerY >= modular.y &&
+      centerY <= modular.y + modular.height
+    ) {
+      return modular
+    }
+  }
+  return null
+}
+
+// ========== MANEJO DE COLISIONES POR GRUPO ==========
+
+// GRUPO 1: Puerta, Estante, Divisor (Elementos internos)
+function handleInternosCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT) {
+  const cubiertaCollision = shapes.find(s => 
+    s.type === 'cubierta' && checkCollision(candidateShape, s)
+  )
+
+  if (cubiertaCollision) {
+    candidateShape.y = cubiertaCollision.y - candidateShape.height - 2
+    
+    const otherShapes = shapes.filter(s => s.type !== 'cubierta')
+    const stillCollides = otherShapes.some(s => checkCollision(candidateShape, s))
+    
+    if (stillCollides) {
+      const snappedPos = findSnapPositionInternos(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+      candidateShape.x = snappedPos.x
+      candidateShape.y = snappedPos.y
+      
+      const finalCheck = shapes.some(s => checkCollision(candidateShape, s))
+      if (finalCheck) return null
+    }
+  } else {
+    const snappedPos = findSnapPositionInternos(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+    candidateShape.x = snappedPos.x
+    candidateShape.y = snappedPos.y
+    
+    const stillCollides = shapes.some(s => checkCollision(candidateShape, s))
+    if (stillCollides) return null
+  }
+
+  return candidateShape
+}
+
+function findSnapPositionInternos(newShape, existingShapes, canvasWidth, canvasHeight) {
   let bestX = newShape.x
   let bestY = newShape.y
   let minDistance = Infinity
@@ -39,34 +106,11 @@ function findSnapPosition(newShape, existingShapes, canvasWidth, canvasHeight) {
   const maxX = canvasWidth - 16 - newShape.width
   const maxY = canvasHeight - 16 - newShape.height
 
-  // Verificar si hay colisión con cubierta
-  const cubiertaCollision = existingShapes.find(s => 
-    s.type === 'cubierta' && checkCollision(newShape, s)
+  const referenceShapes = existingShapes.filter(s => 
+    s.type === 'cubierta' || COLLISION_GROUPS.PRINCIPALES.includes(s.type)
   )
 
-  // Si colisiona con cubierta Y es divisor/estante/puerta, posicionar arriba
-  if (cubiertaCollision && ['divisor', 'estante', 'puerta'].includes(newShape.type)) {
-    const aboveCubierta = {
-      x: newShape.x,
-      y: cubiertaCollision.y - newShape.height - 2
-    }
-    
-    const testShape = { ...newShape, ...aboveCubierta }
-    const otherShapes = existingShapes.filter(s => s.id !== newShape.id && s.type !== 'cubierta')
-    const hasOtherCollision = otherShapes.some(s => checkCollision(testShape, s))
-    
-    if (!hasOtherCollision) {
-      return {
-        x: Math.max(minX, Math.min(maxX, aboveCubierta.x)),
-        y: Math.max(minY, Math.min(maxY, aboveCubierta.y))
-      }
-    }
-  }
-
-  // Lógica original para otros casos
-  for (const other of existingShapes) {
-    if (other.id === newShape.id) continue
-
+  for (const other of referenceShapes) {
     const positions = [
       { x: other.x + other.width, y: other.y },
       { x: other.x - newShape.width, y: other.y },
@@ -98,66 +142,141 @@ function findSnapPosition(newShape, existingShapes, canvasWidth, canvasHeight) {
     }
   }
 
-  if (bestX === newShape.x && bestY === newShape.y) {
-    bestX = Math.max(minX, Math.min(maxX, newShape.x))
-    bestY = Math.max(minY, Math.min(maxY, newShape.y))
+  return { x: bestX, y: bestY }
+}
+
+// GRUPO 2: Base, Cubierta (Elementos horizontales)
+function handleHorizontalesCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT) {
+  const centered = findCenterPositionHorizontales(shapes, candidateShape, BASE_WIDTH, BASE_HEIGHT)
+  candidateShape.x = centered.x
+  candidateShape.y = centered.y
+  
+  const stillCollides = shapes.some(s => checkCollision(candidateShape, s))
+  if (stillCollides) return null
+  
+  return candidateShape
+}
+
+function findCenterPositionHorizontales(shapes, newShape, canvasWidth, canvasHeight) {
+  if (shapes.length === 0) {
+    return { 
+      x: (canvasWidth - newShape.width) / 2, 
+      y: newShape.type === 'base' ? canvasHeight - newShape.height - 8 : 8
+    }
+  }
+
+  const principalesShapes = shapes.filter(s => COLLISION_GROUPS.PRINCIPALES.includes(s.type))
+  
+  let minX, maxX, minY, maxY
+  
+  if (principalesShapes.length > 0) {
+    minX = Math.min(...principalesShapes.map(s => s.x))
+    maxX = Math.max(...principalesShapes.map(s => s.x + s.width))
+    minY = Math.min(...principalesShapes.map(s => s.y))
+    maxY = Math.max(...principalesShapes.map(s => s.y + s.height))
+  } else {
+    minX = Math.min(...shapes.map(s => s.x))
+    maxX = Math.max(...shapes.map(s => s.x + s.width))
+    minY = Math.min(...shapes.map(s => s.y))
+    maxY = Math.max(...shapes.map(s => s.y + s.height))
+  }
+
+  const centerX = (minX + maxX) / 2 - newShape.width / 2
+  
+  const finalY = newShape.type === 'base' 
+    ? maxY + 4 
+    : minY - newShape.height - 4
+
+  return {
+    x: Math.max(8, Math.min(canvasWidth - 16 - newShape.width, centerX)),
+    y: Math.max(8, Math.min(canvasHeight - 16 - newShape.height, finalY))
+  }
+}
+
+// GRUPO 3: Cajonera, Modular (Módulos principales)
+function handlePrincipalesCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT) {
+  const snappedPos = findSnapPositionPrincipales(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+  candidateShape.x = snappedPos.x
+  candidateShape.y = snappedPos.y
+  
+  const stillCollides = shapes.some(s => checkCollision(candidateShape, s))
+  if (stillCollides) return null
+  
+  return candidateShape
+}
+
+function findSnapPositionPrincipales(newShape, existingShapes, canvasWidth, canvasHeight) {
+  let bestX = newShape.x
+  let bestY = newShape.y
+  let minDistance = Infinity
+
+  const minX = 8
+  const minY = 8
+  const maxX = canvasWidth - 16 - newShape.width
+  const maxY = canvasHeight - 16 - newShape.height
+
+  const otherPrincipales = existingShapes.filter(s => 
+    COLLISION_GROUPS.PRINCIPALES.includes(s.type)
+  )
+
+  for (const other of otherPrincipales) {
+    const positions = [
+      { x: other.x + other.width + 4, y: other.y },
+      { x: other.x - newShape.width - 4, y: other.y },
+      { x: other.x, y: other.y + other.height + 4 },
+      { x: other.x, y: other.y - newShape.height - 4 },
+    ]
+
+    for (const pos of positions) {
+      const clampedX = Math.max(minX, Math.min(maxX, pos.x))
+      const clampedY = Math.max(minY, Math.min(maxY, pos.y))
+      
+      const testShape = { ...newShape, x: clampedX, y: clampedY }
+      
+      const hasCollision = existingShapes.some(s => 
+        s.id !== newShape.id && checkCollision(testShape, s)
+      )
+
+      if (!hasCollision) {
+        const distance = Math.sqrt(
+          Math.pow(clampedX - newShape.x, 2) + Math.pow(clampedY - newShape.y, 2)
+        )
+        
+        if (distance < minDistance) {
+          minDistance = distance
+          bestX = clampedX
+          bestY = clampedY
+        }
+      }
+    }
   }
 
   return { x: bestX, y: bestY }
 }
 
-// Encuentra el centro de todos los shapes (para cubierta)
-function findCenterPosition(shapes, newShape, canvasWidth, canvasHeight) {
-  if (shapes.length === 0) {
-    return { 
-      x: (canvasWidth - newShape.width) / 2, 
-      y: 8 
-    }
-  }
+// ========== COMPONENTE PRINCIPAL ==========
 
-  // Buscar cajoneras específicamente
-  const cajoneras = shapes.filter(s => s.type === 'cajonera')
-  
-  let minX, maxX, minY
-  
-  if (cajoneras.length > 0) {
-    // Si hay cajoneras, centrar sobre ellas
-    minX = Math.min(...cajoneras.map(s => s.x))
-    maxX = Math.max(...cajoneras.map(s => s.x + s.width))
-    minY = Math.min(...cajoneras.map(s => s.y))
-  } else {
-    // Si no hay cajoneras, usar todos los shapes
-    minX = Math.min(...shapes.map(s => s.x))
-    maxX = Math.max(...shapes.map(s => s.x + s.width))
-    minY = Math.min(...shapes.map(s => s.y))
-  }
-
-  const centerX = (minX + maxX) / 2 - newShape.width / 2
-  const topY = minY - newShape.height - 4 // 4px de separación
-
-  return {
-    x: Math.max(8, Math.min(canvasWidth - 16 - newShape.width, centerX)),
-    y: Math.max(8, topY)
-  }
-}
-
-export default function KonvaStage({ shapes, setShapes, selectedModule, setSelectedModule, selectedId, setSelectedId }) {
-  const containerRef = useRef(null)
+export default function KonvaStage({ 
+  selectedModule, 
+  shapes, 
+  setShapes, 
+  selectedId, 
+  setSelectedId,
+  updateShape,
+  deleteShape,
+  setSelectedModule
+}) {
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0, scale: 1 })
+  const [zoom, setZoom] = useState(1)
+  const [stagePos, setStagePos] = useState({ x: 0, y: 0 })
+  const [ghostShape, setGhostShape] = useState(null)
+  const [isPanning, setIsPanning] = useState(false)
   const stageRef = useRef(null)
+  const containerRef = useRef(null)
   
   const BASE_WIDTH = 700
   const BASE_HEIGHT = 480
   
-  const [dimensions, setDimensions] = useState({
-    width: BASE_WIDTH,
-    height: BASE_HEIGHT,
-    scale: 1
-  })
-  
-  const [zoom, setZoom] = useState(1)
-  const [stagePos, setStagePos] = useState({ x: 0, y: 0 })
-  const [ghostShape, setGhostShape] = useState(null)
-
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
@@ -187,13 +306,11 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
 
   const handleWheel = (e) => {
     e.evt.preventDefault()
-    
     const stage = stageRef.current
     if (!stage) return
 
     const oldZoom = zoom
     const pointer = stage.getPointerPosition()
-    
     if (!pointer) return
     
     const mousePointTo = {
@@ -256,34 +373,25 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
     const hasCollision = shapes.some(s => checkCollision(candidateShape, s))
 
     if (hasCollision) {
-      if (selectedModule === 'cubierta') {
-        const centered = findCenterPosition(shapes, candidateShape, BASE_WIDTH, BASE_HEIGHT)
-        setGhostShape({ ...candidateShape, x: centered.x, y: centered.y, isCentered: true })
-      } 
-      else if (['divisor', 'estante', 'puerta'].includes(selectedModule)) {
-        const cubiertaCollision = shapes.find(s => 
-          s.type === 'cubierta' && checkCollision(candidateShape, s)
-        )
-        
-        if (cubiertaCollision) {
-          const aboveY = cubiertaCollision.y - candidateShape.height - 2
-          setGhostShape({ 
-            ...candidateShape, 
-            y: aboveY, 
-            isCentered: false,
-            isAboveCubierta: true
-          })
-        } else {
-          const snappedPos = findSnapPosition(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
-          setGhostShape({ ...candidateShape, x: snappedPos.x, y: snappedPos.y, isCentered: false })
-        }
+      let processedShape = null
+
+      if (COLLISION_GROUPS.INTERNOS.includes(selectedModule)) {
+        processedShape = handleInternosCollision({ ...candidateShape }, shapes, BASE_WIDTH, BASE_HEIGHT)
       }
-      else {
-        const snappedPos = findSnapPosition(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
-        setGhostShape({ ...candidateShape, x: snappedPos.x, y: snappedPos.y, isCentered: false })
+      else if (COLLISION_GROUPS.HORIZONTALES.includes(selectedModule)) {
+        processedShape = handleHorizontalesCollision({ ...candidateShape }, shapes, BASE_WIDTH, BASE_HEIGHT)
+      }
+      else if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule)) {
+        processedShape = handlePrincipalesCollision({ ...candidateShape }, shapes, BASE_WIDTH, BASE_HEIGHT)
+      }
+
+      if (processedShape) {
+        setGhostShape({ ...processedShape, isValid: true })
+      } else {
+        setGhostShape({ ...candidateShape, isValid: false })
       }
     } else {
-      setGhostShape({ ...candidateShape, isCentered: false })
+      setGhostShape({ ...candidateShape, isValid: true })
     }
   }
 
@@ -291,137 +399,124 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
     const stage = e.target.getStage()
     const pos = stage.getPointerPosition()
     if (!pos) return
-    if (e.target !== stage) return
-    if (!selectedModule) return
-
-    const base = defaultSizes[selectedModule] || { width: 60, height: 60, depth: 20 }
-    const id = Date.now()
     
-    const canvasX = (pos.x - stagePos.x) / (dimensions.scale * zoom)
-    const canvasY = (pos.y - stagePos.y) / (dimensions.scale * zoom)
-    
-    const candidateShape = {
-      id,
-      type: selectedModule,
-      x: canvasX - base.width / 2,
-      y: canvasY - base.height / 2,
-      width: base.width,
-      height: base.height,
-      depth: base.depth,
-      rotation: 0,
-      ...(selectedModule === 'cajonera' && { numCajones: base.numCajones || 3 }),
-      ...(selectedModule === 'modular' && { 
-        numEstantes: base.numEstantes !== undefined ? base.numEstantes : 2,
-        numDivisores: base.numDivisores !== undefined ? base.numDivisores : 1,
-        numPuertas: base.numPuertas !== undefined ? base.numPuertas : 2
-      })
+    if (e.target === stage && !selectedModule) {
+      setIsPanning(true)
+      setSelectedId(null)
+      return
     }
-
-    const hasCollision = shapes.some(s => checkCollision(candidateShape, s))
     
-    if (hasCollision) {
-      if (selectedModule === 'cubierta') {
-        const centered = findCenterPosition(shapes, candidateShape, BASE_WIDTH, BASE_HEIGHT)
-        candidateShape.x = centered.x
-        candidateShape.y = centered.y
-        
-        const stillCollides = shapes.some(s => checkCollision(candidateShape, s))
-        if (stillCollides) return
-      } 
-      else if (['divisor', 'estante', 'puerta'].includes(selectedModule)) {
-        const cubiertaCollision = shapes.find(s => 
-          s.type === 'cubierta' && checkCollision(candidateShape, s)
-        )
-        
-        if (cubiertaCollision) {
-          candidateShape.y = cubiertaCollision.y - candidateShape.height - 2
-          
-          const otherShapes = shapes.filter(s => s.type !== 'cubierta')
-          const stillCollides = otherShapes.some(s => checkCollision(candidateShape, s))
-          if (stillCollides) {
-            const snappedPos = findSnapPosition(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
-            candidateShape.x = snappedPos.x
-            candidateShape.y = snappedPos.y
-            
-            const finalCheck = shapes.some(s => checkCollision(candidateShape, s))
-            if (finalCheck) return
-          }
-        } else {
-          const snappedPos = findSnapPosition(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
-          candidateShape.x = snappedPos.x
-          candidateShape.y = snappedPos.y
-          
-          const stillCollides = shapes.some(s => checkCollision(candidateShape, s))
-          if (stillCollides) return
-        }
-      } 
-      else {
-        const snappedPos = findSnapPosition(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
-        candidateShape.x = snappedPos.x
-        candidateShape.y = snappedPos.y
-        
-        const stillCollides = shapes.some(s => checkCollision(candidateShape, s))
-        if (stillCollides) return
+    if (e.target === stage && selectedModule) {
+      const base = defaultSizes[selectedModule] || { width: 60, height: 60, depth: 20 }
+      const id = Date.now()
+      
+      const canvasX = (pos.x - stagePos.x) / (dimensions.scale * zoom)
+      const canvasY = (pos.y - stagePos.y) / (dimensions.scale * zoom)
+      
+      const candidateShape = {
+        id,
+        type: selectedModule,
+        x: canvasX - base.width / 2,
+        y: canvasY - base.height / 2,
+        width: base.width,
+        height: base.height,
+        depth: base.depth,
+        rotation: 0,
+        ...(selectedModule === 'cajonera' && { numCajones: base.numCajones || 3 }),
+        ...(selectedModule === 'modular' && { 
+          numEstantes: base.numEstantes !== undefined ? base.numEstantes : 2,
+          numDivisores: base.numDivisores !== undefined ? base.numDivisores : 1,
+          numPuertas: base.numPuertas !== undefined ? base.numPuertas : 2
+        })
       }
-    }
 
-    setShapes(prev => [...prev, candidateShape])
-    setSelectedId(id)
-    setGhostShape(null)
-    if (typeof setSelectedModule === 'function') setSelectedModule(null)
+      const hasCollision = shapes.some(s => checkCollision(candidateShape, s))
+      
+      if (hasCollision) {
+        let processedShape = null
+
+        if (COLLISION_GROUPS.INTERNOS.includes(selectedModule)) {
+          processedShape = handleInternosCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+        }
+        else if (COLLISION_GROUPS.HORIZONTALES.includes(selectedModule)) {
+          processedShape = handleHorizontalesCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+        }
+        else if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule)) {
+          processedShape = handlePrincipalesCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+        }
+
+        if (!processedShape) return
+      }
+
+      if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule) && shapes.length === 0) {
+        candidateShape.x = (BASE_WIDTH - candidateShape.width) / 2
+        candidateShape.y = (BASE_HEIGHT - candidateShape.height) / 2
+      }
+
+      setShapes(prev => [...prev, candidateShape])
+      setSelectedId(id)
+      setGhostShape(null)
+      if (typeof setSelectedModule === 'function') setSelectedModule(null)
+    }
   }
 
-  const updateShape = (id, patch) => {
-    setShapes(prev => prev.map(s => (s.id === id ? { ...s, ...patch } : s)))
+  const handleStageMouseUp = () => {
+    setIsPanning(false)
   }
 
   const handleDragEnd = (shapeId, e) => {
     const draggedShape = shapes.find(s => s.id === shapeId)
     if (!draggedShape) return
 
+    const node = e.target
+    const newX = node.x()
+    const newY = node.y()
+
     const updatedShape = { 
       ...draggedShape, 
-      x: e.target.x(), 
-      y: e.target.y() 
+      x: newX, 
+      y: newY 
     }
-    const otherShapes = shapes.filter(s => s.id !== shapeId)
 
     const minX = 8
     const minY = 8
     const maxX = BASE_WIDTH - 16 - updatedShape.width
     const maxY = BASE_HEIGHT - 16 - updatedShape.height
+
     updatedShape.x = Math.max(minX, Math.min(maxX, updatedShape.x))
     updatedShape.y = Math.max(minY, Math.min(maxY, updatedShape.y))
 
+    if (updatedShape.x !== newX || updatedShape.y !== newY) {
+      node.x(updatedShape.x)
+      node.y(updatedShape.y)
+    }
+
+    const otherShapes = shapes.filter(s => s.id !== shapeId)
     const hasCollision = otherShapes.some(s => checkCollision(updatedShape, s))
     
     if (hasCollision) {
-      if (['divisor', 'estante', 'puerta'].includes(updatedShape.type)) {
-        const cubiertaCollision = otherShapes.find(s => 
-          s.type === 'cubierta' && checkCollision(updatedShape, s)
-        )
-        
-        if (cubiertaCollision) {
-          updatedShape.y = cubiertaCollision.y - updatedShape.height - 2
-          
-          const otherNonCubierta = otherShapes.filter(s => s.type !== 'cubierta')
-          const stillCollides = otherNonCubierta.some(s => checkCollision(updatedShape, s))
-          
-          if (!stillCollides) {
-            updateShape(shapeId, { x: updatedShape.x, y: updatedShape.y })
-            return
-          }
-        }
+      let snappedPos = null
+
+      if (COLLISION_GROUPS.INTERNOS.includes(updatedShape.type)) {
+        snappedPos = findSnapPositionInternos(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
+      } else if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
+        snappedPos = findSnapPositionPrincipales(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
+      } else if (COLLISION_GROUPS.HORIZONTALES.includes(updatedShape.type)) {
+        const centered = findCenterPositionHorizontales(otherShapes, updatedShape, BASE_WIDTH, BASE_HEIGHT)
+        snappedPos = centered
+      }
+
+      if (snappedPos) {
+        updatedShape.x = snappedPos.x
+        updatedShape.y = snappedPos.y
+        node.x(updatedShape.x)
+        node.y(updatedShape.y)
       }
       
-      const snappedPos = findSnapPosition(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
-      updatedShape.x = snappedPos.x
-      updatedShape.y = snappedPos.y
-      
-      const stillCollides = otherShapes.some(s => checkCollision(updatedShape, s))
-      if (stillCollides) {
-        e.target.x(draggedShape.x)
-        e.target.y(draggedShape.y)
+      const finalCheck = otherShapes.some(s => checkCollision(updatedShape, s))
+      if (finalCheck) {
+        node.x(draggedShape.x)
+        node.y(draggedShape.y)
         return
       }
     }
@@ -430,18 +525,15 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
   }
 
   return (
-    <div 
-      ref={containerRef} 
-      style={{ 
-        width: '100%', 
-        height: '100%', 
-        position: 'relative', 
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: 0
-      }}
-    >
+    <div ref={containerRef} style={{ 
+      width: '100%', 
+      height: '100%', 
+      position: 'relative', 
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: 0
+    }}>
       <div style={{ 
         position: 'absolute', 
         top: 10, 
@@ -514,14 +606,15 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
         scaleY={dimensions.scale * zoom}
         x={stagePos.x}
         y={stagePos.y}
-        draggable={false}
+        draggable={!selectedModule}
         onWheel={handleWheel}
         onMouseDown={handleStageMouseDown}
+        onMouseUp={handleStageMouseUp}
         onTouchStart={handleStageMouseDown}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setGhostShape(null)}
         style={{ 
-          cursor: selectedModule ? 'crosshair' : 'default',
+          cursor: selectedModule ? 'crosshair' : (isPanning ? 'grabbing' : 'grab'),
           touchAction: 'none'
         }}
       >
@@ -552,8 +645,8 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
               y={ghostShape.y}
               width={ghostShape.width}
               height={ghostShape.height}
-              fill='rgba(74, 144, 226, 0.3)'
-              stroke='#4A90E2'
+              fill={ghostShape.isValid ? 'rgba(74, 144, 226, 0.3)' : 'rgba(255, 0, 0, 0.3)'}
+              stroke={ghostShape.isValid ? '#4A90E2' : '#ff0000'}
               strokeWidth={2}
               dash={[10, 5]}
               listening={false}
@@ -570,8 +663,18 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
               onDragEnd={e => handleDragEnd(s.id, e)}
               onClick={() => setSelectedId(s.id)}
               onTap={() => setSelectedId(s.id)}
+              dragBoundFunc={(pos) => {
+                const minX = 8
+                const minY = 8
+                const maxX = BASE_WIDTH - 16 - s.width
+                const maxY = BASE_HEIGHT - 16 - s.height
+                
+                return {
+                  x: Math.max(minX, Math.min(maxX, pos.x)),
+                  y: Math.max(minY, Math.min(maxY, pos.y))
+                }
+              }}
             >
-              {/* ESTANTE */}
               {s.type === 'estante' && (
                 <Rect 
                   x={0} 
@@ -588,7 +691,6 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
                 />
               )}
 
-              {/* CAJONERA */}
               {s.type === 'cajonera' && (() => {
                 const numCajones = s.numCajones && s.numCajones > 0 ? s.numCajones : 3
                 const drawerHeight = s.height / numCajones
@@ -628,9 +730,7 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
                 )
               })()}
 
-              {/* MÓDULO MODULAR */}
               {s.type === 'modular' && (() => {
-                // IMPORTANTE: Usar valores por defecto si son undefined
                 const numEstantes = s.numEstantes !== undefined && s.numEstantes !== null ? s.numEstantes : 0
                 const numDivisores = s.numDivisores !== undefined && s.numDivisores !== null ? s.numDivisores : 0
                 const numPuertas = s.numPuertas !== undefined && s.numPuertas !== null ? s.numPuertas : 0
@@ -673,16 +773,11 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
                       />
                     ))}
                     
-                    {/* PUERTAS CON MANIJAS ALTERNAS */}
                     {Array.from({ length: numPuertas }).map((_, i) => {
-                      // Determinar si la manija va a la izquierda o derecha
-                      // Si el índice es par (0, 2, 4...) → manija derecha
-                      // Si el índice es impar (1, 3, 5...) → manija izquierda
                       const manijaIzquierda = i % 2 === 1
                       
                       return (
                         <React.Fragment key={`puerta-${i}`}>
-                          {/* Cuerpo de la puerta */}
                           <Rect
                             x={i * puertaWidth + 2}
                             y={2}
@@ -693,12 +788,10 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
                             strokeWidth={2}
                             cornerRadius={4}
                           />
-                          
-                          {/* Manija de puerta - ALTERNADA */}
                           <Rect
                             x={manijaIzquierda 
-                              ? i * puertaWidth + 8  // Manija a la izquierda
-                              : i * puertaWidth + puertaWidth - 12  // Manija a la derecha
+                              ? i * puertaWidth + 8
+                              : i * puertaWidth + puertaWidth - 12
                             }
                             y={s.height / 2 - 15}
                             width={4}
@@ -713,7 +806,6 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
                 )
               })()}
 
-              {/* BASE */}
               {s.type === 'base' && (
                 <Rect 
                   x={0} 
@@ -730,7 +822,6 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
                 />
               )}
 
-              {/* DIVISOR */}
               {s.type === 'divisor' && (
                 <Rect 
                   x={0} 
@@ -743,7 +834,6 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
                 />
               )}
 
-              {/* CUBIERTA */}
               {s.type === 'cubierta' && (
                 <Rect 
                   x={0} 
@@ -760,7 +850,6 @@ export default function KonvaStage({ shapes, setShapes, selectedModule, setSelec
                 />
               )}
 
-              {/* PUERTA */}
               {s.type === 'puerta' && (
                 <>
                   <Rect 

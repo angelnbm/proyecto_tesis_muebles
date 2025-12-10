@@ -1,7 +1,7 @@
 import { getToken } from './auth.js'
 
-//const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
-const API_URL = import.meta.env.VITE_API_URL || 'https://zlls9tpr-5000.brs.devtunnels.ms/api'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+//const API_URL = import.meta.env.VITE_API_URL || 'https://zlls9tpr-5000.brs.devtunnels.ms/api'
 
 export const saveFurniture = async (nombre, shapes) => {
   const token = getToken()
