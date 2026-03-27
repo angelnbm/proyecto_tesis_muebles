@@ -36,32 +36,6 @@ function checkCollision(rect1, rect2) {
   )
 }
 
-function isInside(rect1, rect2) {
-  return (
-    rect1.x >= rect2.x &&
-    rect1.y >= rect2.y &&
-    rect1.x + rect1.width <= rect2.x + rect2.width &&
-    rect1.y + rect1.height <= rect2.y + rect2.height
-  )
-}
-
-function findContainingModular(shape, modulares) {
-  const centerX = shape.x + shape.width / 2
-  const centerY = shape.y + shape.height / 2
-  
-  for (const modular of modulares) {
-    if (
-      centerX >= modular.x &&
-      centerX <= modular.x + modular.width &&
-      centerY >= modular.y &&
-      centerY <= modular.y + modular.height
-    ) {
-      return modular
-    }
-  }
-  return null
-}
-
 // ========== MANEJO DE COLISIONES POR GRUPO ==========
 
 // GRUPO 1: Puerta, Estante, Divisor (Elementos internos)
@@ -263,7 +237,6 @@ export default function KonvaStage({
   selectedId, 
   setSelectedId,
   updateShape,
-  deleteShape,
   setSelectedModule
 }) {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0, scale: 1 })

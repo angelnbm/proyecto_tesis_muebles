@@ -16,15 +16,16 @@ function computeAllCuts(shapes) {
     const d = Math.round(shape.depth || 20)
     
     switch (shape.type) {
-      case 'cajonera':
+      case 'cajonera': {
         const numCajones = shape.numCajones && shape.numCajones > 0 ? shape.numCajones : 3
         const drawerHeight = Math.round(h / numCajones)
         cuts.push(`- ${shape.type} (${numCajones} cajones) | Frente: ${w}x${drawerHeight} CM (x${numCajones})`)
         cuts.push(`- ${shape.type} | Laterales: ${d}x${h} CM (x2)`)
         cuts.push(`- ${shape.type} | Fondo: ${w}x${d} CM`)
         break
+      }
       
-      case 'modular':
+      case 'modular': {
         // IMPORTANTE: Guardar valores aunque sean 0
         const numEstantes = shape.numEstantes !== undefined && shape.numEstantes !== null ? shape.numEstantes : 0
         const numDivisores = shape.numDivisores !== undefined && shape.numDivisores !== null ? shape.numDivisores : 0
@@ -46,6 +47,7 @@ function computeAllCuts(shapes) {
           cuts.push(`- ${shape.type} | Puertas: ${puertaWidth}x${h} CM (x${numPuertas})`)
         }
         break
+      }
       
       case 'estante':
         cuts.push(`- ${shape.type} | Estante: ${w}x${d} CM`)
@@ -227,14 +229,6 @@ export default function App() {
     ))
   }
 
-  // AGREGAR: Función para eliminar un shape
-  const deleteShape = (id) => {
-    setShapes(prev => prev.filter(s => s.id !== id))
-    if (selectedId === id) {
-      setSelectedId(null)
-    }
-  }
-
   const updateSelectedShape = (key, value) => {
     if (!selected) return
     
@@ -368,15 +362,14 @@ export default function App() {
             <>
               <div className="mobile-canvas">
                 <KonvaStage
-                  shapes={shapes}
-                  setShapes={setShapes}
-                  selectedModule={selectedModule}
-                  setSelectedModule={setSelectedModule}
-                  selectedId={selectedId}
-                  setSelectedId={setSelectedId}
-                  updateShape={updateShape}
-                  deleteShape={deleteShape}
-                />
+                   shapes={shapes}
+                   setShapes={setShapes}
+                   selectedModule={selectedModule}
+                   setSelectedModule={setSelectedModule}
+                   selectedId={selectedId}
+                   setSelectedId={setSelectedId}
+                   updateShape={updateShape}
+                 />
               </div>
 
               {selected && (
@@ -602,7 +595,6 @@ export default function App() {
               selectedId={selectedId}
               setSelectedId={setSelectedId}
               updateShape={updateShape}
-              deleteShape={deleteShape}
             />
           </div>
         )}
