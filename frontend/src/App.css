@@ -1411,13 +1411,6 @@ body {
   transition: transform 0.2s;
 }
 
-.module-total {
-  margin-left: auto;
-  font-size: 12px;
-  color: #27AE60;
-  white-space: nowrap;
-}
-
 /* Piece detail rows */
 .pieces-table .piece-detail {
   background: #1b1e22;

@@ -71,8 +71,6 @@ export default function CubicacionPanel({ shapes }) {
                 <th>Ancho (cm)</th>
                 <th>Alto (cm)</th>
                 <th>Cantidad</th>
-                <th>Área (cm²)</th>
-                <th>Total Área</th>
               </tr>
             </thead>
             <tbody>
@@ -92,7 +90,7 @@ export default function CubicacionPanel({ shapes }) {
                         setSelectedModule(isExpanded ? null : moduleId)
                       }
                     >
-                      <td colSpan="7" className="module-name-cell">
+                      <td colSpan="5" className="module-name-cell">
                         <span
                           className="module-color-dot"
                           style={{ backgroundColor: getModuleColor(module.type) }}
@@ -100,9 +98,6 @@ export default function CubicacionPanel({ shapes }) {
                         <strong>{module.name}</strong>
                         <span className="module-type">({module.type})</span>
                         <span className="expand-icon">{isExpanded ? '▼' : '▶'}</span>
-                        <span className="module-total">
-                          Área Total: <strong>{totalModuleArea.toLocaleString()}</strong> cm²
-                        </span>
                       </td>
                     </tr>
 
@@ -115,12 +110,6 @@ export default function CubicacionPanel({ shapes }) {
                           <td className="number">{piece.width}</td>
                           <td className="number">{piece.height}</td>
                           <td className="number">{piece.quantity}</td>
-                          <td className="number">{piece.area.toLocaleString()}</td>
-                          <td className="number">
-                            <strong>
-                              {(piece.area * piece.quantity).toLocaleString()}
-                            </strong>
-                          </td>
                         </tr>
                       ))}
                   </React.Fragment>
