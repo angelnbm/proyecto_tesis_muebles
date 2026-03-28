@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import Toolbar from './components/Toolbar.jsx'
 import KonvaStage from './components/KonvaStage.jsx'
+import CubicacionPanel from './components/CubicacionPanel.jsx'
 import AuthForm from './components/Login.jsx' 
 import { saveFurniture, loadFurniture, deleteFurniture, updateFurniture } from './services/api.js'
 import { getToken, removeToken, verifyToken } from './services/auth.js'
@@ -600,16 +601,7 @@ export default function App() {
         )}
 
         {activeTab === 'cubicacion' && (
-          <div className="cubicacion-panel">
-            <h2>Lista de cortes:</h2>
-            {allCuts.length === 0 ? (
-              <p className="empty-message">No hay módulos añadidos. Ve a "Diseño" para crear.</p>
-            ) : (
-              <ul className="cut-list">
-                {allCuts.map((cut, i) => <li key={i}>{cut}</li>)}
-              </ul>
-            )}
-          </div>
+          <CubicacionPanel shapes={shapes} />
         )}
       </main>
 
