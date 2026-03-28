@@ -45,10 +45,73 @@ export default function CubicacionPanel({ shapes }) {
   // Calculate total pieces (sum of all quantities)
   const totalPieces = cubicacionData.allPieces.reduce((sum, piece) => sum + piece.quantity, 0)
 
-  // Calculate estimated extra materials (hardware: drawer pulls, hinges, slides)
-  // Formula: ~15% of total board area as extra material
-  const extraMaterialPercentage = 15
-  const estimatedExtraMaterial = (statistics.totalUsedArea * extraMaterialPercentage / 100 / 10000).toFixed(2)
+  // Consolidate pieces by size (width × height)
+  const consolidatedPieces = useMemo(() => {
+    const map = new Map() // key: "width×height", value: { width, height, description[], qty, modules[] }
+    
+    cubicacionData.allPieces.forEach((piece) => {
+      const key = `${piece.width}×${piece.height}`
+      if (!map.has(key)) {
+        map.set(key, {
+          width: piece.width,
+          height: piece.height,
+          descriptions: new Set(),
+          quantity: 0,
+          modules: new Set(),
+        })
+      }
+      const entry = map.get(key)
+      entry.descriptions.add(piece.description)
+      entry.quantity += piece.quantity
+      entry.modules.add(piece.moduleName)
+    })
+    
+    return Array.from(map.values())
+      .sort((a, b) => b.quantity - a.quantity) // Sort by quantity descending
+  }, [cubicacionData.allPieces])
+
+  // Calculate hardware requirements
+  const hardwareList = useMemo(() => {
+    const hardware = {
+      tiradores: 0,      // drawer pulls
+      visagras: 0,       // hinges
+      correderas: 0,     // slides
+    }
+
+    shapes.forEach((shape) => {
+      switch (shape.type) {
+        case 'cajonera': {
+          const numCajones = shape.numCajones && shape.numCajones > 0 ? shape.numCajones : 3
+          // 1 drawer pull per drawer front (some cajoneras have 2 fronts per drawer)
+          hardware.tiradores += numCajones
+          // 1 pair of slides (2 units) per drawer
+          hardware.correderas += numCajones * 2
+          break
+        }
+        case 'puerta': {
+          // 1 handle per door
+          hardware.tiradores += 1
+          // 2 hinges per door
+          hardware.visagras += 2
+          break
+        }
+        case 'modular': {
+          const numPuertas = shape.numPuertas !== undefined && shape.numPuertas !== null ? shape.numPuertas : 0
+          if (numPuertas > 0) {
+            // 1 handle per door
+            hardware.tiradores += numPuertas
+            // 2 hinges per door
+            hardware.visagras += numPuertas * 2
+          }
+          break
+        }
+        default:
+          break
+      }
+    })
+
+    return hardware
+  }, [shapes])
 
   // Generate color for each module type - using app palette
   const getModuleColor = (moduleType) => {
@@ -169,28 +232,59 @@ export default function CubicacionPanel({ shapes }) {
                 {(statistics.totalUsedArea / 10000).toFixed(2)} m²
               </div>
             </div>
-
-            <div className="stat-card">
-              <div className="stat-label">Desperdicio Promedio</div>
-              <div className="stat-value">{statistics.wastePercentage}%</div>
-              <div className="stat-detail">
-                {(statistics.wasteArea / 10000).toFixed(2)} m²
-              </div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-label">Área Total Usada</div>
-              <div className="stat-value">{(statistics.totalUsedArea / 10000).toFixed(2)}</div>
-              <div className="stat-detail">m²</div>
-            </div>
-
-            <div className="stat-card">
-              <div className="stat-label">Material Extra</div>
-              <div className="stat-value">{estimatedExtraMaterial}</div>
-              <div className="stat-detail">m² (tiradores, visagras, correderas)</div>
-            </div>
           </div>
         )}
+      </section>
+
+      {/* SECTION 4: CONSOLIDATED PIECES LIST */}
+      <section className="cubicacion-section cubicacion-pieces-list">
+        <h2>📝 Listado de Piezas Consolidadas</h2>
+        
+        <div className="consolidated-pieces-wrapper">
+          <table className="consolidated-pieces-table">
+            <thead>
+              <tr>
+                <th>Dimensiones (cm)</th>
+                <th>Cantidad</th>
+                <th>Descripciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {consolidatedPieces.map((piece, idx) => (
+                <tr key={idx}>
+                  <td className="dimensions">{piece.width} × {piece.height}</td>
+                  <td className="quantity">{piece.quantity}</td>
+                  <td className="descriptions">{Array.from(piece.descriptions).join(', ')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* SECTION 5: HARDWARE LIST */}
+      <section className="cubicacion-section cubicacion-hardware">
+        <h2>🔧 Material Extra - Hardware</h2>
+        
+        <div className="hardware-grid">
+          <div className="hardware-item">
+            <div className="hardware-label">Tiradores</div>
+            <div className="hardware-value">{hardwareList.tiradores}</div>
+            <div className="hardware-desc">Para puertas y cajones</div>
+          </div>
+
+          <div className="hardware-item">
+            <div className="hardware-label">Visagras</div>
+            <div className="hardware-value">{hardwareList.visagras}</div>
+            <div className="hardware-desc">Para puertas (2 por puerta)</div>
+          </div>
+
+          <div className="hardware-item">
+            <div className="hardware-label">Correderas</div>
+            <div className="hardware-value">{hardwareList.correderas}</div>
+            <div className="hardware-desc">Para cajones (pares)</div>
+          </div>
+        </div>
       </section>
     </div>
   )
