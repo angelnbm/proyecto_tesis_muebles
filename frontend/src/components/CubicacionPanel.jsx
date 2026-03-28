@@ -42,6 +42,14 @@ export default function CubicacionPanel({ shapes }) {
     )
   }
 
+  // Calculate total pieces (sum of all quantities)
+  const totalPieces = cubicacionData.allPieces.reduce((sum, piece) => sum + piece.quantity, 0)
+
+  // Calculate estimated extra materials (hardware: drawer pulls, hinges, slides)
+  // Formula: ~15% of total board area as extra material
+  const extraMaterialPercentage = 15
+  const estimatedExtraMaterial = (statistics.totalUsedArea * extraMaterialPercentage / 100 / 10000).toFixed(2)
+
   // Generate color for each module type - using app palette
   const getModuleColor = (moduleType) => {
     const colors = {
@@ -149,6 +157,12 @@ export default function CubicacionPanel({ shapes }) {
             </div>
 
             <div className="stat-card">
+              <div className="stat-label">Cantidad de Piezas</div>
+              <div className="stat-value">{totalPieces}</div>
+              <div className="stat-detail">piezas totales a cortar</div>
+            </div>
+
+            <div className="stat-card">
               <div className="stat-label">Utilización Promedio</div>
               <div className="stat-value">{statistics.utilizationPercentage}%</div>
               <div className="stat-detail">
@@ -168,6 +182,12 @@ export default function CubicacionPanel({ shapes }) {
               <div className="stat-label">Área Total Usada</div>
               <div className="stat-value">{(statistics.totalUsedArea / 10000).toFixed(2)}</div>
               <div className="stat-detail">m²</div>
+            </div>
+
+            <div className="stat-card">
+              <div className="stat-label">Material Extra</div>
+              <div className="stat-value">{estimatedExtraMaterial}</div>
+              <div className="stat-detail">m² (tiradores, visagras, correderas)</div>
             </div>
           </div>
         )}
