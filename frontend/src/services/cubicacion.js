@@ -8,7 +8,7 @@ export const BOARD_CONFIGS = {
     width: 250,      // Ancho en CM
     height: 183,     // Alto en CM
     name: 'Melamina',
-    minMargin: 1,     // Margen mínimo entre cortes (1cm más compacto)
+    minMargin: 0.3,     // Margen mínimo entre cortes (0.3cm más compacto)
   },
   // Puedes agregar más tipos de tableros aquí
 }
@@ -89,14 +89,8 @@ export function generateStructuredCuts(shapes) {
         const numDivisores = shape.numDivisores !== undefined && shape.numDivisores !== null ? shape.numDivisores : 0
         const numPuertas = shape.numPuertas !== undefined && shape.numPuertas !== null ? shape.numPuertas : 0
 
+        // No incluir "Marco" - las puertas ya cumplen ese rol como frontal
         modulePieces.push(
-          {
-            description: `Marco`,
-            width: w,
-            height: h,
-            quantity: 1,
-            area: w * h,
-          },
           {
             description: `Laterales`,
             width: d,
