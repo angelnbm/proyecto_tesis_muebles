@@ -26,13 +26,28 @@ export default function CubicacionPanel({ shapes }) {
       }
     }
 
-    const { byModule, allPieces } = generateStructuredCuts(shapes)
-    const { boards, statistics } = optimizePiecesInBoards(allPieces)
+    try {
+      const { byModule, allPieces } = generateStructuredCuts(shapes)
+      console.log('✅ generateStructuredCuts result:', { allPieces, modulesCount: byModule.size })
+      
+      const { boards, statistics } = optimizePiecesInBoards(allPieces)
+      console.log('✅ optimizePiecesInBoards result:', { boards, statistics })
 
-    return { byModule, allPieces, boards, statistics }
+      return { byModule, allPieces, boards, statistics }
+    } catch (error) {
+      console.error('❌ Error in cubicacionData:', error)
+      return {
+        byModule: new Map(),
+        allPieces: [],
+        boards: [],
+        statistics: null,
+      }
+    }
   }, [shapes])
 
   const { byModule, boards, statistics } = cubicacionData
+
+  console.log('🔍 CubicacionPanel render:', { shapesLength: shapes?.length, boards: boards?.length, statistics })
 
   if (!shapes || shapes.length === 0) {
     return (
@@ -298,8 +313,8 @@ export default function CubicacionPanel({ shapes }) {
  * we calculate zoom factor based on average piece size to keep them visible
  */
 function BoardVisualization({ board, boardConfig, getModuleColor }) {
-  // Get all pieces to calculate zoom
-  const allPieces = board.shelves.flatMap((shelf) => shelf.pieces)
+  // Get all pieces - handle both old structure (board.shelves) and new Guillotine (board.pieces)
+  const allPieces = board.pieces || (board.shelves ? board.shelves.flatMap((shelf) => shelf.pieces) : [])
 
   // Calculate bounding box of all pieces
   if (allPieces.length === 0) {
@@ -343,7 +358,7 @@ function BoardVisualization({ board, boardConfig, getModuleColor }) {
   const svgHeight = boardConfig.height * scale
 
   // Flattened pieces for rendering
-  const displayPieces = board.shelves.flatMap((shelf) => shelf.pieces)
+  const displayPieces = board.pieces || (board.shelves ? board.shelves.flatMap((shelf) => shelf.pieces) : [])
 
   // Calculate board utilization for this specific board
   const boardArea2 = boardConfig.width * boardConfig.height
@@ -473,19 +488,17 @@ function BoardVisualization({ board, boardConfig, getModuleColor }) {
       <div className="board-legend">
         <div className="legend-title">Piezas en esta plancha:</div>
         <div className="legend-items">
-          {board.shelves.map((shelf, shelfIdx) =>
-            shelf.pieces.map((piece, pieceIdx) => (
-              <div key={`${shelfIdx}-${pieceIdx}`} className="legend-item">
-                <span
-                  className="legend-color"
-                  style={{ backgroundColor: getModuleColor(piece.moduleType) }}
-                />
-                <span className="legend-text">
-                  {piece.description} ({piece.width}×{piece.height} cm)
-                </span>
-              </div>
-            ))
-          )}
+          {(board.pieces || (board.shelves ? board.shelves.flatMap((shelf) => shelf.pieces) : [])).map((piece, pieceIdx) => (
+            <div key={pieceIdx} className="legend-item">
+              <span
+                className="legend-color"
+                style={{ backgroundColor: getModuleColor(piece.moduleType) }}
+              />
+              <span className="legend-text">
+                {piece.description} ({piece.width}×{piece.height} cm)
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>

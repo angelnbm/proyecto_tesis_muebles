@@ -1,5 +1,6 @@
 // ============================================
 // Cubicación Avanzada - Optimización de Planchas
+// Algoritmo: Guillotine Rectangle Packing con Rotación
 // ============================================
 
 // Configuración de planchas (en CM)
@@ -8,7 +9,7 @@ export const BOARD_CONFIGS = {
     width: 250,      // Ancho en CM
     height: 183,     // Alto en CM
     name: 'Melamina',
-    minMargin: 0.3,     // Margen mínimo entre cortes (0.3cm más compacto)
+    kerf: 0.3,       // Grosor de corte (3mm = 0.3cm)
   },
   // Puedes agregar más tipos de tableros aquí
 }
@@ -233,42 +234,48 @@ export function generateStructuredCuts(shapes) {
 }
 
 /**
- * Algoritmo de optimización de piezas en planchas (First Fit Decreasing Height)
+ * Algoritmo Guillotine Rectangle Packing con Rotación
+ * Mejor utilización de espacio que Shelf Algorithm
  * @param {Array} pieces - Array de piezas a optimizar
  * @param {Object} boardConfig - Configuración del tablero
  * @returns {Object} { boards: Array, statistics: Object }
  */
 export function optimizePiecesInBoards(pieces, boardConfig = BOARD_CONFIGS.melamina) {
-  // Crear copia de piezas expandidas por cantidad
+  // 1. Expandir piezas por cantidad
   const expandedPieces = []
   pieces.forEach((piece) => {
     for (let i = 0; i < piece.quantity; i++) {
       expandedPieces.push({
         ...piece,
         sequenceId: `${piece.moduleId}-${piece.description}-${i + 1}`,
+        rotated: false, // Track si fue rotada
       })
     }
   })
 
-  // Ordenar por altura descendente (First Fit Decreasing)
-  expandedPieces.sort((a, b) => b.height - a.height || b.width - a.width)
+  // 2. Ordenar por área descendente (piezas grandes primero)
+  expandedPieces.sort((a, b) => {
+    const areaA = a.width * a.height
+    const areaB = b.width * b.height
+    return areaB - areaA
+  })
 
   const boards = []
-  const margin = boardConfig.minMargin
+  const kerf = boardConfig.kerf
 
-  // Algoritmo de empaque (Shelf Algorithm)
-  expandedPieces.forEach((piece) => {
+  // 3. Intentar colocar cada pieza
+  for (const piece of expandedPieces) {
     let placed = false
 
-    // Intentar colocar en tablero existente
-    for (const board of boards) {
-      if (tryPlacePiece(piece, board, boardConfig, margin)) {
+    // Intentar en tableros existentes
+    for (let boardIdx = 0; boardIdx < boards.length && !placed; boardIdx++) {
+      const result = tryPlacePieceInBoard(piece, boards[boardIdx], boardConfig, kerf)
+      if (result) {
         placed = true
-        break
       }
     }
 
-    // Si no cabe, crear nuevo tablero
+    // Si no cabe en ninguno, crear tablero nuevo
     if (!placed) {
       const newBoard = {
         id: boards.length + 1,
@@ -276,12 +283,19 @@ export function optimizePiecesInBoards(pieces, boardConfig = BOARD_CONFIGS.melam
         height: boardConfig.height,
         pieces: [],
         usedArea: 0,
-        shelves: [],
+        freeRectangles: [
+          {
+            x: 0,
+            y: 0,
+            width: boardConfig.width,
+            height: boardConfig.height,
+          },
+        ],
       }
-      tryPlacePiece(piece, newBoard, boardConfig, margin)
+      tryPlacePieceInBoard(piece, newBoard, boardConfig, kerf)
       boards.push(newBoard)
     }
-  })
+  }
 
   // Calcular estadísticas
   const statistics = calculateStatistics(boards, boardConfig)
@@ -290,77 +304,116 @@ export function optimizePiecesInBoards(pieces, boardConfig = BOARD_CONFIGS.melam
 }
 
 /**
- * Intenta colocar una pieza en un tablero usando algoritmo de estantes
+ * Intenta colocar una pieza en un tablero usando algoritmo Guillotine
  * @private
  */
-function tryPlacePiece(piece, board, boardConfig, margin) {
-  const pieceWidth = piece.width + margin
-  const pieceHeight = piece.height + margin
+function tryPlacePieceInBoard(piece, board, boardConfig, kerf) {
+  // Intentar ambas orientaciones (normal y rotada)
+  const orientations = [
+    { width: piece.width, height: piece.height, rotated: false },
+    { width: piece.height, height: piece.width, rotated: true },
+  ]
 
-  // Si no hay estantes, crear uno nuevo
-  if (board.shelves.length === 0) {
-    if (pieceWidth <= boardConfig.width && pieceHeight <= boardConfig.height) {
-      const newShelf = {
-        y: margin,
-        height: piece.height,
-        remainingWidth: boardConfig.width - pieceWidth,
-        pieces: [],
+  for (const orientation of orientations) {
+    const requiredWidth = orientation.width + kerf
+    const requiredHeight = orientation.height + kerf
+
+    // Buscar el mejor rectángulo libre que quepa
+    let bestRectIdx = -1
+    let bestWaste = Infinity
+
+    for (let i = 0; i < board.freeRectangles.length; i++) {
+      const rect = board.freeRectangles[i]
+      if (rect.width >= requiredWidth && rect.height >= requiredHeight) {
+        // Calcular desperdicio en este rectángulo
+        const waste =
+          rect.width * rect.height -
+          requiredWidth * requiredHeight
+        if (waste < bestWaste) {
+          bestWaste = waste
+          bestRectIdx = i
+        }
       }
-      newShelf.pieces.push({
+    }
+
+    if (bestRectIdx !== -1) {
+      const rect = board.freeRectangles[bestRectIdx]
+
+      // Colocar pieza
+      board.pieces.push({
         ...piece,
-        x: margin,
-        y: newShelf.y,
+        width: orientation.width,
+        height: orientation.height,
+        x: rect.x,
+        y: rect.y,
+        rotated: orientation.rotated,
       })
-      board.shelves.push(newShelf)
-      board.usedArea += piece.width * piece.height
+
+      board.usedArea += orientation.width * orientation.height
+
+      // Dividir rectángulo libre (Guillotine)
+      // Crear dos nuevos rectángulos del espacio restante
+      const newRectangles = []
+
+      // Rectángulo a la derecha
+      if (rect.width > requiredWidth) {
+        newRectangles.push({
+          x: rect.x + requiredWidth,
+          y: rect.y,
+          width: rect.width - requiredWidth,
+          height: rect.height,
+        })
+      }
+
+      // Rectángulo abajo
+      if (rect.height > requiredHeight) {
+        newRectangles.push({
+          x: rect.x,
+          y: rect.y + requiredHeight,
+          width: requiredWidth,
+          height: rect.height - requiredHeight,
+        })
+      }
+
+      // Remover rectángulo usado y agregar nuevos
+      board.freeRectangles.splice(bestRectIdx, 1)
+      board.freeRectangles.push(...newRectangles)
+
+      // Limpiar rectángulos que se superponen
+      mergeAndCleanRectangles(board.freeRectangles)
+
       return true
     }
-    return false
-  }
-
-  // Intentar colocar en estante existente
-  for (const shelf of board.shelves) {
-    if (pieceWidth <= shelf.remainingWidth) {
-      const lastPiece = shelf.pieces[shelf.pieces.length - 1]
-      const xPos = lastPiece.x + lastPiece.width + margin
-
-      // Verificar que cabe verticalmente
-      if (shelf.y + shelf.height + pieceHeight <= boardConfig.height) {
-        shelf.pieces.push({
-          ...piece,
-          x: xPos,
-          y: shelf.y,
-        })
-        shelf.remainingWidth -= pieceWidth
-        board.usedArea += piece.width * piece.height
-        return true
-      }
-    }
-  }
-
-  // Crear nuevo estante
-  const totalUsedHeight = board.shelves.reduce((sum, shelf) => sum + shelf.height + margin, margin)
-  const newShelfY = totalUsedHeight
-  const newShelfHeight = pieceHeight
-
-  if (newShelfY + newShelfHeight <= boardConfig.height && pieceWidth <= boardConfig.width) {
-    const newShelf = {
-      y: newShelfY,
-      height: piece.height,
-      remainingWidth: boardConfig.width - pieceWidth,
-      pieces: [],
-    }
-    newShelf.pieces.push({
-      ...piece,
-      x: margin,
-      y: newShelfY,
-    })
-    board.shelves.push(newShelf)
-    board.usedArea += piece.width * piece.height
-    return true
   }
 
   return false
+}
+
+/**
+ * Limpia y fusiona rectángulos libres superpuestos
+ * @private
+ */
+function mergeAndCleanRectangles(rectangles) {
+  // Remover rectángulos que están contenidos en otros
+  for (let i = rectangles.length - 1; i >= 0; i--) {
+    for (let j = 0; j < rectangles.length; j++) {
+      if (i !== j) {
+        const rect1 = rectangles[i]
+        const rect2 = rectangles[j]
+
+        // Si rect1 está contenido en rect2, remover rect1
+        if (
+          rect1.x >= rect2.x &&
+          rect1.y >= rect2.y &&
+          rect1.x + rect1.width <= rect2.x + rect2.width &&
+          rect1.y + rect1.height <= rect2.y + rect2.height
+        ) {
+          rectangles.splice(i, 1)
+          break
+        }
+      }
+    }
+  }
 }
 
 /**
@@ -383,5 +436,3 @@ function calculateStatistics(boards, boardConfig) {
     wastePercentage: Math.round((100 - utilizationPercentage) * 10) / 10,
   }
 }
-
-
