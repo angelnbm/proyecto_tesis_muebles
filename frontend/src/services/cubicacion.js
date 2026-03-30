@@ -34,9 +34,26 @@ export function generateStructuredCuts(shapes) {
   const byModule = new Map() // Map<moduleId, { type, name, pieces: [] }>
   const allPieces = []
 
-  shapes.forEach((shape, index) => {
+  // First pass: count how many of each type
+  const typeCount = {}
+  const typeIndex = {}
+  shapes.forEach((shape) => {
+    const type = shape.type.toUpperCase()
+    typeCount[type] = (typeCount[type] || 0) + 1
+    typeIndex[type] = 0
+  })
+
+  // Second pass: generate names
+  shapes.forEach((shape) => {
     const moduleId = shape.id
-    const moduleName = `${shape.type.toUpperCase()} ${index + 1}`
+    const type = shape.type.toUpperCase()
+    typeIndex[type]++
+
+    // Only add number if there's more than one of this type
+    const moduleName = typeCount[type] > 1 
+      ? `${type} ${typeIndex[type]}`
+      : type
+
     const w = Math.round(shape.width)
     const h = Math.round(shape.height)
     const d = Math.round(shape.depth || 20)
