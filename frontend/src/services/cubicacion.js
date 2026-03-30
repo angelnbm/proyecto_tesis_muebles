@@ -384,22 +384,4 @@ function calculateStatistics(boards, boardConfig) {
   }
 }
 
-/**
- * Formatea piezas para visualización en texto
- */
-export function formatPiecesForDisplay(byModule) {
-  const formatted = []
 
-  byModule.forEach((module) => {
-    formatted.push(`\n=== ${module.name.toUpperCase()} ===`)
-
-    module.pieces.forEach((piece) => {
-      const pieceStr = `- ${piece.description}: ${piece.width}x${piece.height} CM${
-        piece.quantity > 1 ? ` (x${piece.quantity})` : ''
-      }`
-      formatted.push(pieceStr)
-    })
-  })
-
-  return formatted.join('\n')
-}
