@@ -8,73 +8,9 @@ import AuthForm from './components/Login.jsx'
 import { saveFurniture, loadFurniture, deleteFurniture, updateFurniture } from './services/api.js'
 import { getToken, removeToken, verifyToken } from './services/auth.js'
 
-// Calcula lista de cortes para todos los shapes
-function computeAllCuts(shapes) {
-  const cuts = []
-  shapes.forEach(shape => {
-    const w = Math.round(shape.width)
-    const h = Math.round(shape.height)
-    const d = Math.round(shape.depth || 20)
-    
-    switch (shape.type) {
-      case 'cajonera': {
-        const numCajones = shape.numCajones && shape.numCajones > 0 ? shape.numCajones : 3
-        const drawerHeight = Math.round(h / numCajones)
-        cuts.push(`- ${shape.type} (${numCajones} cajones) | Frente: ${w}x${drawerHeight} CM (x${numCajones})`)
-        cuts.push(`- ${shape.type} | Laterales: ${d}x${h} CM (x2)`)
-        cuts.push(`- ${shape.type} | Fondo: ${w}x${d} CM`)
-        break
-      }
-      
-      case 'modular': {
-        // IMPORTANTE: Guardar valores aunque sean 0
-        const numEstantes = shape.numEstantes !== undefined && shape.numEstantes !== null ? shape.numEstantes : 0
-        const numDivisores = shape.numDivisores !== undefined && shape.numDivisores !== null ? shape.numDivisores : 0
-        const numPuertas = shape.numPuertas !== undefined && shape.numPuertas !== null ? shape.numPuertas : 0
-        
-        cuts.push(`- ${shape.type} | Marco: ${w}x${h} CM`)
-        cuts.push(`- ${shape.type} | Laterales: ${d}x${h} CM (x2)`)
-        cuts.push(`- ${shape.type} | Fondo: ${w}x${h} CM`)
-        
-        if (numEstantes > 0) {
-          cuts.push(`- ${shape.type} | Estantes: ${w}x${d} CM (x${numEstantes})`)
-        }
-        if (numDivisores > 0) {
-          const divisorHeight = Math.round(h / (numDivisores + 1))
-          cuts.push(`- ${shape.type} | Divisores: ${w}x${divisorHeight} CM (x${numDivisores})`)
-        }
-        if (numPuertas > 0) {
-          const puertaWidth = Math.round(w / numPuertas)
-          cuts.push(`- ${shape.type} | Puertas: ${puertaWidth}x${h} CM (x${numPuertas})`)
-        }
-        break
-      }
-      
-      case 'estante':
-        cuts.push(`- ${shape.type} | Estante: ${w}x${d} CM`)
-        break
-      case 'cubierta':
-        cuts.push(`- ${shape.type} | Cubierta: ${w}x${d} CM`)
-        break
-      case 'puerta':
-        cuts.push(`- ${shape.type} | Puerta: ${w}x${h} CM`)
-        break
-      case 'base':
-        cuts.push(`- ${shape.type} | Base: ${w}x${h}x${d} CM`)
-        break
-      case 'divisor':
-        cuts.push(`- ${shape.type} | Divisor: ${w}x${h} CM`)
-        break
-      default:
-        cuts.push(`- ${shape.type}: ${w}x${h}x${d} CM`)
-    }
-  })
-  return cuts
-}
-
 export default function App() {
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true) // ← NUEVO: Estado de carga
+  const [loading, setLoading] = useState(true)
   const [selectedModule, setSelectedModule] = useState(null)
   const [shapes, setShapes] = useState([])
   const [selectedId, setSelectedId] = useState(null)
@@ -84,7 +20,6 @@ export default function App() {
   const [currentDesignId, setCurrentDesignId] = useState(null)
 
   const selected = shapes.find(s => s.id === selectedId) || null
-  const allCuts = computeAllCuts(shapes)
 
   // Detectar cambio de tamaño de pantalla
   useEffect(() => {
@@ -95,16 +30,14 @@ export default function App() {
     return () => window.removeEventListener('resize', handleResize)
   }, [])
 
-  // Verificar token al cargar - ACTUALIZADO
+  // Verificar token al cargar
   useEffect(() => {
     const token = getToken()
     const startTime = Date.now()
     
     if (token) {
-      console.log('🔐 Verificando token...')
       verifyToken(token)
         .then(data => {
-          console.log('✅ Token válido:', data.user)
           
           // Esperar al menos 500ms para evitar parpadeo
           const elapsed = Date.now() - startTime
@@ -116,13 +49,11 @@ export default function App() {
           }, delay)
         })
         .catch(err => {
-          console.log('❌ Token inválido:', err)
           removeToken()
           setUser(null)
           setLoading(false)
         })
     } else {
-      console.log('ℹ️ No hay token guardado')
       setLoading(false)
     }
   }, [])
@@ -132,7 +63,9 @@ export default function App() {
     if (user) {
       loadFurniture()
         .then(data => setDesigns(data))
-        .catch(err => console.error(err))
+        .catch(err => {
+          // Error silencioso en carga de diseños
+        })
     }
   }, [user])
 
@@ -148,9 +81,6 @@ export default function App() {
       return
     }
 
-    // AGREGAR: Log para verificar qué se está guardando
-    console.log('💾 Guardando diseño con shapes:', JSON.stringify(shapes, null, 2))
-
     const existingDesign = designs.find(d => d.nombre === name.trim())
 
     // Actualizar diseño existente
@@ -158,16 +88,13 @@ export default function App() {
       if (!confirm(`¿Sobrescribir el diseño "${name}"?`)) return
       
       try {
-        console.log('📝 Actualizando diseño:', currentDesignId)
         const updated = await updateFurniture(currentDesignId, { 
           nombre: name.trim(), 
           shapes 
         })
-        console.log('✅ Diseño actualizado:', updated)
         setDesigns(prev => prev.map(d => d._id === currentDesignId ? updated : d))
         alert('Diseño actualizado correctamente')
       } catch (err) {
-        console.error('❌ Error al actualizar:', err)
         alert('Error al actualizar: ' + err.message)
       }
       return
@@ -180,22 +107,18 @@ export default function App() {
       )
       
       if (!shouldOverwrite) {
-        handleSave()
         return
       }
 
       try {
-        console.log('📝 Sobrescribiendo diseño:', existingDesign._id)
         const updated = await updateFurniture(existingDesign._id, { 
           nombre: name.trim(), 
           shapes 
         })
-        console.log('✅ Diseño sobrescrito:', updated)
         setDesigns(prev => prev.map(d => d._id === existingDesign._id ? updated : d))
         setCurrentDesignId(existingDesign._id)
         alert('Diseño sobrescrito correctamente')
       } catch (err) {
-        console.error('❌ Error al sobrescribir:', err)
         alert('Error al sobrescribir: ' + err.message)
       }
       return
@@ -203,14 +126,11 @@ export default function App() {
 
     // Crear nuevo diseño
     try {
-      console.log('Creando nuevo diseño')
       const saved = await saveFurniture(name.trim(), shapes)
-      console.log('Diseño creado:', saved)
       setDesigns(prev => [saved, ...prev])
       setCurrentDesignId(saved._id)
       alert('Diseño guardado correctamente')
     } catch (err) {
-      console.error('Error al guardar:', err)
       alert('Error al guardar: ' + err.message)
     }
   }
@@ -223,7 +143,6 @@ export default function App() {
     setCurrentDesignId(null)
   }
 
-  // AGREGAR: Función para actualizar un shape específico
   const updateShape = (id, updates) => {
     setShapes(prev => prev.map(s => 
       s.id === id ? { ...s, ...updates } : s
@@ -245,7 +164,7 @@ export default function App() {
     setShapes(design.shapes || [])
     setSelectedId(null)
     setActiveTab('diseno')
-    setCurrentDesignId(design._id) // NUEVO: Marcar diseño como cargado
+    setCurrentDesignId(design._id)
   }
 
   const handleDeleteDesign = async (id) => {
@@ -265,7 +184,6 @@ export default function App() {
     }
   }
 
-  // NUEVO: Crear nuevo diseño desde cero
   const handleNewDesign = () => {
     if (shapes.length > 0 && !confirm('¿Descartar el diseño actual?')) return
     setShapes([])
@@ -274,7 +192,7 @@ export default function App() {
     setActiveTab('diseno')
   }
 
-  // NUEVO: Pantalla de carga mientras verifica token
+  // Pantalla de carga mientras verifica token
   if (loading) {
     return (
       <div style={{
@@ -423,7 +341,7 @@ export default function App() {
                         </div>
                       )}
 
-                      {/* NUEVO: Campos para módulo modular */}
+                      {/* Campos para módulo modular */}
                       {selected.type === 'modular' && (
                         <>
                           <div className="measure-field">
@@ -527,16 +445,7 @@ export default function App() {
           )}
 
           {activeTab === 'cubicacion' && (
-            <div className="cubicacion-panel">
-              <h2>Lista de cortes</h2>
-              {allCuts.length === 0 ? (
-                <p className="empty-message">No hay módulos añadidos</p>
-              ) : (
-                <ul className="cut-list">
-                  {allCuts.map((cut, i) => <li key={i}>{cut}</li>)}
-                </ul>
-              )}
-            </div>
+            <CubicacionPanel shapes={shapes} />
           )}
         </main>
       </div>
@@ -575,7 +484,7 @@ export default function App() {
             Cubicación
           </button>
 
-          {/* Botones a la derecha - DENTRO DE UN CONTENEDOR */}
+          {/* Botones a la derecha */}
           <div className="canvas-buttons-container">
             <button onClick={handleNewDesign} className="new-btn-desktop" title="Nuevo diseño">
               📄 Nuevo
@@ -660,7 +569,7 @@ export default function App() {
                 </div>
               )}
 
-              {/* NUEVO: Campos para módulo modular en desktop */}
+              {/* Campos para módulo modular en desktop */}
               {selected.type === 'modular' && (
                 <>
                   <div className="sidebar-measure-item">

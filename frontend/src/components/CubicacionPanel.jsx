@@ -131,7 +131,7 @@ export default function CubicacionPanel({ shapes }) {
     <div className="cubicacion-panel">
       {/* SECTION 1: GROUPED PIECES TABLE */}
       <section className="cubicacion-section cubicacion-pieces">
-        <h2>📋 Piezas Agrupadas por Módulo</h2>
+        <h2>Piezas Agrupadas por Módulo</h2>
 
         <div className="pieces-table-wrapper">
           <table className="pieces-table">
@@ -193,7 +193,7 @@ export default function CubicacionPanel({ shapes }) {
 
       {/* SECTION 2: BOARD VISUALIZATION */}
       <section className="cubicacion-section cubicacion-boards">
-        <h2>📦 Visualización de Empaquetamiento en Planchas</h2>
+        <h2>Visualización de Empaquetamiento en Planchas</h2>
 
         <div className="boards-container">
           {boards.map((board) => (
@@ -209,7 +209,7 @@ export default function CubicacionPanel({ shapes }) {
 
       {/* SECTION 3: STATISTICS */}
       <section className="cubicacion-section cubicacion-stats">
-        <h2>📊 Resumen</h2>
+        <h2>Resumen</h2>
 
         {statistics && (
           <div className="stats-grid">
@@ -238,7 +238,7 @@ export default function CubicacionPanel({ shapes }) {
 
       {/* SECTION 4: CONSOLIDATED PIECES LIST */}
       <section className="cubicacion-section cubicacion-pieces-list">
-        <h2>📝 Listado de Piezas Consolidadas</h2>
+        <h2>Listado de Piezas General</h2>
         
         <div className="consolidated-pieces-wrapper">
           <table className="consolidated-pieces-table">
@@ -264,7 +264,7 @@ export default function CubicacionPanel({ shapes }) {
 
       {/* SECTION 5: HARDWARE LIST */}
       <section className="cubicacion-section cubicacion-hardware">
-        <h2>🔧 Material Extra - Hardware</h2>
+        <h2>Otros materiales</h2>
         
         <div className="hardware-grid">
           <div className="hardware-item">
