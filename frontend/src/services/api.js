@@ -6,8 +6,6 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 export const saveFurniture = async (nombre, shapes) => {
   const token = getToken()
   
-  console.log('Enviando al servidor:', { nombre, shapes })
-  
   const res = await fetch(`${API_URL}/furniture`, {
     method: 'POST',
     headers: {
@@ -23,14 +21,11 @@ export const saveFurniture = async (nombre, shapes) => {
   }
   
   const data = await res.json()
-  console.log('Respuesta del servidor:', data)
   return data
 }
 
 export const updateFurniture = async (id, { nombre, shapes }) => {
   const token = getToken()
-  
-  console.log('Actualizando en servidor:', { id, nombre, shapes })
   
   const res = await fetch(`${API_URL}/furniture/${id}`, {
     method: 'PUT',
@@ -47,7 +42,6 @@ export const updateFurniture = async (id, { nombre, shapes }) => {
   }
   
   const data = await res.json()
-  console.log('Respuesta del servidor:', data)
   return data
 }
 
@@ -62,7 +56,6 @@ export const loadFurniture = async () => {
   if (!res.ok) throw new Error('Error al cargar diseños')
   
   const data = await res.json()
-  console.log('Diseños cargados del servidor:', data)
   return data
 }
 
@@ -79,4 +72,5 @@ export const deleteFurniture = async (id) => {
   
   return await res.json()
 }
+
 
