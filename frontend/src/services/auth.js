@@ -1,6 +1,6 @@
-const API_URL = 'http://localhost:5000/api/auth'
+//const API_URL = 'http://localhost:5000/api/auth'
 //const API_URL = 'https://zlls9tpr-5000.brs.devtunnels.ms/api/auth'
-
+const API_URL = 'https://proyecto-tesis-muebles.vercel.app/api/auth'
 export async function register(nombre, email, contrasena) {
   const res = await fetch(`${API_URL}/register`, {
     method: 'POST',
