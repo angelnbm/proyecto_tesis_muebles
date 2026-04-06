@@ -1,7 +1,36 @@
 import { getToken } from './auth.js'
 
-//const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
-const API_URL = import.meta.env.VITE_API_URL || 'https://proyecto-tesis-muebles.vercel.app/api/'
+// URL del API backend - usar variable de entorno o fallback
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+
+/**
+ * Manejo centralizado de errores de fetch
+ */
+const handleFetchError = async (response, operationName = 'operación') => {
+  if (!response.ok) {
+    let errorMessage = `Error en ${operationName}`
+    
+    try {
+      const errorData = await response.json()
+      errorMessage = errorData.message || errorMessage
+    } catch (e) {
+      // Si no se puede parsear JSON, usar status text
+      errorMessage = response.statusText || errorMessage
+    }
+    
+    // Log en desarrollo
+    if (import.meta.env.DEV) {
+      console.error(`[${operationName}]`, {
+        status: response.status,
+        message: errorMessage
+      })
+    }
+    
+    throw new Error(errorMessage)
+  }
+  
+  return response.json()
+}
 
 export const saveFurniture = async (nombre, shapes) => {
   const token = getToken()
@@ -15,13 +44,7 @@ export const saveFurniture = async (nombre, shapes) => {
     body: JSON.stringify({ nombre, shapes })
   })
   
-  if (!res.ok) {
-    const error = await res.json()
-    throw new Error(error.message || 'Error al guardar')
-  }
-  
-  const data = await res.json()
-  return data
+  return handleFetchError(res, 'saveFurniture')
 }
 
 export const updateFurniture = async (id, { nombre, shapes }) => {
@@ -36,13 +59,7 @@ export const updateFurniture = async (id, { nombre, shapes }) => {
     body: JSON.stringify({ nombre, shapes })
   })
   
-  if (!res.ok) {
-    const error = await res.json()
-    throw new Error(error.message || 'Error al actualizar')
-  }
-  
-  const data = await res.json()
-  return data
+  return handleFetchError(res, 'updateFurniture')
 }
 
 export const loadFurniture = async () => {
@@ -53,10 +70,7 @@ export const loadFurniture = async () => {
     }
   })
   
-  if (!res.ok) throw new Error('Error al cargar diseños')
-  
-  const data = await res.json()
-  return data
+  return handleFetchError(res, 'loadFurniture')
 }
 
 export const deleteFurniture = async (id) => {
@@ -68,9 +82,6 @@ export const deleteFurniture = async (id) => {
     }
   })
   
-  if (!res.ok) throw new Error('Error al eliminar')
-  
-  return await res.json()
+  return handleFetchError(res, 'deleteFurniture')
 }
-
 
