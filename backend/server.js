@@ -16,7 +16,48 @@ const PORT = process.env.PORT || 5000
 // 1. Trust Proxy - Necesario para Vercel y obtener IP real
 app.set('trust proxy', 1)
 
-// 2. Helmet - Headers de seguridad
+// 2. CORS PRIMERO (debe ir antes de Helmet)
+const corsOptions = {
+  origin: function(origin, callback) {
+    // Permite requests sin origin (mobile, curl, etc)
+    if (!origin) return callback(null, true)
+    
+    // Permitir múltiples orígenes
+    const allowedOrigins = [
+      'http://localhost:5173',           // Local desarrollo
+      'http://localhost:3000',           // Local alternativo
+      'https://proyecto-tesis-muebles.vercel.app',  // Production
+      'https://proyecto-tesis-muebles-ui-preview.projects.vercel.app', // Preview
+      process.env.CORS_ORIGIN             // Desde variables de entorno
+    ].filter(Boolean) // Elimina undefined
+    
+    // Debug: log el origin recibido
+    if (process.env.NODE_ENV !== 'production') {
+      console.log(`CORS request from: ${origin}`)
+    }
+    
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else if (origin && origin.endsWith('.vercel.app')) {
+      // Permitir cualquier dominio de Vercel (preview o production)
+      callback(null, true)
+    } else {
+      if (process.env.NODE_ENV !== 'production') {
+        console.warn(`CORS blocked: ${origin}`)
+      }
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  maxAge: 86400, // 24 horas
+  optionsSuccessStatus: 200
+}
+
+app.use(cors(corsOptions))
+
+// 3. Helmet - Headers de seguridad (DESPUÉS de CORS)
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -24,7 +65,7 @@ app.use(helmet({
       scriptSrc: ["'self'", "'unsafe-inline'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       imgSrc: ["'self'", 'data:', 'https:'],
-      connectSrc: ["'self'", process.env.CORS_ORIGIN || 'https://tu-app.vercel.app']
+      connectSrc: ["'self'", process.env.CORS_ORIGIN || 'http://localhost:5173']
     }
   },
   hsts: {
@@ -36,15 +77,6 @@ app.use(helmet({
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   noSniff: true,
   xssFilter: true
-}))
-
-// 3. CORS seguro
-app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:5173',
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  maxAge: 86400 // 24 horas
 }))
 
 // 4. Body parser con límite de tamaño
