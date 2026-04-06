@@ -16,68 +16,19 @@ const PORT = process.env.PORT || 5000
 // 1. Trust Proxy - Necesario para Vercel y obtener IP real
 app.set('trust proxy', 1)
 
-// 2. CORS PRIMERO (debe ir antes de Helmet)
-const corsOptions = {
-  origin: function(origin, callback) {
-    // Permite requests sin origin (mobile, curl, etc)
-    if (!origin) return callback(null, true)
-    
-    // Permitir múltiples orígenes
-    const allowedOrigins = [
-      'http://localhost:5173',           // Local desarrollo
-      'http://localhost:3000',           // Local alternativo
-      'https://proyecto-tesis-muebles.vercel.app',  // Production
-      'https://proyecto-tesis-muebles-ui-preview.projects.vercel.app', // Preview
-      process.env.CORS_ORIGIN             // Desde variables de entorno
-    ].filter(Boolean) // Elimina undefined
-    
-    // Debug: log el origin recibido
-    if (process.env.NODE_ENV !== 'production') {
-      console.log(`CORS request from: ${origin}`)
-    }
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true)
-    } else if (origin && origin.endsWith('.vercel.app')) {
-      // Permitir cualquier dominio de Vercel (preview o production)
-      callback(null, true)
-    } else {
-      if (process.env.NODE_ENV !== 'production') {
-        console.warn(`CORS blocked: ${origin}`)
-      }
-      callback(new Error('Not allowed by CORS'))
-    }
-  },
-  credentials: true,
+// 2. CORS - TEMPORAL: Abierto para testing
+// TODO: Volver a seguro cuando esté debugueado
+app.use(cors({
+  origin: '*', // ⚠️ TEMPORAL: Acepta todos los orígenes para testing
+  credentials: false,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  maxAge: 86400, // 24 horas
   optionsSuccessStatus: 200
-}
-
-app.use(cors(corsOptions))
-
-// 3. Helmet - Headers de seguridad (DESPUÉS de CORS)
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: ["'self'", "'unsafe-inline'"],
-      styleSrc: ["'self'", "'unsafe-inline'"],
-      imgSrc: ["'self'", 'data:', 'https:'],
-      connectSrc: ["'self'", process.env.CORS_ORIGIN || 'http://localhost:5173']
-    }
-  },
-  hsts: {
-    maxAge: 31536000,
-    includeSubDomains: true,
-    preload: true
-  },
-  frameguard: { action: 'deny' },
-  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
-  noSniff: true,
-  xssFilter: true
 }))
+
+// 3. Helmet - TEMPORALMENTE DESHABILITADO para testing
+// TODO: Volver a habilitar cuando esté debugueado
+// app.use(helmet({...}))
 
 // 4. Body parser con límite de tamaño
 app.use(express.json({ limit: '10kb' }))
@@ -127,11 +78,13 @@ connectDB()
 
 // ==================== RUTAS ====================
 
-// Rutas de autenticación con rate limiting específico
-app.use('/api/auth', authLimiter, authRoutes)
+// Rutas de autenticación (SIN rate limiting temporalmente)
+// TODO: Volver a activar cuando esté debugueado
+app.use('/api/auth', authRoutes)
 
-// Rutas de muebles con rate limiting específico
-app.use('/api/furniture', furnitureLimiter, furnitureRoutes)
+// Rutas de muebles (SIN rate limiting temporalmente)
+// TODO: Volver a activar cuando esté debugueado
+app.use('/api/furniture', furnitureRoutes)
 
 // Health check
 app.get('/', (req, res) => {
@@ -171,6 +124,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Servidor corriendo en puerto ${PORT}`)
   console.log(`📡 Escuchando en todas las interfaces (0.0.0.0:${PORT})`)
-  console.log(`🔒 Seguridad habilitada: CORS, Helmet, Rate Limiting, Sanitización`)
-  console.log(`🌍 CORS Origin: ${process.env.CORS_ORIGIN || 'http://localhost:5173'}`)
+  console.log(`⚠️  MODO TESTING: CORS abierto, Helmet deshabilitado, Sin rate limiting`)
+  console.log(`🔄 Cuando esté debugueado, volver a habilitar seguridad en server.js`)
 })
