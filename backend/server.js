@@ -6,7 +6,7 @@ require('dotenv').config()
 const furnitureRoutes = require('./routes/furnitureRoutes.js')
 const authRoutes = require('./routes/authRoutes.js')
 const { globalLimiter, authLimiter, furnitureLimiter } = require('./middleware/rateLimit.js')
-const { sanitizeInputs } = require('./middleware/validation.js')
+const { sanitizeInputsWrapper } = require('./middleware/validation.js')
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -52,7 +52,7 @@ app.use(express.json({ limit: '10kb' }))
 app.use(express.urlencoded({ limit: '10kb', extended: true }))
 
 // 5. Sanitización de inputs
-app.use(sanitizeInputs)
+app.use(sanitizeInputsWrapper)
 
 // 6. Rate Limiting Global
 app.use(globalLimiter)

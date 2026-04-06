@@ -19,12 +19,58 @@ const handleValidationErrors = (req, res, next) => {
 };
 
 // Middleware para sanitizar inputs (prevenir NoSQL injection)
+// Solo sanitiza req.body y req.params, NO req.query (que es getter en Express 5.x)
 const sanitizeInputs = mongoSanitize({
   replaceWith: '_',
   onSanitize: ({ req, key }) => {
     console.warn(`⚠️ Sanitización detectada en ${key}`);
   }
 });
+
+// Wrapper para sanitizar solo body y params, evitando error con query getter
+const sanitizeInputsWrapper = (req, res, next) => {
+  try {
+    // Sanitiza solo body y params, no toca query
+    if (req.body && typeof req.body === 'object') {
+      req.body = sanitizeData(req.body);
+    }
+    if (req.params && typeof req.params === 'object') {
+      req.params = sanitizeData(req.params);
+    }
+    next();
+  } catch (err) {
+    console.error('❌ Error en sanitización:', err.message);
+    next();
+  }
+};
+
+// Función auxiliar para sanitizar datos recursivamente
+const sanitizeData = (data) => {
+  if (typeof data !== 'object' || data === null) {
+    return data;
+  }
+
+  const sanitized = Array.isArray(data) ? [] : {};
+
+  for (const key in data) {
+    if (Object.prototype.hasOwnProperty.call(data, key)) {
+      // Reemplazar caracteres peligrosos en la clave
+      const safeKey = key.replace(/\$/g, '_').replace(/\./g, '_');
+      
+      // Recursivamente sanitizar valores
+      if (typeof data[key] === 'object' && data[key] !== null) {
+        sanitized[safeKey] = sanitizeData(data[key]);
+      } else if (typeof data[key] === 'string') {
+        // Sanitizar strings
+        sanitized[safeKey] = data[key].replace(/\$/g, '_').replace(/\./g, '_');
+      } else {
+        sanitized[safeKey] = data[key];
+      }
+    }
+  }
+
+  return sanitized;
+};
 
 // Middleware para validar JWT
 const verifyJWT = (req, res, next) => {
@@ -89,7 +135,7 @@ const validatePayload = (schema) => {
 
 module.exports = {
   handleValidationErrors,
-  sanitizeInputs,
+  sanitizeInputsWrapper,
   verifyJWT,
   validatePayload
 };
