@@ -1,32 +1,18 @@
-const mongoose = require('mongoose')
 const app = require('../backend/app')
-
-let isConnected = false
-
-async function ensureDbConnection() {
-  if (isConnected) {
-    return
-  }
-
-  const uri = process.env.MONGODB_URI
-
-  if (!uri) {
-    throw new Error('Falta la variable MONGODB_URI')
-  }
-
-  await mongoose.connect(uri)
-  isConnected = true
-}
+const { connectToDatabase } = require('../backend/config/db')
 
 module.exports = async (req, res) => {
   try {
-    await ensureDbConnection()
+    await connectToDatabase()
     return app(req, res)
   } catch (error) {
-    console.error('Error inicializando handler serverless:', error.message)
+    console.error('Error inicializando handler serverless:', error)
     return res.status(500).json({
       success: false,
-      message: 'No se pudo inicializar el backend',
+      message: process.env.NODE_ENV === 'production'
+        ? 'Error interno del servidor'
+        : (error && error.message) || 'No se pudo inicializar el backend',
+      error: 'SERVER_INITIALIZATION_ERROR',
     })
   }
 }

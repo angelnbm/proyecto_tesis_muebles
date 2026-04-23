@@ -73,12 +73,25 @@ app.use((req, res) => {
 })
 
 app.use((err, req, res, next) => {
-  console.error('Error global:', err.message)
+  console.error('Error global:', err)
+
+  if (res.headersSent) {
+    return next(err)
+  }
 
   if (err.message === 'Origen no permitido por CORS') {
     return res.status(403).json({
       success: false,
       message: err.message,
+      error: 'CORS_FORBIDDEN',
+    })
+  }
+
+  if (err.type === 'entity.parse.failed') {
+    return res.status(400).json({
+      success: false,
+      message: 'JSON invalido en el body de la solicitud',
+      error: 'INVALID_JSON_BODY',
     })
   }
 
@@ -87,6 +100,7 @@ app.use((err, req, res, next) => {
     message: process.env.NODE_ENV === 'production'
       ? 'Error interno del servidor'
       : err.message,
+    error: err.code || 'INTERNAL_SERVER_ERROR',
     ...(process.env.NODE_ENV !== 'production' && { stack: err.stack }),
   })
 })
