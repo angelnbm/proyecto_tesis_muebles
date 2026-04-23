@@ -13,37 +13,83 @@ app.set('trust proxy', 1)
 function getCorsOrigins() {
   const configured = process.env.CORS_ORIGIN
   const origins = configured
-    ? configured.split(',').map((value) => value.trim()).filter(Boolean)
+    ? configured.split(',')
+      .map((value) => normalizeOrigin(value))
+      .filter(Boolean)
     : []
 
   if (process.env.VERCEL_URL) {
-    origins.push(`https://${process.env.VERCEL_URL}`)
+    origins.push(normalizeOrigin(`https://${process.env.VERCEL_URL}`))
   }
 
   if ((process.env.NODE_ENV || 'development') === 'development') {
-    origins.push('http://localhost:5173')
+    origins.push(normalizeOrigin('http://localhost:5173'))
   }
 
-  return Array.from(new Set(origins))
+  return Array.from(new Set(origins.filter(Boolean)))
+}
+
+function normalizeOrigin(value) {
+  if (!value || typeof value !== 'string') {
+    return ''
+  }
+
+  const trimmed = value.trim().replace(/\/+$/, '')
+
+  if (!trimmed) {
+    return ''
+  }
+
+  try {
+    return new URL(trimmed).origin
+  } catch {
+    return trimmed
+  }
+}
+
+function getRequestOrigin(req) {
+  const host = req.headers.host
+
+  if (!host) {
+    return ''
+  }
+
+  const forwardedProto = req.headers['x-forwarded-proto']
+  const proto = Array.isArray(forwardedProto)
+    ? forwardedProto[0]
+    : (forwardedProto || req.protocol || 'https')
+
+  return normalizeOrigin(`${proto}://${host}`)
 }
 
 const allowedOrigins = getCorsOrigins()
 
-app.use(cors({
-  origin(origin, callback) {
-    if (!origin) {
-      return callback(null, true)
-    }
+app.use(cors((req, callback) => {
+  const requestOrigin = getRequestOrigin(req)
+  const dynamicAllowedOrigins = new Set(allowedOrigins)
 
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true)
-    }
+  if (requestOrigin) {
+    dynamicAllowedOrigins.add(requestOrigin)
+  }
 
-    return callback(new Error('Origen no permitido por CORS'))
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  callback(null, {
+    origin(origin, originCallback) {
+      if (!origin) {
+        return originCallback(null, true)
+      }
+
+      const normalizedOrigin = normalizeOrigin(origin)
+
+      if (normalizedOrigin && dynamicAllowedOrigins.has(normalizedOrigin)) {
+        return originCallback(null, true)
+      }
+
+      return originCallback(new Error('Origen no permitido por CORS'))
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
 }))
 
 app.use(helmet())
