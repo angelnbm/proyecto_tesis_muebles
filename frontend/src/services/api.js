@@ -1,7 +1,7 @@
 import { getToken } from './auth.js'
 
-// URL del API backend - usar variable de entorno o fallback
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+// URL del API backend - usar variable de entorno o fallback relativo
+const API_URL = import.meta.env.VITE_API_URL || '/api'
 
 /**
  * Manejo centralizado de errores de fetch
