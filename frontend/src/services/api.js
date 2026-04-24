@@ -33,13 +33,24 @@ const handleFetchError = async (response, operationName = 'operacion') => {
 
       if (rawBody && contentType.includes('application/json')) {
         const errorData = JSON.parse(rawBody)
-        errorMessage = errorData.message || errorData.error || errorMessage
+
+        const detailedMessage = [
+          errorData?.message,
+          errorData?.details,
+          errorData?.error,
+          errorData?.data?.message,
+          errorData?.data?.details,
+        ].find((value) => typeof value === 'string' && value.trim())
+
+        errorMessage = detailedMessage || `${errorMessage} (${response.status})`
       } else if (rawBody) {
-        errorMessage = `${errorMessage} (${response.status})`
+        errorMessage = `${rawBody.trim()} (${response.status})`
       }
     } catch (e) {
       // Si no se puede parsear JSON, usar status text
-      errorMessage = response.statusText || errorMessage
+      errorMessage = response.statusText
+        ? `${response.statusText} (${response.status})`
+        : errorMessage
     }
     
     // Log en desarrollo
@@ -62,6 +73,22 @@ function unwrapData(payload) {
   }
 
   return payload
+}
+
+function unwrapCollection(payload) {
+  const unwrapped = unwrapData(payload)
+
+  if (Array.isArray(unwrapped)) {
+    return unwrapped
+  }
+
+  if (unwrapped && typeof unwrapped === 'object') {
+    if (Array.isArray(unwrapped.designs)) return unwrapped.designs
+    if (Array.isArray(unwrapped.items)) return unwrapped.items
+    if (Array.isArray(unwrapped.results)) return unwrapped.results
+  }
+
+  return []
 }
 
 export const saveFurniture = async (nombre, shapes) => {
@@ -105,7 +132,7 @@ export const loadFurniture = async () => {
   })
   
   const payload = await handleFetchError(res, 'loadFurniture')
-  return unwrapData(payload)
+  return unwrapCollection(payload)
 }
 
 export const deleteFurniture = async (id) => {
