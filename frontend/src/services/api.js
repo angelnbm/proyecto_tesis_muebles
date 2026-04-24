@@ -20,51 +20,128 @@ function resolveApiBaseUrl() {
 
 const API_URL = `${resolveApiBaseUrl()}/furniture`
 
+const NETWORK_ERROR_HINT = 'No se pudo conectar con el servidor. Revisa tu conexion, CORS o que la API este disponible.'
+
 /**
  * Manejo centralizado de errores de fetch
  */
+function buildHttpErrorMessage(operationName, response, rawBody, parsedBody) {
+  const detailedMessage = [
+    parsedBody?.message,
+    parsedBody?.details,
+    parsedBody?.error,
+    parsedBody?.data?.message,
+    parsedBody?.data?.details,
+  ].find((value) => typeof value === 'string' && value.trim())
+
+  if (detailedMessage) {
+    return `${detailedMessage.trim()} (${response.status})`
+  }
+
+  if (typeof rawBody === 'string' && rawBody.trim()) {
+    return `${rawBody.trim()} (${response.status})`
+  }
+
+  if (response.statusText) {
+    return `${response.statusText} (${response.status})`
+  }
+
+  return `Error en ${operationName} (${response.status})`
+}
+
+async function parseResponseBody(response) {
+  const rawBody = await response.text()
+
+  if (!rawBody || !rawBody.trim()) {
+    return { rawBody: '', parsedBody: null }
+  }
+
+  const contentType = (response.headers.get('content-type') || '').toLowerCase()
+
+  if (contentType.includes('application/json')) {
+    try {
+      return { rawBody, parsedBody: JSON.parse(rawBody) }
+    } catch {
+      return { rawBody, parsedBody: null }
+    }
+  }
+
+  try {
+    return { rawBody, parsedBody: JSON.parse(rawBody) }
+  } catch {
+    return { rawBody, parsedBody: null }
+  }
+}
+
 const handleFetchError = async (response, operationName = 'operacion') => {
   if (!response.ok) {
-    let errorMessage = `Error en ${operationName}`
+    const { rawBody, parsedBody } = await parseResponseBody(response)
+    const errorMessage = buildHttpErrorMessage(operationName, response, rawBody, parsedBody)
 
-    try {
-      const rawBody = await response.text()
-      const contentType = response.headers.get('content-type') || ''
-
-      if (rawBody && contentType.includes('application/json')) {
-        const errorData = JSON.parse(rawBody)
-
-        const detailedMessage = [
-          errorData?.message,
-          errorData?.details,
-          errorData?.error,
-          errorData?.data?.message,
-          errorData?.data?.details,
-        ].find((value) => typeof value === 'string' && value.trim())
-
-        errorMessage = detailedMessage || `${errorMessage} (${response.status})`
-      } else if (rawBody) {
-        errorMessage = `${rawBody.trim()} (${response.status})`
-      }
-    } catch (e) {
-      // Si no se puede parsear JSON, usar status text
-      errorMessage = response.statusText
-        ? `${response.statusText} (${response.status})`
-        : errorMessage
-    }
-    
-    // Log en desarrollo
     if (import.meta.env.DEV) {
       console.error(`[${operationName}]`, {
         status: response.status,
-        message: errorMessage
+        message: errorMessage,
+        body: parsedBody || rawBody || null,
       })
     }
-    
+
     throw new Error(errorMessage)
   }
-  
-  return response.json()
+
+  if (response.status === 204) {
+    return null
+  }
+
+  const { rawBody, parsedBody } = await parseResponseBody(response)
+
+  if (!rawBody) {
+    return null
+  }
+
+  return parsedBody || rawBody
+}
+
+function serializeUnexpectedError(error, operationName) {
+  if (error instanceof Error) {
+    const message = error.message || `Error inesperado en ${operationName}`
+    return error.name && error.name !== 'Error'
+      ? `${error.name}: ${message}`
+      : message
+  }
+
+  if (typeof error === 'string' && error.trim()) {
+    return error.trim()
+  }
+
+  try {
+    return JSON.stringify(error)
+  } catch {
+    return `Error inesperado en ${operationName}`
+  }
+}
+
+async function apiRequest(url, options, operationName) {
+  try {
+    const response = await fetch(url, options)
+    return await handleFetchError(response, operationName)
+  } catch (error) {
+    const isNetworkError = error instanceof TypeError
+      && /fetch|network|failed|load|cors/i.test(error.message || '')
+
+    const message = isNetworkError
+      ? `${NETWORK_ERROR_HINT} (${operationName})`
+      : serializeUnexpectedError(error, operationName)
+
+    if (import.meta.env.DEV) {
+      console.error(`[${operationName}]`, {
+        error: message,
+        original: error,
+      })
+    }
+
+    throw new Error(message)
+  }
 }
 
 function unwrapData(payload) {
@@ -94,57 +171,53 @@ function unwrapCollection(payload) {
 export const saveFurniture = async (nombre, shapes) => {
   const token = getToken()
 
-  const res = await fetch(API_URL, {
+  const payload = await apiRequest(API_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
     body: JSON.stringify({ nombre, shapes })
-  })
-  
-  const payload = await handleFetchError(res, 'saveFurniture')
+  }, 'saveFurniture')
+
   return unwrapData(payload)
 }
 
 export const updateFurniture = async (id, { nombre, shapes }) => {
   const token = getToken()
 
-  const res = await fetch(`${API_URL}/${id}`, {
+  const payload = await apiRequest(`${API_URL}/${id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     },
     body: JSON.stringify({ nombre, shapes })
-  })
-  
-  const payload = await handleFetchError(res, 'updateFurniture')
+  }, 'updateFurniture')
+
   return unwrapData(payload)
 }
 
 export const loadFurniture = async () => {
   const token = getToken()
-  const res = await fetch(API_URL, {
+  const payload = await apiRequest(API_URL, {
     headers: {
       'Authorization': `Bearer ${token}`
     }
-  })
-  
-  const payload = await handleFetchError(res, 'loadFurniture')
+  }, 'loadFurniture')
+
   return unwrapCollection(payload)
 }
 
 export const deleteFurniture = async (id) => {
   const token = getToken()
-  const res = await fetch(`${API_URL}/${id}`, {
+  const payload = await apiRequest(`${API_URL}/${id}`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`
     }
-  })
-  
-  const payload = await handleFetchError(res, 'deleteFurniture')
+  }, 'deleteFurniture')
+
   return unwrapData(payload)
 }
 
