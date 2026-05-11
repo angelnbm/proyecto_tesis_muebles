@@ -1,23 +1,27 @@
-import React from 'react'
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './App.css'
 import Toolbar from './components/Toolbar.jsx'
 import KonvaStage from './components/KonvaStage.jsx'
 import CubicacionPanel from './components/CubicacionPanel.jsx'
+import MaterialLibrary from './components/MaterialLibrary.jsx'
 import AuthForm from './components/Login.jsx' 
+import LandingPage from './components/LandingPage.jsx'
 import { saveFurniture, loadFurniture, deleteFurniture, updateFurniture } from './services/api.js'
 import { getToken, removeToken, verifyToken } from './services/auth.js'
 
 export default function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [showLogin, setShowLogin] = useState(false)
   const [selectedModule, setSelectedModule] = useState(null)
   const [shapes, setShapes] = useState([])
   const [selectedId, setSelectedId] = useState(null)
   const [activeTab, setActiveTab] = useState('diseno')
+  const [selectedMaterial, setSelectedMaterial] = useState(null)
   const [designs, setDesigns] = useState([])
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600)
   const [currentDesignId, setCurrentDesignId] = useState(null)
+  const stageRef = useRef(null)
 
   const selected = shapes.find(s => s.id === selectedId) || null
 
@@ -226,10 +230,14 @@ export default function App() {
 
   // Si no hay usuario (después de verificar), mostrar login
   if (!user) {
-    return <AuthForm onLogin={(userData) => {
-      setUser(userData)
-      setLoading(false)
-    }} />
+    return showLogin ? (
+      <AuthForm onLogin={(userData) => {
+        setUser(userData)
+        setLoading(false)
+      }} />
+    ) : (
+      <LandingPage onLoginClick={() => setShowLogin(true)} />
+    )
   }
 
   // ============================================
@@ -255,18 +263,24 @@ export default function App() {
 
         {/* Tabs */}
         <div className="mobile-tabs">
-          <button 
-            className={activeTab === 'diseno' ? 'active' : ''}
-            onClick={() => setActiveTab('diseno')}
-          >
-            Diseño
-          </button>
-          <button 
-            className={activeTab === 'cubicacion' ? 'active' : ''}
-            onClick={() => setActiveTab('cubicacion')}
-          >
-            Cubicación
-          </button>
+            <button 
+              className={activeTab === 'diseno' ? 'active' : ''}
+              onClick={() => setActiveTab('diseno')}
+            >
+              Diseño
+            </button>
+           <button 
+              className={activeTab === 'cubicacion' ? 'active' : ''}
+              onClick={() => setActiveTab('cubicacion')}
+            >
+              Cubicación
+            </button>
+            <button
+              className={activeTab === 'biblioteca' ? 'active' : ''}
+              onClick={() => setActiveTab('biblioteca')}
+            >
+              Biblioteca
+            </button>
           <button onClick={handleNewDesign} className="new-btn-mobile" title="Nuevo diseño">
             📄
           </button>
@@ -277,19 +291,21 @@ export default function App() {
 
         {/* Contenido principal - SCROLLEABLE */}
         <main className="mobile-content">
-          {activeTab === 'diseno' && (
+           <div className={`mobile-canvas ${activeTab === 'diseno' ? '' : 'is-hidden'}`}>
+             <KonvaStage
+                ref={stageRef}
+                shapes={shapes}
+                setShapes={setShapes}
+                selectedModule={selectedModule}
+                setSelectedModule={setSelectedModule}
+                selectedId={selectedId}
+                setSelectedId={setSelectedId}
+                updateShape={updateShape}
+              />
+           </div>
+
+           {activeTab === 'diseno' && (
             <>
-              <div className="mobile-canvas">
-                <KonvaStage
-                   shapes={shapes}
-                   setShapes={setShapes}
-                   selectedModule={selectedModule}
-                   setSelectedModule={setSelectedModule}
-                   selectedId={selectedId}
-                   setSelectedId={setSelectedId}
-                   updateShape={updateShape}
-                 />
-              </div>
 
               {selected && (
                 <div className="bottom-panel">
@@ -445,7 +461,15 @@ export default function App() {
           )}
 
           {activeTab === 'cubicacion' && (
-            <CubicacionPanel shapes={shapes} />
+            <CubicacionPanel
+              shapes={shapes}
+              exportStageImage={() => stageRef.current?.exportImage?.() || null}
+              selectedMaterial={selectedMaterial}
+            />
+          )}
+
+          {activeTab === 'biblioteca' && (
+            <MaterialLibrary onMaterialSelect={setSelectedMaterial} />
           )}
         </main>
       </div>
@@ -483,6 +507,12 @@ export default function App() {
           >
             Cubicación
           </button>
+          <button
+            className={`canvas-tab ${activeTab === 'biblioteca' ? 'active' : ''}`}
+            onClick={() => setActiveTab('biblioteca')}
+          >
+            Biblioteca
+          </button>
 
           {/* Botones a la derecha */}
           <div className="canvas-buttons-container">
@@ -495,22 +525,29 @@ export default function App() {
           </div>
         </div>
 
-        {activeTab === 'diseno' && (
-          <div className="konva-wrapper">
-            <KonvaStage
-              shapes={shapes}
-              setShapes={setShapes}
-              selectedModule={selectedModule}
-              setSelectedModule={setSelectedModule}
-              selectedId={selectedId}
-              setSelectedId={setSelectedId}
-              updateShape={updateShape}
-            />
-          </div>
-        )}
+        <div className={`konva-wrapper ${activeTab === 'diseno' ? '' : 'is-hidden'}`}>
+          <KonvaStage
+            ref={stageRef}
+            shapes={shapes}
+            setShapes={setShapes}
+            selectedModule={selectedModule}
+            setSelectedModule={setSelectedModule}
+            selectedId={selectedId}
+            setSelectedId={setSelectedId}
+            updateShape={updateShape}
+          />
+        </div>
 
         {activeTab === 'cubicacion' && (
-          <CubicacionPanel shapes={shapes} />
+          <CubicacionPanel
+            shapes={shapes}
+            exportStageImage={() => stageRef.current?.exportImage?.() || null}
+            selectedMaterial={selectedMaterial}
+          />
+        )}
+
+        {activeTab === 'biblioteca' && (
+          <MaterialLibrary onMaterialSelect={setSelectedMaterial} />
         )}
       </main>
 

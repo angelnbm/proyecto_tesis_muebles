@@ -12,8 +12,22 @@ import {
  * 2. Visual board layout with packed pieces
  * 3. Statistics and summaries
  */
-export default function CubicacionPanel({ shapes }) {
+export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial }) {
   const [selectedModule, setSelectedModule] = useState(null)
+  const [emailForm, setEmailForm] = useState({
+    nombre_cliente: '',
+    to_email: '',
+    nombre_proyecto: '',
+    precio_total: '',
+    nombre_empresa: '',
+  })
+  const [isSending, setIsSending] = useState(false)
+  const [emailStatus, setEmailStatus] = useState({ type: null, message: '' })
+  const [previewImage, setPreviewImage] = useState(null)
+
+  const emailServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_1rqf0vo'
+  const emailTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_egzw8fd'
+  const emailPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'S1uLBrr9Cn3CVH4Nq'
 
   // Process all data: group pieces and optimize board packing
   const cubicacionData = useMemo(() => {
@@ -27,11 +41,9 @@ export default function CubicacionPanel({ shapes }) {
     }
 
     try {
-      const { byModule, allPieces } = generateStructuredCuts(shapes)
-      console.log('✅ generateStructuredCuts result:', { allPieces, modulesCount: byModule.size })
-      
-      const { boards, statistics } = optimizePiecesInBoards(allPieces)
-      console.log('✅ optimizePiecesInBoards result:', { boards, statistics })
+    const { byModule, allPieces } = generateStructuredCuts(shapes)
+    
+    const { boards, statistics } = optimizePiecesInBoards(allPieces)
 
       return { byModule, allPieces, boards, statistics }
     } catch (error) {
@@ -47,7 +59,6 @@ export default function CubicacionPanel({ shapes }) {
 
   const { byModule, boards, statistics } = cubicacionData
 
-  console.log('🔍 CubicacionPanel render:', { shapesLength: shapes?.length, boards: boards?.length, statistics })
 
   if (!shapes || shapes.length === 0) {
     return (
@@ -127,6 +138,115 @@ export default function CubicacionPanel({ shapes }) {
 
     return hardware
   }, [shapes])
+
+  const boardArea = BOARD_CONFIGS.melamina.width * BOARD_CONFIGS.melamina.height
+  const boardsCost = useMemo(() => {
+    if (!selectedMaterial || !boards || boards.length === 0) return null
+    const unitPrice = Number(selectedMaterial.precio)
+    if (Number.isNaN(unitPrice)) return null
+    return unitPrice * boards.length
+  }, [selectedMaterial, boards])
+  const boardsSummary = useMemo(() => {
+    if (!boards || boards.length === 0) return 'Sin planchas calculadas'
+
+    return boards
+      .map((board) => {
+        const percent = boardArea > 0
+          ? ((board.usedArea / boardArea) * 100).toFixed(1)
+          : '0.0'
+        const waste = (100 - Number(percent)).toFixed(1)
+        return `Plancha #${board.id}: ${percent}% uso / ${waste}% desperdicio`
+      })
+      .join('\n')
+  }, [boards, boardArea])
+
+  const extrasSummary = useMemo(() => (
+    `Tiradores: ${hardwareList.tiradores}\n` +
+    `Visagras: ${hardwareList.visagras}\n` +
+    `Correderas: ${hardwareList.correderas}`
+  ), [hardwareList])
+
+  const handleEmailFieldChange = (field) => (event) => {
+    setEmailForm((prev) => ({ ...prev, [field]: event.target.value }))
+  }
+
+  const handleSendEmail = async (event) => {
+    event.preventDefault()
+    setEmailStatus({ type: null, message: '' })
+
+    const imageDataUrl = exportStageImage ? exportStageImage() : null
+    setPreviewImage(imageDataUrl)
+
+    if (!boards || boards.length === 0) {
+      setEmailStatus({
+        type: 'error',
+        message: 'No hay planchas calculadas para enviar la cotización.',
+      })
+      return
+    }
+
+    if (!emailForm.to_email.trim()) {
+      setEmailStatus({
+        type: 'error',
+        message: 'Ingresá el correo de destino.',
+      })
+      return
+    }
+
+    if (!emailForm.nombre_cliente.trim() || !emailForm.nombre_proyecto.trim()) {
+      setEmailStatus({
+        type: 'error',
+        message: 'Completá el nombre del cliente y del proyecto.',
+      })
+      return
+    }
+
+    setIsSending(true)
+
+    try {
+      const imageBase64 = imageDataUrl ? imageDataUrl.split(',')[1] : ''
+      const templateParams = {
+        nombre_cliente: emailForm.nombre_cliente.trim(),
+        to_email: emailForm.to_email.trim(),
+        reply_to: emailForm.to_email.trim(),
+        from_name: emailForm.nombre_empresa.trim() || emailForm.nombre_cliente.trim(),
+        nombre_proyecto: emailForm.nombre_proyecto.trim(),
+        precio_total: emailForm.precio_total.trim() || 'Sin definir',
+        nombre_empresa: emailForm.nombre_empresa.trim() || 'Sin definir',
+        planchas_resumen: boardsSummary,
+        extras_resumen: extrasSummary,
+        imagen_base64: imageBase64 || '',
+        imagen_data_url: imageDataUrl || '',
+        material_nombre: selectedMaterial?.nombre || 'Sin material seleccionado',
+        material_precio: selectedMaterial?.precio != null ? `$ ${Number(selectedMaterial.precio).toFixed(2)}` : 'Sin definir',
+        planchas_total: boards?.length || 0,
+      }
+
+      if (!window.emailjs) {
+        throw new Error('EmailJS no está disponible. Revisá el script en index.html')
+      }
+
+      if (!templateParams.imagen_base64) {
+        throw new Error('No se pudo generar la imagen del diseño. Volvé a la pestaña Diseño y probá de nuevo.')
+      }
+
+      window.emailjs.init(emailPublicKey)
+      await window.emailjs.send(emailServiceId, emailTemplateId, templateParams)
+
+      setEmailStatus({
+        type: 'success',
+        message: 'Cotización enviada correctamente.',
+      })
+    } catch (error) {
+      const errorMessage = error?.text || error?.message || 'No se pudo enviar la cotización.'
+      setEmailStatus({
+        type: 'error',
+        message: `${errorMessage} Revisá el template y los campos requeridos en EmailJS.`,
+      })
+    } finally {
+      setIsSending(false)
+    }
+  }
 
   // Generate color for each module type - using app palette
   const getModuleColor = (moduleType) => {
@@ -247,6 +367,17 @@ export default function CubicacionPanel({ shapes }) {
                 {(statistics.totalUsedArea / 10000).toFixed(2)} m²
               </div>
             </div>
+            <div className="stat-card">
+              <div className="stat-label">Costo de planchas</div>
+              <div className="stat-value">
+                {boardsCost !== null ? `$ ${boardsCost.toFixed(2)}` : 'Sin material seleccionado'}
+              </div>
+              {selectedMaterial && (
+                <div className="stat-detail">
+                  {selectedMaterial.nombre} · ${Number(selectedMaterial.precio).toFixed(2)} c/u
+                </div>
+              )}
+            </div>
           </div>
         )}
       </section>
@@ -277,7 +408,102 @@ export default function CubicacionPanel({ shapes }) {
         </div>
       </section>
 
-      {/* SECTION 5: HARDWARE LIST */}
+      {/* SECTION 5: COTIZACION EMAILJS */}
+      <section className="cubicacion-section cubicacion-email">
+        <h2>Enviar cotización por Email</h2>
+
+        <form className="emailjs-form" onSubmit={handleSendEmail}>
+          <div className="emailjs-grid">
+            <div className="emailjs-field">
+              <label>Nombre del cliente</label>
+              <input
+                type="text"
+                value={emailForm.nombre_cliente}
+                onChange={handleEmailFieldChange('nombre_cliente')}
+                placeholder="Juan Pérez"
+                required
+              />
+            </div>
+
+            <div className="emailjs-field">
+              <label>Correo de destino</label>
+              <input
+                type="email"
+                value={emailForm.to_email}
+                onChange={handleEmailFieldChange('to_email')}
+                placeholder="cliente@email.com"
+                required
+              />
+            </div>
+
+            <div className="emailjs-field">
+              <label>Nombre del proyecto</label>
+              <input
+                type="text"
+                value={emailForm.nombre_proyecto}
+                onChange={handleEmailFieldChange('nombre_proyecto')}
+                placeholder="Cocina integral"
+                required
+              />
+            </div>
+
+            <div className="emailjs-field">
+              <label>Precio total</label>
+              <input
+                type="text"
+                value={emailForm.precio_total}
+                onChange={handleEmailFieldChange('precio_total')}
+                placeholder="$ 0,00"
+              />
+            </div>
+
+            <div className="emailjs-field">
+              <label>Nombre de la empresa</label>
+              <input
+                type="text"
+                value={emailForm.nombre_empresa}
+                onChange={handleEmailFieldChange('nombre_empresa')}
+                placeholder="Muebles S.A."
+              />
+            </div>
+          </div>
+
+          <div className="emailjs-summary">
+            <h4>Planchas a utilizar</h4>
+            <pre>{boardsSummary}</pre>
+            <h4>Extras</h4>
+            <pre>{extrasSummary}</pre>
+            {selectedMaterial && (
+              <>
+                <h4>Material seleccionado</h4>
+                <p>{selectedMaterial.nombre} · ${Number(selectedMaterial.precio).toFixed(2)} c/u</p>
+              </>
+            )}
+            <h4>Imagen del diseño</h4>
+            {previewImage ? (
+              <img
+                src={previewImage}
+                alt="Diseño"
+                style={{ width: '100%', height: 'auto', borderRadius: '6px', marginTop: '8px' }}
+              />
+            ) : (
+              <p></p>
+            )}
+          </div>
+
+          {emailStatus.message && (
+            <div className={`emailjs-status ${emailStatus.type}`}>
+              {emailStatus.message}
+            </div>
+          )}
+
+          <button type="submit" disabled={isSending}>
+            {isSending ? 'Enviando...' : 'Enviar cotización'}
+          </button>
+        </form>
+      </section>
+
+      {/* SECTION 6: HARDWARE LIST */}
       <section className="cubicacion-section cubicacion-hardware">
         <h2>Otros materiales</h2>
         

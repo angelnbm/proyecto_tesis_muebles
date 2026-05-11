@@ -182,6 +182,169 @@ body {
   box-shadow: 0 2px 8px rgba(74,144,226,0.3);
 }
 
+/* Biblioteca de materiales */
+.material-library {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: #2e3239;
+  border-radius: 8px;
+  color: #e8eaed;
+  height: calc(100vh - 170px);
+  overflow: hidden;
+}
+
+.material-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.material-tabs button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #3a3f47;
+  color: #9aa0a6;
+  cursor: pointer;
+}
+
+.material-tabs button.active {
+  background: #4A90E2;
+  color: #fff;
+}
+
+.material-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 16px;
+  height: 100%;
+  align-items: stretch;
+}
+
+.material-list {
+  background: #23262c;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  overflow: auto;
+}
+
+.material-list ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+}
+
+.material-list li {
+  background: #2e3239;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.material-list li p {
+  margin: 4px 0;
+  font-size: 12px;
+  color: #b0b6be;
+}
+
+.material-list .actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.material-list button {
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+  background: #4A90E2;
+  color: #fff;
+}
+
+.material-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.material-search {
+  padding: 8px 10px;
+  border-radius: 6px;
+  border: 1px solid #3a3f47;
+  background: #1f2227;
+  color: #e8eaed;
+}
+
+.material-form {
+  background: #23262c;
+  border-radius: 8px;
+  padding: 12px;
+  height: 100%;
+  overflow: auto;
+}
+
+.material-form form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.material-form .form-actions {
+  margin-top: auto;
+}
+
+.material-form form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.material-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.material-form input {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #3a3f47;
+  background: #1f2227;
+  color: #e8eaed;
+}
+
+.material-form .form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.error-text {
+  color: #ef4444;
+  font-size: 12px;
+}
+
+.emailjs-summary img {
+  border: 1px solid #2a2d32;
+}
+
+@media (max-width: 900px) {
+  .material-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Contenedor de botones a la derecha */
 .canvas-buttons-container {
   position: absolute;
@@ -1250,6 +1413,16 @@ body {
   position: relative;
   width: 100%;
   min-height: 0;
+}
+
+.konva-wrapper.is-hidden,
+.mobile-canvas.is-hidden {
+  position: absolute !important;
+  left: -9999px;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden;
 }
 
 /* Panel de cubicación - también usar toda la altura */

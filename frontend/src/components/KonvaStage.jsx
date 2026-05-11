@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React, { useRef, useState, useEffect, useImperativeHandle, forwardRef } from 'react'
 import { Stage, Layer, Rect, Group, Text, Line } from 'react-konva'
 
 const defaultSizes = {
@@ -230,7 +230,7 @@ function findSnapPositionPrincipales(newShape, existingShapes, canvasWidth, canv
 
 // ========== COMPONENTE PRINCIPAL ==========
 
-export default function KonvaStage({ 
+const KonvaStage = forwardRef(function KonvaStage({ 
   selectedModule, 
   shapes, 
   setShapes, 
@@ -238,7 +238,7 @@ export default function KonvaStage({
   setSelectedId,
   updateShape,
   setSelectedModule
-}) {
+}, ref) {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0, scale: 1 })
   const [zoom, setZoom] = useState(1)
   const [stagePos, setStagePos] = useState({ x: 0, y: 0 })
@@ -250,6 +250,35 @@ export default function KonvaStage({
   const BASE_WIDTH = 700
   const BASE_HEIGHT = 480
   
+  useImperativeHandle(ref, () => ({
+    exportImage: () => {
+      if (!stageRef.current) return null
+      const stage = stageRef.current
+      const prevScale = stage.scale()
+      const prevPos = stage.position()
+      const prevSize = { width: stage.width(), height: stage.height() }
+
+      stage.scale({ x: 1, y: 1 })
+      stage.position({ x: 0, y: 0 })
+      stage.size({ width: BASE_WIDTH, height: BASE_HEIGHT })
+      stage.batchDraw()
+
+      const dataUrl = stage.toDataURL({
+        mimeType: 'image/jpeg',
+        quality: 0.6,
+        pixelRatio: 1,
+        backgroundColor: '#ffffff',
+      })
+
+      stage.size(prevSize)
+      stage.scale(prevScale)
+      stage.position(prevPos)
+      stage.batchDraw()
+
+      return dataUrl
+    },
+  }))
+
   useEffect(() => {
     const container = containerRef.current
     if (!container) return
@@ -257,6 +286,10 @@ export default function KonvaStage({
     const updateDimensions = () => {
       const containerWidth = container.clientWidth
       const containerHeight = container.clientHeight
+
+      if (containerWidth === 0 || containerHeight === 0) {
+        return
+      }
       
       const scaleX = containerWidth / BASE_WIDTH
       const scaleY = containerHeight / BASE_HEIGHT
@@ -862,4 +895,6 @@ export default function KonvaStage({
       </Stage>
     </div>
   )
-}
+})
+
+export default KonvaStage
