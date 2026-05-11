@@ -33,7 +33,7 @@ const landingMarkup = `
     <h1>
       <span class="ink">Diseña el</span><br/>
       <span class="ink">mueble.</span> <span class="accent">Calcula</span><br/>
-      <span class="ink">la </span><span class="strike">madera</span><span class="ink">.</span>
+      <span class="ink">el </span><span class="strike">material</span><span class="ink">.</span>
     </h1>
 
     <p class="hero__sub">
@@ -238,7 +238,7 @@ const landingMarkup = `
 <section class="shell" id="cta" data-screen-label="CTA">
   <div class="cta">
     <div class="cta__inner">
-      <h2>Dejá de calcular en <em>servilleta</em>.</h2>
+      <h2>Deja de calcular en <em>papel</em>.</h2>
       <p>Empezá a diseñar y cubicar en un solo lugar. Gratis para tu primer proyecto.</p>
       <div class="cta__btns">
         <a href="#" class="btn btn--primary" data-login="true">Crear mi cuenta →</a>
