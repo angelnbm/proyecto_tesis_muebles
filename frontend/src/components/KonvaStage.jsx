@@ -36,87 +36,253 @@ function checkCollision(rect1, rect2) {
   )
 }
 
+const SNAP_THRESHOLD = 8
+const SNAP_THRESHOLD_PRINCIPALES = 22
+
+function clamp(value, min, max) {
+  return Math.max(min, Math.min(max, value))
+}
+
+function clampToCanvas(shape, canvasWidth, canvasHeight) {
+  const minX = 8
+  const minY = 8
+  const maxX = canvasWidth - 16 - shape.width
+  const maxY = canvasHeight - 16 - shape.height
+
+  return {
+    x: clamp(shape.x, minX, maxX),
+    y: clamp(shape.y, minY, maxY)
+  }
+}
+
+function isPointInsideRect(point, rect) {
+  return (
+    point.x >= rect.x &&
+    point.x <= rect.x + rect.width &&
+    point.y >= rect.y &&
+    point.y <= rect.y + rect.height
+  )
+}
+
+function getContainers(shapes) {
+  return shapes.filter(s => COLLISION_GROUPS.PRINCIPALES.includes(s.type))
+}
+
+function getContainerAtPoint(shapes, point) {
+  const containers = getContainers(shapes).filter(c => isPointInsideRect(point, c))
+  if (containers.length === 0) return null
+
+  return containers[containers.length - 1]
+}
+
+function getContainerForShape(shapes, shape) {
+  const center = {
+    x: shape.x + shape.width / 2,
+    y: shape.y + shape.height / 2
+  }
+
+  return getContainerAtPoint(shapes, center)
+}
+
+function getDivisionLines(container, shapes) {
+  const vertical = []
+  const horizontal = []
+
+  shapes.forEach(s => {
+    if (!COLLISION_GROUPS.INTERNOS.includes(s.type)) return
+    if (s.id === container.id) return
+
+    const center = { x: s.x + s.width / 2, y: s.y + s.height / 2 }
+    if (!isPointInsideRect(center, container)) return
+
+    if (s.type === 'divisor') {
+      vertical.push(s.x)
+      vertical.push(s.x + s.width)
+    }
+    if (s.type === 'estante') {
+      horizontal.push(s.y)
+      horizontal.push(s.y + s.height)
+    }
+  })
+
+  const uniqueSorted = (values) => Array.from(new Set(values)).sort((a, b) => a - b)
+
+  return {
+    vertical: uniqueSorted(vertical),
+    horizontal: uniqueSorted(horizontal)
+  }
+}
+
+function computeCompartmentBounds(container, point, divisions) {
+  // Define the sub-compartment by nearest divider lines around the drop point.
+  const leftCandidates = divisions.vertical.filter(x => x < point.x)
+  const rightCandidates = divisions.vertical.filter(x => x > point.x)
+  const topCandidates = divisions.horizontal.filter(y => y < point.y)
+  const bottomCandidates = divisions.horizontal.filter(y => y > point.y)
+
+  const left = leftCandidates.length > 0 ? Math.max(...leftCandidates) : container.x
+  const right = rightCandidates.length > 0 ? Math.min(...rightCandidates) : container.x + container.width
+  const top = topCandidates.length > 0 ? Math.max(...topCandidates) : container.y
+  const bottom = bottomCandidates.length > 0 ? Math.min(...bottomCandidates) : container.y + container.height
+
+  return {
+    x: left,
+    y: top,
+    width: Math.max(0, right - left),
+    height: Math.max(0, bottom - top)
+  }
+}
+
+function fitInternalToCompartment(shape, compartment, dropPoint) {
+  const base = defaultSizes[shape.type] || { width: shape.width, height: shape.height }
+
+  if (shape.type === 'estante') {
+    const height = base.height
+    // Estante spans full width, Y clamps within compartment height.
+    return {
+      ...shape,
+      width: compartment.width,
+      height,
+      x: compartment.x,
+      y: clamp(dropPoint.y - height / 2, compartment.y, compartment.y + compartment.height - height)
+    }
+  }
+
+  if (shape.type === 'divisor') {
+    const width = base.width
+    // Divisor spans full height, X clamps within compartment width.
+    return {
+      ...shape,
+      width,
+      height: compartment.height,
+      x: clamp(dropPoint.x - width / 2, compartment.x, compartment.x + compartment.width - width),
+      y: compartment.y
+    }
+  }
+
+  if (shape.type === 'puerta') {
+    // Puerta fills the full compartment front.
+    return {
+      ...shape,
+      width: compartment.width,
+      height: compartment.height,
+      x: compartment.x,
+      y: compartment.y
+    }
+  }
+
+  return { ...shape }
+}
+
+function snapInternalToCompartmentEdges(shape, compartment, threshold) {
+  const right = compartment.x + compartment.width - shape.width
+  const bottom = compartment.y + compartment.height - shape.height
+  let nextX = shape.x
+  let nextY = shape.y
+
+  if (shape.type !== 'estante') {
+    if (Math.abs(shape.x - compartment.x) <= threshold) nextX = compartment.x
+    if (Math.abs(shape.x - right) <= threshold) nextX = right
+  }
+
+  if (shape.type !== 'divisor') {
+    if (Math.abs(shape.y - compartment.y) <= threshold) nextY = compartment.y
+    if (Math.abs(shape.y - bottom) <= threshold) nextY = bottom
+  }
+
+  return { ...shape, x: nextX, y: nextY }
+}
+
+function findSnapPositionToEdges(newShape, referenceShapes, canvasWidth, canvasHeight, threshold) {
+  let bestX = newShape.x
+  let bestY = newShape.y
+  let minDistance = threshold + 1
+
+  referenceShapes.forEach(other => {
+    const candidates = [
+      { x: other.x, y: newShape.y, distance: Math.abs(newShape.x - other.x) },
+      { x: other.x + other.width - newShape.width, y: newShape.y, distance: Math.abs(newShape.x - (other.x + other.width - newShape.width)) },
+      { x: other.x - newShape.width, y: newShape.y, distance: Math.abs(newShape.x - (other.x - newShape.width)) },
+      { x: other.x + other.width, y: newShape.y, distance: Math.abs(newShape.x - (other.x + other.width)) },
+      { x: newShape.x, y: other.y, distance: Math.abs(newShape.y - other.y) },
+      { x: newShape.x, y: other.y + other.height - newShape.height, distance: Math.abs(newShape.y - (other.y + other.height - newShape.height)) },
+      { x: newShape.x, y: other.y - newShape.height, distance: Math.abs(newShape.y - (other.y - newShape.height)) },
+      { x: newShape.x, y: other.y + other.height, distance: Math.abs(newShape.y - (other.y + other.height)) }
+    ]
+
+    candidates.forEach(candidate => {
+      if (candidate.distance > threshold) return
+      const clamped = clampToCanvas({ ...newShape, x: candidate.x, y: candidate.y }, canvasWidth, canvasHeight)
+      if (candidate.distance < minDistance) {
+        minDistance = candidate.distance
+        bestX = clamped.x
+        bestY = clamped.y
+      }
+    })
+  })
+
+  return { x: bestX, y: bestY }
+}
+
+function getCollisionShapesForInternal(shapes, container) {
+  return shapes.filter(s => {
+    if (container && s.id === container.id) return false
+    if (container && COLLISION_GROUPS.INTERNOS.includes(s.type)) {
+      const otherContainer = getContainerForShape(shapes, s)
+      if (otherContainer && otherContainer.id === container.id) return false
+    }
+    return true
+  })
+}
+
+function resolveInternalPlacement(candidateShape, shapes, canvasWidth, canvasHeight) {
+  const dropPoint = {
+    x: candidateShape.x + candidateShape.width / 2,
+    y: candidateShape.y + candidateShape.height / 2
+  }
+
+  const container = getContainerAtPoint(shapes, dropPoint)
+  let adjusted = { ...candidateShape }
+
+  if (container) {
+    const divisions = getDivisionLines(container, shapes)
+    const compartment = computeCompartmentBounds(container, dropPoint, divisions)
+
+    adjusted = fitInternalToCompartment(adjusted, compartment, dropPoint)
+    adjusted = snapInternalToCompartmentEdges(adjusted, compartment, SNAP_THRESHOLD)
+  } else {
+    const referenceShapes = shapes.filter(s =>
+      s.type === 'cubierta' || COLLISION_GROUPS.PRINCIPALES.includes(s.type)
+    )
+    const snapped = findSnapPositionToEdges(adjusted, referenceShapes, canvasWidth, canvasHeight, SNAP_THRESHOLD)
+    adjusted.x = snapped.x
+    adjusted.y = snapped.y
+  }
+
+  const clamped = clampToCanvas(adjusted, canvasWidth, canvasHeight)
+  adjusted.x = clamped.x
+  adjusted.y = clamped.y
+
+  const collisionShapes = getCollisionShapesForInternal(shapes, container)
+  const hasCollision = collisionShapes.some(s => checkCollision(adjusted, s))
+
+  return { shape: adjusted, isValid: !hasCollision }
+}
+
 // ========== MANEJO DE COLISIONES POR GRUPO ==========
 
 // GRUPO 1: Puerta, Estante, Divisor (Elementos internos)
 function handleInternosCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT) {
-  const cubiertaCollision = shapes.find(s => 
-    s.type === 'cubierta' && checkCollision(candidateShape, s)
-  )
-
-  if (cubiertaCollision) {
-    candidateShape.y = cubiertaCollision.y - candidateShape.height - 2
-    
-    const otherShapes = shapes.filter(s => s.type !== 'cubierta')
-    const stillCollides = otherShapes.some(s => checkCollision(candidateShape, s))
-    
-    if (stillCollides) {
-      const snappedPos = findSnapPositionInternos(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
-      candidateShape.x = snappedPos.x
-      candidateShape.y = snappedPos.y
-      
-      const finalCheck = shapes.some(s => checkCollision(candidateShape, s))
-      if (finalCheck) return null
-    }
-  } else {
-    const snappedPos = findSnapPositionInternos(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
-    candidateShape.x = snappedPos.x
-    candidateShape.y = snappedPos.y
-    
-    const stillCollides = shapes.some(s => checkCollision(candidateShape, s))
-    if (stillCollides) return null
-  }
-
-  return candidateShape
+  const resolved = resolveInternalPlacement(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+  return resolved.isValid ? resolved.shape : null
 }
 
 function findSnapPositionInternos(newShape, existingShapes, canvasWidth, canvasHeight) {
-  let bestX = newShape.x
-  let bestY = newShape.y
-  let minDistance = Infinity
-
-  const minX = 8
-  const minY = 8
-  const maxX = canvasWidth - 16 - newShape.width
-  const maxY = canvasHeight - 16 - newShape.height
-
   const referenceShapes = existingShapes.filter(s => 
     s.type === 'cubierta' || COLLISION_GROUPS.PRINCIPALES.includes(s.type)
   )
 
-  for (const other of referenceShapes) {
-    const positions = [
-      { x: other.x + other.width, y: other.y },
-      { x: other.x - newShape.width, y: other.y },
-      { x: other.x, y: other.y + other.height },
-      { x: other.x, y: other.y - newShape.height },
-    ]
-
-    for (const pos of positions) {
-      const clampedX = Math.max(minX, Math.min(maxX, pos.x))
-      const clampedY = Math.max(minY, Math.min(maxY, pos.y))
-      
-      const testShape = { ...newShape, x: clampedX, y: clampedY }
-      
-      const hasCollision = existingShapes.some(s => 
-        s.id !== newShape.id && checkCollision(testShape, s)
-      )
-
-      if (!hasCollision) {
-        const distance = Math.sqrt(
-          Math.pow(clampedX - newShape.x, 2) + Math.pow(clampedY - newShape.y, 2)
-        )
-        
-        if (distance < minDistance) {
-          minDistance = distance
-          bestX = clampedX
-          bestY = clampedY
-        }
-      }
-    }
-  }
-
-  return { x: bestX, y: bestY }
+  return findSnapPositionToEdges(newShape, referenceShapes, canvasWidth, canvasHeight, SNAP_THRESHOLD)
 }
 
 // GRUPO 2: Base, Cubierta (Elementos horizontales)
@@ -179,53 +345,120 @@ function handlePrincipalesCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEI
   return candidateShape
 }
 
+function getSnapReferencesForPrincipales(existingShapes) {
+  const principales = existingShapes.filter(s => COLLISION_GROUPS.PRINCIPALES.includes(s.type))
+  if (principales.length > 0) return principales
+
+  return existingShapes.filter(s => COLLISION_GROUPS.HORIZONTALES.includes(s.type))
+}
+
 function findSnapPositionPrincipales(newShape, existingShapes, canvasWidth, canvasHeight) {
-  let bestX = newShape.x
-  let bestY = newShape.y
-  let minDistance = Infinity
+  const references = getSnapReferencesForPrincipales(existingShapes)
+  if (references.length === 0) {
+    return { x: Math.round(newShape.x), y: Math.round(newShape.y) }
+  }
 
-  const minX = 8
-  const minY = 8
-  const maxX = canvasWidth - 16 - newShape.width
-  const maxY = canvasHeight - 16 - newShape.height
+  const threshold = SNAP_THRESHOLD_PRINCIPALES
+  let bestSingle = { x: newShape.x, y: newShape.y, distance: threshold + 1 }
+  let bestCorner = null
+  let bestCornerScore = Number.POSITIVE_INFINITY
+  const xCandidates = []
 
-  const otherPrincipales = existingShapes.filter(s => 
-    COLLISION_GROUPS.PRINCIPALES.includes(s.type)
-  )
-
-  for (const other of otherPrincipales) {
-    const positions = [
-      { x: other.x + other.width + 4, y: other.y },
-      { x: other.x - newShape.width - 4, y: other.y },
-      { x: other.x, y: other.y + other.height + 4 },
-      { x: other.x, y: other.y - newShape.height - 4 },
+  references.forEach(other => {
+    const xOptions = [
+      { value: other.x, distance: Math.abs(newShape.x - other.x), refId: other.id },
+      { value: other.x + other.width - newShape.width, distance: Math.abs(newShape.x - (other.x + other.width - newShape.width)), refId: other.id },
+      { value: other.x - newShape.width, distance: Math.abs(newShape.x - (other.x - newShape.width)), refId: other.id },
+      { value: other.x + other.width, distance: Math.abs(newShape.x - (other.x + other.width)), refId: other.id }
     ]
 
-    for (const pos of positions) {
-      const clampedX = Math.max(minX, Math.min(maxX, pos.x))
-      const clampedY = Math.max(minY, Math.min(maxY, pos.y))
-      
-      const testShape = { ...newShape, x: clampedX, y: clampedY }
-      
-      const hasCollision = existingShapes.some(s => 
-        s.id !== newShape.id && checkCollision(testShape, s)
-      )
+    const yOptions = [
+      { value: other.y, distance: Math.abs(newShape.y - other.y), refId: other.id },
+      { value: other.y + other.height - newShape.height, distance: Math.abs(newShape.y - (other.y + other.height - newShape.height)), refId: other.id },
+      { value: other.y - newShape.height, distance: Math.abs(newShape.y - (other.y - newShape.height)), refId: other.id },
+      { value: other.y + other.height, distance: Math.abs(newShape.y - (other.y + other.height)), refId: other.id }
+    ]
 
-      if (!hasCollision) {
-        const distance = Math.sqrt(
-          Math.pow(clampedX - newShape.x, 2) + Math.pow(clampedY - newShape.y, 2)
-        )
-        
-        if (distance < minDistance) {
-          minDistance = distance
-          bestX = clampedX
-          bestY = clampedY
-        }
+    xOptions.forEach(option => {
+      if (option.distance > threshold) return
+      xCandidates.push(option)
+      if (option.distance < bestSingle.distance) {
+        const clamped = clampToCanvas({ ...newShape, x: option.value, y: newShape.y }, canvasWidth, canvasHeight)
+        bestSingle = { x: clamped.x, y: clamped.y, distance: option.distance }
       }
+    })
+
+    yOptions.forEach(option => {
+      if (option.distance > threshold) return
+      if (option.distance < bestSingle.distance) {
+        const clamped = clampToCanvas({ ...newShape, x: newShape.x, y: option.value }, canvasWidth, canvasHeight)
+        bestSingle = { x: clamped.x, y: clamped.y, distance: option.distance }
+      }
+    })
+
+    xOptions.forEach(xOption => {
+      if (xOption.distance > threshold) return
+      yOptions.forEach(yOption => {
+        if (yOption.distance > threshold) return
+        const clamped = clampToCanvas({ ...newShape, x: xOption.value, y: yOption.value }, canvasWidth, canvasHeight)
+        const score = xOption.distance + yOption.distance
+        if (score < bestCornerScore) {
+          bestCornerScore = score
+          bestCorner = { x: clamped.x, y: clamped.y }
+        }
+      })
+    })
+  })
+
+  if (bestCorner) {
+    return { x: Math.round(bestCorner.x), y: Math.round(bestCorner.y) }
+  }
+
+  if (xCandidates.length > 1) {
+    const left = xCandidates.filter(c => c.value <= newShape.x)
+    const right = xCandidates.filter(c => c.value >= newShape.x)
+    if (left.length > 0 && right.length > 0) {
+      const bestX = xCandidates.reduce((best, current) =>
+        current.distance < best.distance ? current : best
+      , xCandidates[0])
+      const clamped = clampToCanvas({ ...newShape, x: bestX.value, y: newShape.y }, canvasWidth, canvasHeight)
+      return { x: Math.round(clamped.x), y: Math.round(clamped.y) }
     }
   }
 
-  return { x: bestX, y: bestY }
+  return { x: Math.round(bestSingle.x), y: Math.round(bestSingle.y) }
+}
+
+function findAttachPositionPrincipales(newShape, existingShapes, canvasWidth, canvasHeight) {
+  const references = getSnapReferencesForPrincipales(existingShapes)
+  let bestPosition = null
+  let minDistance = Number.POSITIVE_INFINITY
+
+  references.forEach(other => {
+    const candidates = [
+      { x: other.x - newShape.width, y: newShape.y },
+      { x: other.x + other.width, y: newShape.y },
+      { x: newShape.x, y: other.y - newShape.height },
+      { x: newShape.x, y: other.y + other.height }
+    ]
+
+    candidates.forEach(candidate => {
+      const clamped = clampToCanvas({ ...newShape, x: candidate.x, y: candidate.y }, canvasWidth, canvasHeight)
+      const distance = Math.abs(newShape.x - clamped.x) + Math.abs(newShape.y - clamped.y)
+      if (distance >= minDistance) return
+
+      const testShape = { ...newShape, x: clamped.x, y: clamped.y }
+      const hasCollision = existingShapes.some(s => checkCollision(testShape, s))
+      if (hasCollision) return
+
+      minDistance = distance
+      bestPosition = { x: clamped.x, y: clamped.y }
+    })
+  })
+
+  if (!bestPosition) return null
+
+  return { x: Math.round(bestPosition.x), y: Math.round(bestPosition.y) }
 }
 
 // ========== COMPONENTE PRINCIPAL ==========
@@ -246,6 +479,7 @@ const KonvaStage = forwardRef(function KonvaStage({
   const [isPanning, setIsPanning] = useState(false)
   const stageRef = useRef(null)
   const containerRef = useRef(null)
+  const lastValidSnapRef = useRef(new Map())
   
   const BASE_WIDTH = 700
   const BASE_HEIGHT = 480
@@ -376,15 +610,35 @@ const KonvaStage = forwardRef(function KonvaStage({
       depth: base.depth,
     }
 
+    if (COLLISION_GROUPS.INTERNOS.includes(selectedModule)) {
+      const resolved = resolveInternalPlacement({ ...candidateShape }, shapes, BASE_WIDTH, BASE_HEIGHT)
+      setGhostShape({ ...resolved.shape, isValid: resolved.isValid })
+      return
+    }
+
+    if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule)) {
+      const snappedPos = findSnapPositionPrincipales(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+      let previewShape = { ...candidateShape, x: snappedPos.x, y: snappedPos.y }
+      let isValid = !shapes.some(s => checkCollision(previewShape, s))
+
+      if (!isValid) {
+        const attachPos = findAttachPositionPrincipales(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+        if (attachPos) {
+          previewShape = { ...candidateShape, x: attachPos.x, y: attachPos.y }
+          isValid = true
+        }
+      }
+
+      setGhostShape({ ...previewShape, isValid })
+      return
+    }
+
     const hasCollision = shapes.some(s => checkCollision(candidateShape, s))
 
     if (hasCollision) {
       let processedShape = null
 
-      if (COLLISION_GROUPS.INTERNOS.includes(selectedModule)) {
-        processedShape = handleInternosCollision({ ...candidateShape }, shapes, BASE_WIDTH, BASE_HEIGHT)
-      }
-      else if (COLLISION_GROUPS.HORIZONTALES.includes(selectedModule)) {
+      if (COLLISION_GROUPS.HORIZONTALES.includes(selectedModule)) {
         processedShape = handleHorizontalesCollision({ ...candidateShape }, shapes, BASE_WIDTH, BASE_HEIGHT)
       }
       else if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule)) {
@@ -397,7 +651,16 @@ const KonvaStage = forwardRef(function KonvaStage({
         setGhostShape({ ...candidateShape, isValid: false })
       }
     } else {
-      setGhostShape({ ...candidateShape, isValid: true })
+      let processedShape = candidateShape
+
+      if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule)) {
+        const snappedPos = findSnapPositionPrincipales(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+        const snappedCandidate = { ...candidateShape, x: snappedPos.x, y: snappedPos.y }
+        const stillValid = !shapes.some(s => checkCollision(snappedCandidate, s))
+        processedShape = stillValid ? snappedCandidate : candidateShape
+      }
+
+      setGhostShape({ ...processedShape, isValid: true })
     }
   }
 
@@ -436,22 +699,38 @@ const KonvaStage = forwardRef(function KonvaStage({
         })
       }
 
-      const hasCollision = shapes.some(s => checkCollision(candidateShape, s))
-      
-      if (hasCollision) {
-        let processedShape = null
+      if (COLLISION_GROUPS.INTERNOS.includes(selectedModule)) {
+        const resolved = resolveInternalPlacement(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+        if (!resolved.isValid) return
+        candidateShape.x = resolved.shape.x
+        candidateShape.y = resolved.shape.y
+        candidateShape.width = resolved.shape.width
+        candidateShape.height = resolved.shape.height
+      } else {
+        const hasCollision = shapes.some(s => checkCollision(candidateShape, s))
+        
+        if (hasCollision) {
+          let processedShape = null
 
-        if (COLLISION_GROUPS.INTERNOS.includes(selectedModule)) {
-          processedShape = handleInternosCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
-        }
-        else if (COLLISION_GROUPS.HORIZONTALES.includes(selectedModule)) {
-          processedShape = handleHorizontalesCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
-        }
-        else if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule)) {
-          processedShape = handlePrincipalesCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
-        }
+          if (COLLISION_GROUPS.HORIZONTALES.includes(selectedModule)) {
+            processedShape = handleHorizontalesCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+          }
+          else if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule)) {
+            processedShape = handlePrincipalesCollision(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+          }
 
-        if (!processedShape) return
+          if (!processedShape) return
+          candidateShape.x = processedShape.x
+          candidateShape.y = processedShape.y
+        } else if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule)) {
+          const snappedPos = findSnapPositionPrincipales(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
+          const snappedCandidate = { ...candidateShape, x: snappedPos.x, y: snappedPos.y }
+          const stillValid = !shapes.some(s => checkCollision(snappedCandidate, s))
+          if (stillValid) {
+            candidateShape.x = snappedCandidate.x
+            candidateShape.y = snappedCandidate.y
+          }
+        }
       }
 
       if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule) && shapes.length === 0) {
@@ -498,36 +777,97 @@ const KonvaStage = forwardRef(function KonvaStage({
     }
 
     const otherShapes = shapes.filter(s => s.id !== shapeId)
-    const hasCollision = otherShapes.some(s => checkCollision(updatedShape, s))
-    
-    if (hasCollision) {
-      let snappedPos = null
 
-      if (COLLISION_GROUPS.INTERNOS.includes(updatedShape.type)) {
-        snappedPos = findSnapPositionInternos(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
-      } else if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
-        snappedPos = findSnapPositionPrincipales(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
-      } else if (COLLISION_GROUPS.HORIZONTALES.includes(updatedShape.type)) {
-        const centered = findCenterPositionHorizontales(otherShapes, updatedShape, BASE_WIDTH, BASE_HEIGHT)
-        snappedPos = centered
-      }
-
-      if (snappedPos) {
-        updatedShape.x = snappedPos.x
-        updatedShape.y = snappedPos.y
-        node.x(updatedShape.x)
-        node.y(updatedShape.y)
-      }
-      
-      const finalCheck = otherShapes.some(s => checkCollision(updatedShape, s))
-      if (finalCheck) {
+    if (COLLISION_GROUPS.INTERNOS.includes(updatedShape.type)) {
+      const resolved = resolveInternalPlacement(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
+      if (!resolved.isValid) {
         node.x(draggedShape.x)
         node.y(draggedShape.y)
         return
       }
+
+      updatedShape.x = resolved.shape.x
+      updatedShape.y = resolved.shape.y
+      updatedShape.width = resolved.shape.width
+      updatedShape.height = resolved.shape.height
+      node.x(updatedShape.x)
+      node.y(updatedShape.y)
+    } else {
+      let snappedForPrincipal = null
+      const hasCollision = otherShapes.some(s => checkCollision(updatedShape, s))
+      
+      if (hasCollision) {
+        let snappedPos = null
+        let attachPos = null
+
+        if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
+          attachPos = findAttachPositionPrincipales(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
+        }
+
+        if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
+          snappedPos = findSnapPositionPrincipales(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
+        } else if (COLLISION_GROUPS.HORIZONTALES.includes(updatedShape.type)) {
+          const centered = findCenterPositionHorizontales(otherShapes, updatedShape, BASE_WIDTH, BASE_HEIGHT)
+          snappedPos = centered
+        }
+
+        if (attachPos) {
+          updatedShape.x = attachPos.x
+          updatedShape.y = attachPos.y
+          node.x(updatedShape.x)
+          node.y(updatedShape.y)
+          snappedForPrincipal = { x: updatedShape.x, y: updatedShape.y }
+        } else if (snappedPos) {
+          updatedShape.x = snappedPos.x
+          updatedShape.y = snappedPos.y
+          node.x(updatedShape.x)
+          node.y(updatedShape.y)
+          if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
+            snappedForPrincipal = { x: updatedShape.x, y: updatedShape.y }
+          }
+        }
+        
+        const finalCheck = otherShapes.some(s => checkCollision(updatedShape, s))
+        if (finalCheck) {
+          if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
+            const lastValid = lastValidSnapRef.current.get(shapeId)
+            if (lastValid) {
+              node.x(lastValid.x)
+              node.y(lastValid.y)
+              updateShape(shapeId, { x: lastValid.x, y: lastValid.y })
+              return
+            }
+          }
+          node.x(draggedShape.x)
+          node.y(draggedShape.y)
+          return
+        }
+      } else if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
+        const snappedPos = findSnapPositionPrincipales(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
+        const snappedCandidate = { ...updatedShape, x: snappedPos.x, y: snappedPos.y }
+        const stillValid = !otherShapes.some(s => checkCollision(snappedCandidate, s))
+        if (stillValid) {
+          updatedShape.x = snappedCandidate.x
+          updatedShape.y = snappedCandidate.y
+          node.x(updatedShape.x)
+          node.y(updatedShape.y)
+          if (snappedPos.x !== newX || snappedPos.y !== newY) {
+            snappedForPrincipal = { x: updatedShape.x, y: updatedShape.y }
+          }
+        }
+      }
+
+      if (snappedForPrincipal) {
+        lastValidSnapRef.current.set(shapeId, snappedForPrincipal)
+      }
     }
 
-    updateShape(shapeId, { x: updatedShape.x, y: updatedShape.y })
+    updateShape(shapeId, {
+      x: updatedShape.x,
+      y: updatedShape.y,
+      width: updatedShape.width,
+      height: updatedShape.height
+    })
   }
 
   return (

@@ -6,6 +6,7 @@ const { sanitizeInputsWrapper } = require('./middleware/validation.js')
 const furnitureRoutes = require('./routes/furnitureRoutes.js')
 const authRoutes = require('./routes/authRoutes.js')
 const materialRoutes = require('./routes/materialRoutes.js')
+const drawerTypeRoutes = require('./routes/drawerTypeRoutes.js')
 
 const app = express()
 
@@ -111,6 +112,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authLimiter, authRoutes)
 app.use('/api/furniture', furnitureLimiter, furnitureRoutes)
 app.use('/api/materials', materialRoutes)
+app.use('/api/drawer-types', drawerTypeRoutes)
 
 app.use((req, res) => {
   res.status(404).json({

@@ -20,8 +20,8 @@ function validateMaterialPayload(body) {
     return 'El nombre es obligatorio'
   }
 
-  if (!categoria || !['material', 'accesorio'].includes(categoria)) {
-    return 'La categoria debe ser material o accesorio'
+  if (!categoria || !['material', 'accesorio', 'tapa-canto'].includes(categoria)) {
+    return 'La categoria debe ser material, accesorio o tapa-canto'
   }
 
   if (payload.precio === undefined || payload.precio === null || Number.isNaN(Number(payload.precio))) {

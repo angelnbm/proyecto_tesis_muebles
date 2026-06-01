@@ -22,7 +22,7 @@ function resolveApiBaseUrl() {
   return configured
 }
 
-const API_URL = `${resolveApiBaseUrl()}/materials`
+const API_URL = `${resolveApiBaseUrl()}/drawer-types`
 
 async function parseResponse(response, operationName) {
   const rawBody = await response.text()
@@ -45,40 +45,39 @@ function authHeaders() {
   }
 }
 
-export async function listMaterials(filters = {}) {
-  const query = new URLSearchParams(filters).toString()
-  const res = await fetch(`${API_URL}${query ? `?${query}` : ''}`, {
+export async function listDrawerTypes() {
+  const res = await fetch(API_URL, {
     headers: authHeaders(),
   })
 
-  return parseResponse(res, 'loadMaterials')
+  return parseResponse(res, 'loadDrawerTypes')
 }
 
-export async function createMaterial(payload) {
+export async function createDrawerType(payload) {
   const res = await fetch(API_URL, {
     method: 'POST',
     headers: authHeaders(),
     body: JSON.stringify(payload),
   })
 
-  return parseResponse(res, 'createMaterial')
+  return parseResponse(res, 'createDrawerType')
 }
 
-export async function updateMaterial(id, payload) {
+export async function updateDrawerType(id, payload) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: 'PUT',
     headers: authHeaders(),
     body: JSON.stringify(payload),
   })
 
-  return parseResponse(res, 'updateMaterial')
+  return parseResponse(res, 'updateDrawerType')
 }
 
-export async function deleteMaterial(id) {
+export async function deleteDrawerType(id) {
   const res = await fetch(`${API_URL}/${id}`, {
     method: 'DELETE',
     headers: authHeaders(),
   })
 
-  return parseResponse(res, 'deleteMaterial')
+  return parseResponse(res, 'deleteDrawerType')
 }

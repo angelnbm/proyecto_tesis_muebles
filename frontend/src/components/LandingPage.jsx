@@ -201,6 +201,119 @@ const landingMarkup = `
   </div>
 </section>
 
+<section class="section--sm" data-screen-label="Flow">
+  <div class="shell">
+    <div class="flow">
+      <div class="flow__step">
+        <div class="flow__num">— paso 01</div>
+        <div class="flow__title">Bocetá</div>
+        <div class="flow__desc">Arrastrá módulos al canvas, definí medidas y separadores. Sin instalar nada.</div>
+      </div>
+      <div class="flow__step">
+        <div class="flow__num">— paso 02</div>
+        <div class="flow__title">Cubicá</div>
+        <div class="flow__desc">Una pestaña: Tablón distribuye cada pieza en planchas reales y reporta utilización.</div>
+      </div>
+      <div class="flow__step">
+        <div class="flow__num">— paso 03</div>
+        <div class="flow__title">Cotizá</div>
+        <div class="flow__desc">Exportá lista de cortes, costos por material y plano por pieza para el taller.</div>
+      </div>
+      <div class="flow__step">
+        <div class="flow__num">— paso 04</div>
+        <div class="flow__title">Cortá</div>
+        <div class="flow__desc">Mandá el corte a la sierra o a la CNC con el archivo listo. Cero re-medir.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="cubicacion" data-screen-label="Big stat">
+  <div class="shell">
+    <div class="bigstat">
+      <div class="bigstat__num">−<em>23</em>%</div>
+      <div class="bigstat__copy">
+        <h3>Menos plancha tirada al fondo del taller.</h3>
+        <p>El motor de empaquetamiento prueba miles de combinaciones para resolver el corte con mayor utilización posible. Comparado con cubicaciones manuales típicas, los talleres beta reducen un 23% el desperdicio promedio.</p>
+        <ul>
+          <li>Bin-packing 2D con rotación y agrupado por material</li>
+          <li>Soporta planchas múltiples y formatos personalizados</li>
+          <li>Respeta el grano de la madera cuando lo marcás</li>
+          <li>Exporta el patrón a DXF / SVG para CNC</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" data-screen-label="Cubicación detail">
+  <div class="shell">
+    <div class="s-head">
+      <div>
+        <div class="s-head__num">[ 02 / cubicación ]</div>
+        <h2>Cada pieza, en su <em>plancha</em>.</h2>
+      </div>
+      <p class="s-head__lede">Lo que antes era una hoja Excel y un boceto a mano, ahora es una sola visualización viva.</p>
+    </div>
+
+    <div class="detail">
+      <div class="detail__copy">
+        <h3>De la <em>idea</em> al corte, sin planilla.</h3>
+        <p>Tablón calcula automáticamente cuántas planchas necesitás y cómo se acomoda cada pieza. Cambiás una medida y la cubicación se reactualiza.</p>
+        <p>Esto sirve para cotizar más rápido, comprar la cantidad justa, y entregar un presupuesto que respeta el material disponible.</p>
+
+        <div class="detail__bullets">
+          <div class="b">
+            <div class="n">01</div>
+            <div><strong>Multi-material</strong><span>Distinguí MDF 18mm, MDF 9mm, melamina, contrachapado — cada uno se cubica por separado y suma costos.</span></div>
+          </div>
+          <div class="b">
+            <div class="n">02</div>
+            <div><strong>Costo por plancha</strong><span>Cargá tu precio actual y Tablón devuelve el costo total de materia prima del proyecto.</span></div>
+          </div>
+          <div class="b">
+            <div class="n">03</div>
+            <div><strong>Lista de cortes</strong><span>Exportá un PDF listo para el operario con cada pieza numerada y referenciada al plano.</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail__viz">
+        <div class="detail__viz-hd">
+          <span>plancha #1 / 250 × 183 cm · MDF 18mm</span>
+          <span class="pill">en vivo</span>
+        </div>
+        <div class="viz-sheet">
+          <div class="viz-cell r" style="grid-column:span 3;grid-row:span 2">100×70<br/>Fondo</div>
+          <div class="viz-cell t" style="grid-column:span 3;grid-row:span 2">100×70<br/>Fondo</div>
+          <div class="viz-cell t" style="grid-column:span 2;grid-row:span 3">45×100<br/>Divisores</div>
+          <div class="viz-cell r" style="grid-column:span 3;grid-row:span 2">100×70<br/>Fondo</div>
+          <div class="viz-cell t" style="grid-column:span 3;grid-row:span 2">100×70<br/>Estantes</div>
+          <div class="viz-cell r" style="grid-column:span 3">100×23<br/>Frente</div>
+          <div class="viz-cell r" style="grid-column:span 3">100×23<br/>Frente</div>
+          <div class="viz-cell e" style="grid-column:span 2;grid-row:span 1">desperdicio</div>
+          <span class="meta">250 × 183 cm</span>
+        </div>
+
+        <div class="viz-stats">
+          <div class="viz-stat green">
+            <div class="label">Utilización</div>
+            <div class="val">81.1%</div>
+          </div>
+          <div class="viz-stat orange">
+            <div class="label">Desperdicio</div>
+            <div class="val">18.9%</div>
+          </div>
+          <div class="viz-stat">
+            <div class="label">Costo plancha</div>
+            <div class="val" style="font-size:24px">US$ 84</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="section" id="biblioteca" data-screen-label="Biblioteca">
   <div class="shell">
     <div class="s-head">
@@ -230,6 +343,76 @@ const landingMarkup = `
         <div class="lib__thumb"></div>
         <div class="lib__name">Puerta abatible</div>
         <div class="lib__dim">50 × 100 cm</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section--sm" data-screen-label="Quote">
+  <div class="shell">
+    <div class="quote">
+      <div>
+        <q>Antes me tomaba media tarde sentarme con la calculadora a ver cuántas planchas pedir. Ahora lo veo mientras dibujo — y compro justo.</q>
+        <div class="quote__att">
+          <strong>Mariano Sotelo</strong>
+          Maestro carpintero · Taller La Astilla, Córdoba
+        </div>
+      </div>
+      <div class="quote__avatar"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="precios" data-screen-label="Precios">
+  <div class="shell">
+    <div class="s-head">
+      <div>
+        <div class="s-head__num">[ 04 / precios ]</div>
+        <h2>Pagás por proyecto, no por <em>asiento</em>.</h2>
+      </div>
+      <p class="s-head__lede">Sin contratos anuales. Cancelás cuando quieras. Cobramos por trabajo terminado, no por estar logueado.</p>
+    </div>
+
+    <div class="price">
+      <div class="price__card">
+        <div class="price__name">Banco</div>
+        <div class="price__amt">US$ 0<span class="per">/ siempre</span></div>
+        <p style="color:var(--color-paper-grey);font-size:14px">Para diseñar tu primer mueble y probar el flujo completo.</p>
+        <ul class="price__list">
+          <li>1 proyecto activo</li>
+          <li>Cubicación con marca de agua</li>
+          <li>Biblioteca de 5 piezas</li>
+          <li>Soporte por mail</li>
+        </ul>
+        <a href="#" class="btn btn--outline" data-login="true" style="margin-top:auto;justify-content:center">Empezar</a>
+      </div>
+
+      <div class="price__card featured">
+        <div class="price__name">Taller</div>
+        <div class="price__amt">US$ 19<span class="per">/ mes</span></div>
+        <p style="color:var(--color-paper-grey);font-size:14px">Para carpinteros y diseñadores que cotizan varios trabajos por mes.</p>
+        <ul class="price__list">
+          <li>Proyectos ilimitados</li>
+          <li>Cubicación multi-material</li>
+          <li>Biblioteca ilimitada</li>
+          <li>Exporta DXF / SVG / PDF</li>
+          <li>Lista de cortes para operario</li>
+        </ul>
+        <a href="#" class="btn btn--primary" data-login="true" style="margin-top:auto;justify-content:center">Empezar 14 días gratis</a>
+      </div>
+
+      <div class="price__card">
+        <div class="price__name">Fábrica</div>
+        <div class="price__amt">a medida<span class="per"></span></div>
+        <p style="color:var(--color-paper-grey);font-size:14px">Para fábricas con CNC, multi-equipo y catálogo propio.</p>
+        <ul class="price__list">
+          <li>Equipo y permisos</li>
+          <li>Conector CNC y SSO</li>
+          <li>Catálogo compartido</li>
+          <li>API y webhooks</li>
+          <li>Soporte dedicado</li>
+        </ul>
+        <a href="#" class="btn btn--outline" data-login="true" style="margin-top:auto;justify-content:center">Hablar con ventas</a>
       </div>
     </div>
   </div>

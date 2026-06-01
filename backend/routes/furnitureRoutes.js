@@ -26,6 +26,16 @@ function normalizeShapes(shapes) {
     numEstantes: shape.numEstantes !== undefined ? shape.numEstantes : null,
     numDivisores: shape.numDivisores !== undefined ? shape.numDivisores : null,
     numPuertas: shape.numPuertas !== undefined ? shape.numPuertas : null,
+    drawerTypeId: shape.drawerTypeId || undefined,
+    tapaCantoId: shape.tapaCantoId || undefined,
+    drawers: Array.isArray(shape.drawers)
+      ? shape.drawers
+        .filter((drawer) => drawer && drawer.drawerTypeId !== undefined && drawer.drawerTypeId !== null)
+        .map((drawer) => ({
+          index: Number(drawer.index),
+          drawerTypeId: drawer.drawerTypeId,
+        }))
+      : undefined,
   }))
 }
 

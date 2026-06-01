@@ -7,6 +7,8 @@ import MaterialLibrary from './components/MaterialLibrary.jsx'
 import AuthForm from './components/Login.jsx' 
 import LandingPage from './components/LandingPage.jsx'
 import { saveFurniture, loadFurniture, deleteFurniture, updateFurniture } from './services/api.js'
+import { listDrawerTypes } from './services/drawerTypes.js'
+import { listMaterials } from './services/materials.js'
 import { getToken, removeToken, verifyToken } from './services/auth.js'
 
 export default function App() {
@@ -19,8 +21,15 @@ export default function App() {
   const [activeTab, setActiveTab] = useState('diseno')
   const [selectedMaterial, setSelectedMaterial] = useState(null)
   const [designs, setDesigns] = useState([])
+  const [drawerTypes, setDrawerTypes] = useState([])
+  const [tapaCantos, setTapaCantos] = useState([])
+  const [materials, setMaterials] = useState([])
+  const [accessories, setAccessories] = useState([])
+  const [selectedAccessories, setSelectedAccessories] = useState([])
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 600)
   const [currentDesignId, setCurrentDesignId] = useState(null)
+  const [selectedTapaCantoId, setSelectedTapaCantoId] = useState(null)
+  const [selectedDrawerTypeId, setSelectedDrawerTypeId] = useState(null)
   const stageRef = useRef(null)
 
   const selected = shapes.find(s => s.id === selectedId) || null
@@ -71,6 +80,31 @@ export default function App() {
           // Error silencioso en carga de diseños
         })
     }
+  }, [user])
+
+  useEffect(() => {
+    if (!user) {
+      setDrawerTypes([])
+      setTapaCantos([])
+      setMaterials([])
+      return
+    }
+
+    listDrawerTypes()
+      .then(data => setDrawerTypes(Array.isArray(data) ? data : []))
+      .catch(() => setDrawerTypes([]))
+
+    listMaterials({ categoria: 'tapa-canto' })
+      .then(data => setTapaCantos(Array.isArray(data) ? data : []))
+      .catch(() => setTapaCantos([]))
+
+    listMaterials({})
+      .then(data => setMaterials(Array.isArray(data) ? data : []))
+      .catch(() => setMaterials([]))
+
+    listMaterials({ categoria: 'accesorio' })
+      .then(data => setAccessories(Array.isArray(data) ? data : []))
+      .catch(() => setAccessories([]))
   }, [user])
 
   // Guardar diseño actual con validaciones
@@ -465,11 +499,31 @@ export default function App() {
               shapes={shapes}
               exportStageImage={() => stageRef.current?.exportImage?.() || null}
               selectedMaterial={selectedMaterial}
+              drawerTypes={drawerTypes}
+              tapaCantos={tapaCantos}
+              materials={materials}
+              accessories={accessories}
+              selectedAccessories={selectedAccessories}
+              currentDesignName={designs.find(d => d._id === currentDesignId)?.nombre || ''}
+              selectedTapaCantoId={selectedTapaCantoId}
+              selectedDrawerTypeId={selectedDrawerTypeId}
             />
           )}
 
           {activeTab === 'biblioteca' && (
-            <MaterialLibrary onMaterialSelect={setSelectedMaterial} />
+            <MaterialLibrary
+              onMaterialSelect={setSelectedMaterial}
+              drawerTypes={drawerTypes}
+              onDrawerTypesChange={setDrawerTypes}
+              selectedTapaCantoId={selectedTapaCantoId}
+              onTapaCantoSelect={setSelectedTapaCantoId}
+              selectedDrawerTypeId={selectedDrawerTypeId}
+              onDrawerTypeSelect={setSelectedDrawerTypeId}
+              selected={selected}
+              onShapeUpdate={updateShape}
+              onAccessoriesChange={setSelectedAccessories}
+              selectedAccessories={selectedAccessories}
+            />
           )}
         </main>
       </div>
@@ -543,11 +597,31 @@ export default function App() {
             shapes={shapes}
             exportStageImage={() => stageRef.current?.exportImage?.() || null}
             selectedMaterial={selectedMaterial}
+            drawerTypes={drawerTypes}
+            tapaCantos={tapaCantos}
+            materials={materials}
+            accessories={accessories}
+            selectedAccessories={selectedAccessories}
+            currentDesignName={designs.find(d => d._id === currentDesignId)?.nombre || ''}
+            selectedTapaCantoId={selectedTapaCantoId}
+            selectedDrawerTypeId={selectedDrawerTypeId}
           />
         )}
 
         {activeTab === 'biblioteca' && (
-          <MaterialLibrary onMaterialSelect={setSelectedMaterial} />
+          <MaterialLibrary
+            onMaterialSelect={setSelectedMaterial}
+            drawerTypes={drawerTypes}
+            onDrawerTypesChange={setDrawerTypes}
+            selectedTapaCantoId={selectedTapaCantoId}
+            onTapaCantoSelect={setSelectedTapaCantoId}
+            selectedDrawerTypeId={selectedDrawerTypeId}
+            onDrawerTypeSelect={setSelectedDrawerTypeId}
+            selected={selected}
+            onShapeUpdate={updateShape}
+            onAccessoriesChange={setSelectedAccessories}
+            selectedAccessories={selectedAccessories}
+          />
         )}
       </main>
 
@@ -669,6 +743,10 @@ export default function App() {
             >
               🗑️ Eliminar
             </button>
+
+
+
+
           </div>
         )}
 

@@ -15,6 +15,10 @@ function resolveApiBaseUrl() {
     return `${configured}/api`
   }
 
+  if (!configured.startsWith('/')) {
+    return `/${configured}`
+  }
+
   return configured
 }
 

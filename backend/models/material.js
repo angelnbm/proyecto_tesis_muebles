@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const materialSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
-  categoria: { type: String, required: true, enum: ['material', 'accesorio'] },
+  categoria: { type: String, required: true, enum: ['material', 'accesorio', 'tapa-canto'] },
   precio: { type: Number, required: true, min: 0 },
   unidad: { type: String, default: 'unidad' },
   // Campos para materiales

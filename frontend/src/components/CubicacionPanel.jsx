@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import {
   generateStructuredCuts,
   optimizePiecesInBoards,
@@ -12,12 +12,12 @@ import {
  * 2. Visual board layout with packed pieces
  * 3. Statistics and summaries
  */
-export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial }) {
+export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial, drawerTypes, tapaCantos, materials, accessories, selectedAccessories, currentDesignName, selectedTapaCantoId, selectedDrawerTypeId }) {
   const [selectedModule, setSelectedModule] = useState(null)
   const [emailForm, setEmailForm] = useState({
     nombre_cliente: '',
     to_email: '',
-    nombre_proyecto: '',
+    nombre_proyecto: currentDesignName || '',
     precio_total: '',
     nombre_empresa: '',
   })
@@ -37,15 +37,16 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         allPieces: [],
         boards: [],
         statistics: null,
+        tapaCantoList: [],
       }
     }
 
     try {
-    const { byModule, allPieces } = generateStructuredCuts(shapes)
+    const { byModule, allPieces, tapaCantoList } = generateStructuredCuts(shapes, { drawerTypes, tapaCantos, selectedTapaCantoId, selectedDrawerTypeId })
     
     const { boards, statistics } = optimizePiecesInBoards(allPieces)
 
-      return { byModule, allPieces, boards, statistics }
+      return { byModule, allPieces, boards, statistics, tapaCantoList }
     } catch (error) {
       console.error('❌ Error in cubicacionData:', error)
       return {
@@ -53,11 +54,12 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         allPieces: [],
         boards: [],
         statistics: null,
+        tapaCantoList: [],
       }
     }
-  }, [shapes])
+  }, [shapes, drawerTypes, tapaCantos])
 
-  const { byModule, boards, statistics } = cubicacionData
+  const { byModule, boards, statistics, tapaCantoList = [] } = cubicacionData
 
 
   if (!shapes || shapes.length === 0) {
@@ -71,22 +73,36 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
   // Calculate total pieces (sum of all quantities)
   const totalPieces = cubicacionData.allPieces.reduce((sum, piece) => sum + piece.quantity, 0)
 
+  const materialMap = useMemo(() => {
+    const list = Array.isArray(materials) ? materials : []
+    return list.reduce((acc, item) => {
+      acc[item._id] = item
+      return acc
+    }, {})
+  }, [materials])
+
   // Consolidate pieces by size (width × height)
   const consolidatedPieces = useMemo(() => {
-    const map = new Map() // key: "width×height", value: { width, height, description[], qty, modules[] }
+    const map = new Map() // key: "material|width×height", value: { width, height, materialId, materialName, description[], qty, modules[] }
     
     cubicacionData.allPieces.forEach((piece) => {
-      const key = `${piece.width}×${piece.height}`
+      const materialId = piece.materialId || 'sin-material'
+      const key = `${materialId}|${piece.width}×${piece.height}`
       if (!map.has(key)) {
         map.set(key, {
           width: piece.width,
           height: piece.height,
+          materialId: piece.materialId || null,
+          materialName: piece.materialId ? (materialMap[piece.materialId]?.nombre || 'Sin material') : null,
           descriptions: new Set(),
           quantity: 0,
           modules: new Set(),
         })
       }
       const entry = map.get(key)
+      if (!entry.materialName && piece.materialId) {
+        entry.materialName = materialMap[piece.materialId]?.nombre || 'Sin material'
+      }
       entry.descriptions.add(piece.description)
       entry.quantity += piece.quantity
       entry.modules.add(piece.moduleName)
@@ -94,50 +110,62 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     
     return Array.from(map.values())
       .sort((a, b) => b.quantity - a.quantity) // Sort by quantity descending
-  }, [cubicacionData.allPieces])
+  }, [cubicacionData.allPieces, materialMap])
 
-  // Calculate hardware requirements
+  // Accesorios seleccionados con auto-cálculo de cantidades
   const hardwareList = useMemo(() => {
-    const hardware = {
-      tiradores: 0,      // drawer pulls
-      visagras: 0,       // hinges
-      correderas: 0,     // slides
+    if (!selectedAccessories || selectedAccessories.length === 0) {
+      return {}
     }
 
+    // Contar puertas y cajones de todos los módulos
+    let totalPuertas = 0
+    let totalCajones = 0
     shapes.forEach((shape) => {
-      switch (shape.type) {
-        case 'cajonera': {
-          const numCajones = shape.numCajones && shape.numCajones > 0 ? shape.numCajones : 3
-          // 1 drawer pull per drawer front (some cajoneras have 2 fronts per drawer)
-          hardware.tiradores += numCajones
-          // 1 pair of slides (2 units) per drawer
-          hardware.correderas += numCajones * 2
-          break
-        }
-        case 'puerta': {
-          // 1 handle per door
-          hardware.tiradores += 1
-          // 2 hinges per door
-          hardware.visagras += 2
-          break
-        }
-        case 'modular': {
-          const numPuertas = shape.numPuertas !== undefined && shape.numPuertas !== null ? shape.numPuertas : 0
-          if (numPuertas > 0) {
-            // 1 handle per door
-            hardware.tiradores += numPuertas
-            // 2 hinges per door
-            hardware.visagras += numPuertas * 2
-          }
-          break
-        }
-        default:
-          break
+      if (shape.type === 'puerta') totalPuertas++
+      if (shape.type === 'cajonera') {
+        totalCajones += shape.numCajones || 3
+      }
+      if (shape.type === 'modular') {
+        totalPuertas += shape.numPuertas || 0
       }
     })
 
-    return hardware
-  }, [shapes])
+    const accessoryMap = {}
+    if (Array.isArray(accessories)) {
+      accessories.forEach(a => { accessoryMap[a._id] = a })
+    }
+
+    const result = {}
+    selectedAccessories.forEach(({ materialId, quantity }) => {
+      const acc = accessoryMap[materialId]
+      if (!acc) return
+
+      // Auto-cálculo según tipo de accesorio
+      let autoQty = 0
+      if (acc.accesorio_tipo === 'tirador') {
+        autoQty = totalPuertas + totalCajones
+      } else if (acc.accesorio_tipo === 'corredera') {
+        autoQty = totalCajones * 2
+      } else if (acc.accesorio_tipo === 'visagra') {
+        autoQty = totalPuertas * 2
+      }
+
+      // Usar cantidad manual si el usuario la seteó, sino auto-cálculo
+      const finalQty = quantity > 0 ? quantity : autoQty
+      if (finalQty > 0) {
+        result[materialId] = {
+          nombre: acc.nombre,
+          color: acc.color || '',
+          precio: acc.precio,
+          cantidad: finalQty,
+          total: acc.precio * finalQty,
+          accesorio_tipo: acc.accesorio_tipo || '',
+        }
+      }
+    })
+    return result
+  }, [selectedAccessories, accessories, shapes])
 
   const boardArea = BOARD_CONFIGS.melamina.width * BOARD_CONFIGS.melamina.height
   const boardsCost = useMemo(() => {
@@ -146,25 +174,54 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     if (Number.isNaN(unitPrice)) return null
     return unitPrice * boards.length
   }, [selectedMaterial, boards])
+
+  // Costo total: planchas + accesorios + tapa-canto
+  const totalCost = useMemo(() => {
+    let total = 0
+    if (boardsCost) total += boardsCost
+    Object.values(hardwareList).forEach(item => { total += item.total })
+    tapaCantoList.forEach(item => { total += item.totalCost })
+    return total
+  }, [boardsCost, hardwareList, tapaCantoList])
+
+  // Auto-poblar form cuando cambian los datos
+  useEffect(() => {
+    setEmailForm(prev => ({
+      ...prev,
+      nombre_proyecto: currentDesignName || prev.nombre_proyecto,
+      precio_total: totalCost > 0 ? totalCost.toFixed(2) : '',
+    }))
+  }, [currentDesignName, totalCost])
+
   const boardsSummary = useMemo(() => {
     if (!boards || boards.length === 0) return 'Sin planchas calculadas'
+    const matNombre = selectedMaterial?.nombre || 'Material'
+    const matColor = selectedMaterial?.color || ''
+    const colorStr = matColor ? ` (${matColor})` : ''
+    const cant = boards.length
+    return `${cant} plancha${cant > 1 ? 's' : ''} de ${matNombre}${colorStr}`
+  }, [boards, selectedMaterial])
 
-    return boards
-      .map((board) => {
-        const percent = boardArea > 0
-          ? ((board.usedArea / boardArea) * 100).toFixed(1)
-          : '0.0'
-        const waste = (100 - Number(percent)).toFixed(1)
-        return `Plancha #${board.id}: ${percent}% uso / ${waste}% desperdicio`
+  const extrasSummary = useMemo(() => {
+    let parts = []
+
+    const accEntries = Object.entries(hardwareList)
+    if (accEntries.length > 0) {
+      parts.push('Accesorios:')
+      accEntries.forEach(([id, item]) => {
+        parts.push(`  ${item.nombre}${item.color ? ` (${item.color})` : ''}: ${item.cantidad} u x $${item.precio.toFixed(2)}/u = $${item.total.toFixed(2)}`)
       })
-      .join('\n')
-  }, [boards, boardArea])
+    }
 
-  const extrasSummary = useMemo(() => (
-    `Tiradores: ${hardwareList.tiradores}\n` +
-    `Visagras: ${hardwareList.visagras}\n` +
-    `Correderas: ${hardwareList.correderas}`
-  ), [hardwareList])
+    if (tapaCantoList.length > 0) {
+      parts.push('Tapa canto:')
+      tapaCantoList.forEach((item) => {
+        parts.push(`  ${item.materialName}${item.color ? ` (${item.color})` : ''}: ${item.linealMeters.toFixed(2)}m x $${item.precio.toFixed(2)}/m = $${item.totalCost.toFixed(2)}`)
+      })
+    }
+
+    return parts.join('\n') || 'Sin accesorios seleccionados'
+  }, [hardwareList, tapaCantoList])
 
   const handleEmailFieldChange = (field) => (event) => {
     setEmailForm((prev) => ({ ...prev, [field]: event.target.value }))
@@ -193,10 +250,10 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
       return
     }
 
-    if (!emailForm.nombre_cliente.trim() || !emailForm.nombre_proyecto.trim()) {
+    if (!emailForm.nombre_cliente.trim()) {
       setEmailStatus({
         type: 'error',
-        message: 'Completá el nombre del cliente y del proyecto.',
+        message: 'Completá el nombre del cliente.',
       })
       return
     }
@@ -392,6 +449,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
               <tr>
                 <th>Dimensiones (cm)</th>
                 <th>Cantidad</th>
+                <th>Material</th>
                 <th>Descripciones</th>
               </tr>
             </thead>
@@ -400,6 +458,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
                 <tr key={idx}>
                   <td className="dimensions">{piece.width} × {piece.height}</td>
                   <td className="quantity">{piece.quantity}</td>
+                  <td className="material">{piece.materialName || '-'}</td>
                   <td className="descriptions">{Array.from(piece.descriptions).join(', ')}</td>
                 </tr>
               ))}
@@ -503,30 +562,38 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         </form>
       </section>
 
-      {/* SECTION 6: HARDWARE LIST */}
-      <section className="cubicacion-section cubicacion-hardware">
-        <h2>Otros materiales</h2>
-        
-        <div className="hardware-grid">
-          <div className="hardware-item">
-            <div className="hardware-label">Tiradores</div>
-            <div className="hardware-value">{hardwareList.tiradores}</div>
-            <div className="hardware-desc">Para puertas y cajones</div>
+      {/* SECTION 6: ACCESORIOS */}
+      {Object.keys(hardwareList).length > 0 && (
+        <section className="cubicacion-section cubicacion-hardware">
+          <h2>Accesorios</h2>
+          <div className="hardware-grid">
+            {Object.entries(hardwareList).map(([id, item]) => (
+              <div key={id} className="hardware-item">
+                <div className="hardware-label">{item.nombre}{item.color ? ` (${item.color})` : ''}</div>
+                <div className="hardware-value">{item.cantidad} u</div>
+                <div className="hardware-desc">${item.precio.toFixed(2)}/u · Total: ${item.total.toFixed(2)}</div>
+              </div>
+            ))}
           </div>
+        </section>
+      )}
 
-          <div className="hardware-item">
-            <div className="hardware-label">Visagras</div>
-            <div className="hardware-value">{hardwareList.visagras}</div>
-            <div className="hardware-desc">Para puertas (2 por puerta)</div>
-          </div>
+      {/* SECTION 7: TAPA-CANTO */}
+      {tapaCantoList.length > 0 && (
+        <section className="cubicacion-section cubicacion-hardware">
+          <h2>Tapa canto</h2>
 
-          <div className="hardware-item">
-            <div className="hardware-label">Correderas</div>
-            <div className="hardware-value">{hardwareList.correderas}</div>
-            <div className="hardware-desc">Para cajones (pares)</div>
+          <div className="hardware-grid">
+            {tapaCantoList.map((item, idx) => (
+              <div key={idx} className="hardware-item">
+                <div className="hardware-label">{item.materialName}{item.color ? ` (${item.color})` : ''}</div>
+                <div className="hardware-value">{item.linealMeters.toFixed(2)} m</div>
+                <div className="hardware-desc">${item.precio.toFixed(2)}/m · Total: ${item.totalCost.toFixed(2)}</div>
+              </div>
+            ))}
           </div>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   )
 }

@@ -24,6 +24,7 @@ export const BOARD_CONFIGS = {
  * @property {number} height - Alto en CM
  * @property {number} quantity - Cantidad necesaria
  * @property {number} area - Área en CM² (calculada)
+ * @property {string} [materialId] - ID de material si aplica
  */
 
 /**
@@ -31,9 +32,45 @@ export const BOARD_CONFIGS = {
  * @param {Array} shapes - Array de shapes del canvas
  * @returns {Object} { byModule: Map, allPieces: Array }
  */
-export function generateStructuredCuts(shapes) {
+export function generateStructuredCuts(shapes, options = {}) {
   const byModule = new Map() // Map<moduleId, { type, name, pieces: [] }>
   const allPieces = []
+  const drawerTypes = Array.isArray(options.drawerTypes) ? options.drawerTypes : []
+  const drawerTypeMap = new Map(drawerTypes.map((item) => [item._id, item]))
+
+  const roundToTenth = (value) => Math.round(value * 10) / 10
+
+  const tapaCantos = Array.isArray(options.tapaCantos) ? options.tapaCantos : []
+  const tapaCantoMap = new Map(tapaCantos.map((item) => [item._id, item]))
+  const tapaCantoAccum = new Map()
+  const defaultTapaCantoId = tapaCantos.length > 0 ? tapaCantos[0]._id : null
+  const defaultDrawerTypeId = drawerTypes.length > 0 ? drawerTypes[0]._id : null
+  const { selectedTapaCantoId, selectedDrawerTypeId } = options
+
+  const addPiece = (target, piece) => {
+    target.push({
+      ...piece,
+      area: piece.width * piece.height,
+    })
+  }
+
+  const addTapaCanto = (tapaCantoId, linealMetersCm) => {
+    const effectiveId = selectedTapaCantoId || tapaCantoId || defaultTapaCantoId
+    if (!effectiveId) return
+    const material = tapaCantoMap.get(effectiveId)
+    if (!material) return
+    const linealMeters = linealMetersCm / 100
+    if (!tapaCantoAccum.has(effectiveId)) {
+      tapaCantoAccum.set(effectiveId, {
+        materialId: effectiveId,
+        materialName: material.nombre,
+        color: material.color || null,
+        precio: Number(material.precio) || 0,
+        linealMeters: 0,
+      })
+    }
+    tapaCantoAccum.get(effectiveId).linealMeters += linealMeters
+  }
 
   // First pass: count how many of each type
   const typeCount = {}
@@ -74,31 +111,91 @@ export function generateStructuredCuts(shapes) {
     switch (shape.type) {
       case 'cajonera': {
         const numCajones = shape.numCajones && shape.numCajones > 0 ? shape.numCajones : 3
-        const drawerHeight = Math.round(h / numCajones)
+        const drawerFrontHeight = Math.round(h / numCajones)
+        const internalWidth = Math.max(0, roundToTenth(w - 2.6))
+        const drawerOverrides = Array.isArray(shape.drawers) ? shape.drawers : []
+        const drawerOverrideMap = new Map(
+          drawerOverrides
+            .filter((drawer) => drawer && drawer.index != null)
+            .map((drawer) => [drawer.index, drawer.drawerTypeId])
+        )
 
-        modulePieces.push(
-          {
-            description: `Frente`,
-            width: w,
+        addPiece(modulePieces, {
+          description: 'Frente',
+          width: w,
+          height: drawerFrontHeight,
+          quantity: numCajones,
+        })
+        addPiece(modulePieces, {
+          description: 'Laterales',
+          width: d,
+          height: h,
+          quantity: 2,
+        })
+        addPiece(modulePieces, {
+          description: 'Fondo',
+          width: w,
+          height: d,
+          quantity: 1,
+        })
+
+        addTapaCanto(shape.tapaCantoId, w)
+
+        for (let index = 1; index <= numCajones; index++) {
+          const drawerTypeId = drawerOverrideMap.get(index) || selectedDrawerTypeId || shape.drawerTypeId || defaultDrawerTypeId
+          const drawerType = drawerTypeMap.get(drawerTypeId)
+
+          if (!drawerType) {
+            continue
+          }
+
+          const heightDiscountPct = Number(drawerType.heightDiscountPct) || 0
+          const drawerHeight = roundToTenth(
+            drawerFrontHeight * (1 - heightDiscountPct / 100)
+          )
+
+        addPiece(modulePieces, {
+          description: 'Laterales cajon',
+          width: d,
+          height: drawerHeight,
+          quantity: 2,
+          materialId: drawerType.laterales,
+        })
+          addPiece(modulePieces, {
+            description: 'Frente interno cajon',
+            width: internalWidth,
             height: drawerHeight,
-            quantity: numCajones,
-            area: w * drawerHeight,
-          },
-          {
-            description: `Laterales`,
-            width: d,
-            height: h,
-            quantity: 2,
-            area: d * h,
-          },
-          {
-            description: `Fondo`,
-            width: w,
+            quantity: 1,
+            materialId: drawerType.frenteInterno,
+          })
+          addPiece(modulePieces, {
+            description: 'Trasera cajon',
+            width: internalWidth,
+            height: drawerHeight,
+            quantity: 1,
+            materialId: drawerType.trasera,
+          })
+          addPiece(modulePieces, {
+            description: 'Fondo cajon',
+            width: internalWidth,
             height: d,
             quantity: 1,
-            area: w * d,
+            materialId: drawerType.fondo,
+          })
+
+          if (drawerType.hasRefuerzo) {
+            addPiece(modulePieces, {
+              description: 'Refuerzo cajon',
+              width: internalWidth,
+              height: drawerHeight,
+              quantity: 1,
+              materialId: drawerType.refuerzo,
+            })
           }
-        )
+
+          addTapaCanto(shape.tapaCantoId, 2 * internalWidth + 2 * drawerHeight)
+          addTapaCanto(shape.tapaCantoId, d * 2)
+        }
         break
       }
 
@@ -125,6 +222,8 @@ export function generateStructuredCuts(shapes) {
           }
         )
 
+        addTapaCanto(shape.tapaCantoId, w)
+
         if (numEstantes > 0) {
           modulePieces.push({
             description: `Estantes`,
@@ -133,6 +232,7 @@ export function generateStructuredCuts(shapes) {
             quantity: numEstantes,
             area: w * d,
           })
+          addTapaCanto(shape.tapaCantoId, w * numEstantes)
         }
 
         if (numDivisores > 0) {
@@ -155,6 +255,7 @@ export function generateStructuredCuts(shapes) {
             quantity: numPuertas,
             area: puertaWidth * h,
           })
+          addTapaCanto(shape.tapaCantoId, (2 * puertaWidth + 2 * h) * numPuertas)
         }
         break
       }
@@ -167,6 +268,7 @@ export function generateStructuredCuts(shapes) {
           quantity: 1,
           area: w * d,
         })
+        addTapaCanto(shape.tapaCantoId, w)
         break
 
       case 'cubierta':
@@ -187,6 +289,7 @@ export function generateStructuredCuts(shapes) {
           quantity: 1,
           area: w * h,
         })
+        addTapaCanto(shape.tapaCantoId, 2 * w + 2 * h)
         break
 
       case 'base':
@@ -230,7 +333,13 @@ export function generateStructuredCuts(shapes) {
     })
   })
 
-  return { byModule, allPieces }
+  const tapaCantoList = Array.from(tapaCantoAccum.values()).map((item) => ({
+    ...item,
+    linealMeters: Math.round(item.linealMeters * 100) / 100,
+    totalCost: Math.round(item.linealMeters * item.precio * 100) / 100,
+  }))
+
+  return { byModule, allPieces, tapaCantoList }
 }
 
 /**
