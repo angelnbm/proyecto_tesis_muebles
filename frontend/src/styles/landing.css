@@ -95,6 +95,7 @@
 .landing-page .hero__cta{display:flex;gap:12px;align-items:center;margin-top:32px;flex-wrap:wrap}
 .landing-page .hero__meta{display:flex;gap:24px;align-items:center;margin-top:48px;font-family:var(--font-mono);font-size:12px;color:var(--color-faded-grey);flex-wrap:wrap}
 .landing-page .hero__meta strong{color:var(--color-canvas-white);font-weight:500}
+.landing-page .hero__meta .meta-sep{color:var(--color-slate-border)}
 
 .landing-page .window{
   background:var(--color-deep-space);
@@ -343,4 +344,129 @@
   .landing-page .feat,.landing-page .lib,.landing-page .footer__row{grid-template-columns:1fr}
   .landing-page .shell{padding:0 20px}
   .landing-page .section{padding:64px 0}
+}
+
+/* ======================================================
+   MOBILE RESPONSIVE — COMPLETO (≤ 640 px)
+   ====================================================== */
+@media (max-width:640px){
+
+  /* ---- nav ---- */
+  .landing-page .nav__inner{height:54px}
+  .landing-page .brand{font-size:18px}
+  /* Ocultar el link "Ingresar" en mobile, mantener solo el botón primario */
+  .landing-page .nav__cta a:first-child{display:none}
+  .landing-page .nav__cta .btn--primary{padding:8px 14px;font-size:13px}
+
+  /* ---- shell / secciones ---- */
+  .landing-page .shell{padding:0 16px}
+  .landing-page .section{padding:56px 0}
+  .landing-page .section--sm{padding:40px 0}
+
+  /* ---- hero ---- */
+  .landing-page .hero{padding:40px 0 0}
+  .landing-page .hero__eyebrow{font-size:11px;padding:5px 10px}
+  .landing-page .hero h1{font-size:clamp(36px,12vw,64px);margin-top:16px;max-width:100%}
+  .landing-page .hero__sub{font-size:15px;margin-top:16px;max-width:100%;line-height:1.5}
+  .landing-page .hero__cta{margin-top:20px;flex-direction:column;align-items:flex-start;gap:10px}
+  .landing-page .hero__cta .btn{width:100%;justify-content:center}
+  .landing-page .hero__meta{flex-direction:column;gap:8px;margin-top:28px;align-items:flex-start;font-size:11px}
+  /* Ocultar separadores "|" en mobile */
+  .landing-page .hero__meta .meta-sep{display:none}
+
+  /* ---- preview de la app (window) — scroll horizontal ---- */
+  .landing-page #producto{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px 8px;margin-top:48px}
+  .landing-page .window{min-width:600px;border-radius:8px}
+  .landing-page .window__body{min-height:340px;grid-template-columns:76px 1fr}
+  .landing-page .app-canvas{min-height:240px}
+  .landing-page .window__addr{font-size:10px;padding:3px 10px}
+
+  /* ---- encabezados de sección ---- */
+  .landing-page .s-head{gap:16px;margin-bottom:28px;padding-bottom:16px}
+  .landing-page .s-head h2{font-size:clamp(32px,9vw,52px)}
+  .landing-page .s-head__lede{justify-self:start;max-width:100%;font-size:15px}
+
+  /* ---- feature cards ---- */
+  .landing-page .feat{grid-template-columns:1fr;gap:12px}
+  .landing-page .feat__card{min-height:auto;padding:20px}
+  .landing-page .feat__card .glyph{height:110px}
+  .landing-page .feat__card h3{font-size:20px}
+
+  /* ---- flow pasos ---- */
+  .landing-page .flow{grid-template-columns:1fr;gap:0;padding-top:20px}
+  .landing-page .flow__step{padding-right:0;padding-bottom:24px;border-bottom:1px solid var(--color-slate-border);margin-bottom:0}
+  .landing-page .flow__step:last-child{border-bottom:none;padding-bottom:0}
+  .landing-page .flow__step:not(:last-child)::after{content:"↓";position:static;display:block;margin-top:16px;font-size:16px}
+  .landing-page .flow__title{font-size:18px}
+
+  /* ---- big stat ---- */
+  .landing-page .bigstat{padding:24px;gap:20px}
+  .landing-page .bigstat__num{font-size:clamp(72px,20vw,120px)}
+  .landing-page .bigstat__copy h3{font-size:24px;margin-bottom:12px}
+  .landing-page .bigstat__copy p{font-size:14px;margin-bottom:16px}
+  .landing-page .bigstat__copy ul{font-size:13px;gap:6px}
+
+  /* ---- detalle cubicación ---- */
+  .landing-page .detail{gap:32px}
+  .landing-page .detail__copy h3{font-size:32px;margin-bottom:16px}
+  .landing-page .detail__copy p{font-size:15px}
+  .landing-page .detail__bullets .b{padding:12px;gap:10px}
+  .landing-page .detail__viz{padding:14px;gap:10px}
+  .landing-page .viz-stats{grid-template-columns:1fr 1fr}
+  .landing-page .viz-stat .val{font-size:26px}
+  .landing-page .viz-stat{padding:10px}
+  .landing-page .viz-sheet{grid-auto-rows:40px}
+
+  /* ---- biblioteca cards ---- */
+  .landing-page .lib{grid-template-columns:1fr 1fr;gap:10px}
+  .landing-page .lib__card{padding:12px}
+  .landing-page .lib__name{font-size:13px}
+
+  /* ---- quote ---- */
+  .landing-page .quote{padding:24px;gap:20px;grid-template-columns:1fr}
+  .landing-page .quote q{font-size:22px}
+  .landing-page .quote__att{font-size:13px;margin-top:12px}
+  .landing-page .quote__avatar{width:72px;height:72px;border-radius:50%;margin:0 auto}
+
+  /* ---- precios ---- */
+  .landing-page .price{gap:12px}
+  .landing-page .price__card{padding:24px;gap:12px}
+  .landing-page .price__amt{font-size:52px}
+  .landing-page .price__name{font-size:20px}
+
+  /* ---- CTA final ---- */
+  .landing-page .cta{padding:48px 20px;margin-top:32px}
+  .landing-page .cta h2{font-size:clamp(36px,10vw,60px)}
+  .landing-page .cta p{font-size:16px;max-width:100%;margin-top:16px}
+  .landing-page .cta__btns{flex-direction:column;align-items:stretch;gap:10px;margin-top:24px}
+  .landing-page .cta__btns .btn{width:100%;justify-content:center}
+
+  /* ---- footer ---- */
+  .landing-page .footer{padding:32px 0 20px;margin-top:32px}
+  .landing-page .footer__row{grid-template-columns:1fr 1fr;gap:24px;margin-bottom:28px}
+  .landing-page .footer__col h5{margin-bottom:8px}
+  .landing-page .footer__col ul{gap:6px}
+  .landing-page .footer__bottom{flex-direction:column;gap:6px;text-align:center}
+  /* Mantener la primera columna del footer en ancho completo */
+  .landing-page .footer__col:first-child{grid-column:1/3}
+
+  /* ---- app-cub panel ---- */
+  .landing-page .app-cub{grid-template-columns:1fr}
+  .landing-page .app-cub__title{grid-column:auto}
+}
+
+/* ======================================================
+   EXTRA SMALL (≤ 480 px)
+   ====================================================== */
+@media (max-width:480px){
+  .landing-page .hero h1{font-size:clamp(32px,11vw,48px)}
+  .landing-page .bigstat__num{font-size:68px}
+  .landing-page .viz-stats{grid-template-columns:1fr}
+  .landing-page .lib{grid-template-columns:1fr 1fr}
+  .landing-page .footer__row{grid-template-columns:1fr}
+  .landing-page .footer__col:first-child{grid-column:auto}
+  .landing-page .price__amt{font-size:44px}
+  .landing-page .cta h2{font-size:clamp(30px,10vw,48px)}
+  .landing-page .hero__meta{display:none}
+  .landing-page .btn{font-size:13px;padding:10px 14px}
 }

@@ -47,9 +47,9 @@ const landingMarkup = `
 
     <div class="hero__meta">
       <span><strong>+12,400</strong> piezas cubicadas esta semana</span>
-      <span style="color:var(--color-slate-border)">|</span>
+      <span class="meta-sep">|</span>
       <span><strong>81.1%</strong> utilización promedio de plancha</span>
-      <span style="color:var(--color-slate-border)">|</span>
+      <span class="meta-sep">|</span>
       <span><strong>0</strong> instalación · navegador</span>
     </div>
 
