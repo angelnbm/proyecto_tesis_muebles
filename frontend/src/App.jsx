@@ -238,20 +238,21 @@ export default function App() {
         alignItems: 'center',
         justifyContent: 'center',
         height: '100vh',
-        backgroundColor: '#1e1e1e',
-        color: '#e8eaed',
+        backgroundColor: 'var(--color-ink-black)',
+        color: 'var(--color-canvas-white)',
         flexDirection: 'column',
-        gap: '16px'
+        gap: '16px',
+        fontFamily: 'var(--font-matter)',
       }}>
         <div style={{
-          width: '50px',
-          height: '50px',
-          border: '4px solid #4A90E2',
-          borderTop: '4px solid transparent',
+          width: '40px',
+          height: '40px',
+          border: '2px solid var(--color-slate-border)',
+          borderTop: '2px solid var(--color-ideation-blue)',
           borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
+          animation: 'spin 0.8s linear infinite'
         }}></div>
-        <p>Cargando...</p>
+        <p style={{ color: 'var(--color-faded-grey)', fontSize: '14px' }}>Cargando...</p>
         <style>{`
           @keyframes spin {
             0% { transform: rotate(0deg); }
@@ -537,9 +538,19 @@ export default function App() {
     <div className="app-root">
       <aside className="left-toolbar">
         <div>
-          <p style={{ color: '#9aa0a6', fontSize: '12px', marginBottom: '4px' }}>Usuario:</p>
-          <p style={{ color: '#e8eaed', fontWeight: 'bold', marginBottom: '8px' }}>{user.nombre}</p>
-          <button onClick={handleLogout}>
+          <p style={{ color: 'var(--color-faded-grey)', fontSize: '11px', marginBottom: '4px' }}>Usuario</p>
+          <p style={{ color: 'var(--color-canvas-white)', fontWeight: '500', marginBottom: '10px', fontSize: '13px' }}>{user.nombre}</p>
+          <button onClick={handleLogout} style={{
+            width: '100%',
+            padding: '6px 12px',
+            background: 'transparent',
+            color: 'var(--color-faded-grey)',
+            border: '1px solid var(--color-slate-border)',
+            borderRadius: 'var(--radius-buttons)',
+            fontSize: '12px',
+            cursor: 'pointer',
+            transition: 'all 0.2s',
+          }}>
             Cerrar Sesión
           </button>
         </div>
@@ -630,8 +641,8 @@ export default function App() {
           <div className="sidebar-measures">
             <h3>Editando: {selected.type}</h3>
             {currentDesignId && (
-              <p style={{ fontSize: '10px', color: '#9aa0a6', marginBottom: '8px' }}>
-                Diseño: {designs.find(d => d._id === currentDesignId)?.nombre || 'Sin nombre'}
+              <p style={{ fontSize: '10px', color: 'var(--color-faded-grey)', marginBottom: '8px' }}>
+                {designs.find(d => d._id === currentDesignId)?.nombre || 'Sin nombre'}
               </p>
             )}
             <div className="sidebar-measure-fields">
