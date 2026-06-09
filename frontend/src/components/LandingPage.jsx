@@ -33,7 +33,7 @@ const landingMarkup = `
     <h1>
       <span class="ink">Diseña el</span><br/>
       <span class="ink">mueble.</span> <span class="accent">Calcula</span><br/>
-      <span class="ink">el </span><span class="strike">material</span><span class="ink">.</span>
+      <span class="ink">la </span><span class="strike">madera</span><span class="ink">.</span>
     </h1>
 
     <p class="hero__sub">
@@ -65,6 +65,7 @@ const landingMarkup = `
           <div style="width:60px"></div>
         </div>
         <div class="window__body" id="appBody">
+          <!-- sidebar -->
           <aside class="app-side">
             <div class="app-side__user">
               Usuario:
@@ -79,12 +80,13 @@ const landingMarkup = `
             </div>
           </aside>
 
+          <!-- main -->
           <main class="app-main">
             <div class="app-tabs">
               <div class="app-tabs__group">
-                <button class="app-tab app-tab--active">Diseño</button>
-                <button class="app-tab">Cubicación</button>
-                <button class="app-tab">Biblioteca</button>
+                <button class="app-tab" data-tab="diseno">Diseño</button>
+                <button class="app-tab" data-tab="cubicacion">Cubicación</button>
+                <button class="app-tab" data-tab="biblioteca">Biblioteca</button>
               </div>
               <div class="app-tabs__actions">
                 <button class="app-actbtn">＋ Nuevo</button>
@@ -92,7 +94,8 @@ const landingMarkup = `
               </div>
             </div>
 
-            <div class="app-canvas">
+            <!-- DISEÑO PANEL -->
+            <div class="app-canvas" data-panel="diseno">
               <div class="app-canvas__title">Canvas de diseño</div>
               <div class="app-canvas__zoom">
                 <button>+</button>
@@ -107,14 +110,100 @@ const landingMarkup = `
                 <div class="fpiece fpiece--base"></div>
               </div>
             </div>
+
+            <!-- CUBICACIÓN PANEL -->
+            <div class="app-cub" data-panel="cubicacion" style="display:none">
+              <div class="app-cub__title">Visualización de empaquetamiento en planchas</div>
+              <div class="plancha">
+                <div class="plancha__hd">
+                  <strong>Plancha #1</strong>
+                  <div class="stats">Util: <b>81.1%</b> · Desp: <em>18.9%</em></div>
+                </div>
+                <div class="plancha__sheet" style="grid-template-columns:repeat(6,1fr);grid-auto-rows:38px">
+                  <div class="plancha__cell cell--red" style="grid-column:span 2;grid-row:span 2">100×70<br/>Fondo</div>
+                  <div class="plancha__cell cell--teal" style="grid-column:span 2;grid-row:span 2">100×70<br/>Fondo</div>
+                  <div class="plancha__cell cell--teal" style="grid-column:span 2;grid-row:span 3">45×100<br/>Divisores</div>
+                  <div class="plancha__cell cell--red" style="grid-column:span 2;grid-row:span 2">100×70<br/>Fondo</div>
+                  <div class="plancha__cell cell--teal" style="grid-column:span 2;grid-row:span 2">100×70<br/>Estantes</div>
+                  <div class="plancha__cell cell--red" style="grid-column:span 2">100×23<br/>Frente</div>
+                  <div class="plancha__cell cell--red" style="grid-column:span 2">100×23<br/>Frente</div>
+                </div>
+                <div class="plancha__legend">
+                  <div class="row"><span class="sw" style="background:#e9756a"></span>Fondo (100×70 cm)</div>
+                  <div class="row"><span class="sw" style="background:#e9756a"></span>Frente (100×23 cm)</div>
+                  <div class="row"><span class="sw" style="background:#4ec5b3"></span>Estantes (100×70 cm)</div>
+                </div>
+              </div>
+              <div class="plancha">
+                <div class="plancha__hd">
+                  <strong>Plancha #2</strong>
+                  <div class="stats">Util: <b>78.4%</b> · Desp: <em>21.6%</em></div>
+                </div>
+                <div class="plancha__sheet" style="grid-template-columns:repeat(6,1fr);grid-auto-rows:38px">
+                  <div class="plancha__cell cell--teal" style="grid-column:span 2;grid-row:span 2">100×70<br/>Estantes</div>
+                  <div class="plancha__cell cell--teal" style="grid-column:span 2;grid-row:span 2">100×70<br/>Estantes</div>
+                  <div class="plancha__cell cell--teal" style="grid-column:span 2;grid-row:span 3">45×100<br/>Divisores</div>
+                  <div class="plancha__cell cell--red" style="grid-column:span 2;grid-row:span 2">100×70<br/>Fondo</div>
+                  <div class="plancha__cell cell--teal" style="grid-column:span 2;grid-row:span 2">100×70<br/>Estantes</div>
+                  <div class="plancha__cell cell--red" style="grid-column:span 2">100×23<br/>Frente</div>
+                  <div class="plancha__cell cell--red" style="grid-column:span 2">100×23<br/>Frente</div>
+                </div>
+                <div class="plancha__legend">
+                  <div class="row"><span class="sw" style="background:#4ec5b3"></span>Estantes (100×70 cm)</div>
+                  <div class="row"><span class="sw" style="background:#e9756a"></span>Fondo (100×70 cm)</div>
+                  <div class="row"><span class="sw" style="background:#4ec5b3"></span>Divisores (45×100 cm)</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- BIBLIOTECA PANEL -->
+            <div class="app-canvas" data-panel="biblioteca" style="display:none;background:var(--color-ink-black);border-color:var(--color-slate-border);padding:14px;display:none">
+              <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+                <div style="background:var(--color-dots-black);border:1px solid var(--color-slate-border);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px">
+                  <div style="aspect-ratio:1;background:var(--color-paper-grey);border-radius:4px"></div>
+                  <div style="font-size:11px">Repisa flotante</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">90×25</div>
+                </div>
+                <div style="background:var(--color-dots-black);border:1px solid var(--color-slate-border);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px">
+                  <div style="aspect-ratio:1;background:var(--color-paper-grey);border-radius:4px;position:relative"><div style="position:absolute;inset:6px;border:2px solid var(--color-faded-grey)"></div></div>
+                  <div style="font-size:11px">Cajón estándar</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">60×45</div>
+                </div>
+                <div style="background:var(--color-dots-black);border:1px solid var(--color-slate-border);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px">
+                  <div style="aspect-ratio:1;background:var(--color-paper-grey);border-radius:4px;position:relative"><div style="position:absolute;inset:6px;background:repeating-linear-gradient(0deg,var(--color-faded-grey) 0 2px,transparent 2px 12px)"></div></div>
+                  <div style="font-size:11px">Persiana</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">120×80</div>
+                </div>
+                <div style="background:var(--color-dots-black);border:1px solid var(--color-slate-border);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px;border-color:var(--color-ideation-blue)">
+                  <div style="aspect-ratio:1;background:var(--color-paper-grey);border-radius:4px;position:relative"><div style="position:absolute;inset:8px;border:2px solid var(--color-faded-grey);background:#fff"></div></div>
+                  <div style="font-size:11px;color:var(--color-ideation-blue)">Puerta abatible</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">50×100</div>
+                </div>
+              </div>
+            </div>
           </main>
 
+          <!-- right panel -->
           <aside class="app-recent">
             <h4>Diseños recientes:</h4>
             <div class="app-recent__item">
               <div>
                 <div class="name">1234</div>
                 <div class="date">6/4/2026</div>
+              </div>
+              <span class="trash">🗑</span>
+            </div>
+            <div class="app-recent__item" style="margin-top:8px">
+              <div>
+                <div class="name">Cocina · López</div>
+                <div class="date">5/2/2026</div>
+              </div>
+              <span class="trash">🗑</span>
+            </div>
+            <div class="app-recent__item" style="margin-top:8px">
+              <div>
+                <div class="name">Vitrina A</div>
+                <div class="date">4/28/2026</div>
               </div>
               <span class="trash">🗑</span>
             </div>
@@ -125,6 +214,7 @@ const landingMarkup = `
   </div>
 </section>
 
+<!-- MARQUEE -->
 <div class="strip">
   <div class="strip__inner">
     <span>
@@ -134,16 +224,19 @@ const landingMarkup = `
       <span>· exporta a CSV / PDF</span><span class="dot"></span>
       <span>· conexión a CNC</span><span class="dot"></span>
       <span>· optimización de desperdicio</span><span class="dot"></span>
+      <span>· planos por pieza</span><span class="dot"></span>
       <span>· corte por plancha</span><span class="dot"></span>
       <span>· cubicación automática</span><span class="dot"></span>
       <span>· biblioteca de piezas</span><span class="dot"></span>
       <span>· exporta a CSV / PDF</span><span class="dot"></span>
       <span>· conexión a CNC</span><span class="dot"></span>
       <span>· optimización de desperdicio</span><span class="dot"></span>
+      <span>· planos por pieza</span><span class="dot"></span>
     </span>
   </div>
 </div>
 
+<!-- FEATURES -->
 <section class="section" id="features" data-screen-label="Features">
   <div class="shell">
     <div class="s-head">
@@ -153,6 +246,7 @@ const landingMarkup = `
       </div>
       <p class="s-head__lede">Diseña, cubica y guarda piezas reutilizables sin saltar entre planos, planillas y la cortadora. Todo conversa.</p>
     </div>
+
     <div class="feat">
       <div class="feat__card">
         <span class="tag">/ canvas</span>
@@ -167,6 +261,7 @@ const landingMarkup = `
         <h3>Diseño paramétrico por arrastre</h3>
         <p>Suelta estantes, cajoneras, modulares y bases sobre un canvas a escala. Cada pieza es un componente con cotas que viven con tu diseño — cambiá el ancho y todo se reajusta.</p>
       </div>
+
       <div class="feat__card">
         <span class="tag">/ cubicación</span>
         <div class="glyph gl-cub">
@@ -179,8 +274,9 @@ const landingMarkup = `
           <div class="t" style="grid-column:span 2"></div>
         </div>
         <h3>Empaquetado óptimo en planchas reales</h3>
-        <p>El motor toma cada pieza y resuelve el corte que minimiza desperdicio. Vas a saber exactamente cuántas planchas comprar.</p>
+        <p>El motor toma cada pieza, la corta contra el formato de plancha que uses (1.83×2.50, 1.22×2.44…) y resuelve el corte que minimiza desperdicio. Vas a saber exactamente cuántas planchas comprar.</p>
       </div>
+
       <div class="feat__card">
         <span class="tag">/ biblioteca</span>
         <div class="glyph gl-lib">
@@ -195,7 +291,7 @@ const landingMarkup = `
           <div class="item">zócalo</div>
         </div>
         <h3>Tu propia biblioteca de piezas</h3>
-        <p>Guardá cada componente que diseñes y reutilizalo en el próximo trabajo.</p>
+        <p>Guardá cada componente que diseñes — un cajón de 60×45, una puerta abatible — y reutilizalo en el próximo trabajo. Tu propio kit, tus propias medidas estándar.</p>
       </div>
     </div>
   </div>
@@ -234,7 +330,7 @@ const landingMarkup = `
       <div class="bigstat__num">−<em>23</em>%</div>
       <div class="bigstat__copy">
         <h3>Menos plancha tirada al fondo del taller.</h3>
-        <p>El motor de empaquetamiento prueba miles de combinaciones para resolver el corte con mayor utilización posible. Comparado con cubicaciones manuales típicas, los talleres beta reducen un 23% el desperdicio promedio.</p>
+        <p>El motor de empaquetamiento prueba miles de combinaciones de orientación, rotación y agrupamiento por color/grano para resolver el corte con mayor utilización posible. Comparado con cubicaciones manuales típicas, los talleres beta reducen un 23% el desperdicio promedio.</p>
         <ul>
           <li>Bin-packing 2D con rotación y agrupado por material</li>
           <li>Soporta planchas múltiples y formatos personalizados</li>
@@ -259,8 +355,8 @@ const landingMarkup = `
     <div class="detail">
       <div class="detail__copy">
         <h3>De la <em>idea</em> al corte, sin planilla.</h3>
-        <p>Tablón calcula automáticamente cuántas planchas necesitás y cómo se acomoda cada pieza. Cambiás una medida y la cubicación se reactualiza.</p>
-        <p>Esto sirve para cotizar más rápido, comprar la cantidad justa, y entregar un presupuesto que respeta el material disponible.</p>
+        <p>Tablón calcula automáticamente cuántas planchas necesitás y cómo se acomoda cada pieza. Cambiás una medida en el diseño y la cubicación se reactualiza al instante.</p>
+        <p>Esto sirve para cotizar más rápido, comprar la cantidad justa, y entregar al cliente un presupuesto que respeta el material disponible.</p>
 
         <div class="detail__bullets">
           <div class="b">
@@ -269,7 +365,7 @@ const landingMarkup = `
           </div>
           <div class="b">
             <div class="n">02</div>
-            <div><strong>Costo por plancha</strong><span>Cargá tu precio actual y Tablón devuelve el costo total de materia prima del proyecto.</span></div>
+            <div><strong>Costo por plancha</strong><span>Cargá tu precio actual y Tablón te devuelve el costo total de materia prima del proyecto.</span></div>
           </div>
           <div class="b">
             <div class="n">03</div>
@@ -321,26 +417,26 @@ const landingMarkup = `
         <div class="s-head__num">[ 03 / biblioteca ]</div>
         <h2>Tus piezas, <em>tu</em> kit.</h2>
       </div>
-      <p class="s-head__lede">Cada pieza guardada se vuelve un ladrillo para armar el siguiente mueble en minutos.</p>
+      <p class="s-head__lede">Cada pieza guardada se vuelve un ladrillo: combinala con otras para armar el siguiente mueble en minutos.</p>
     </div>
     <div class="lib">
       <div class="lib__card">
-        <div class="lib__thumb"></div>
+        <div class="lib__thumb"><div style="position:absolute;inset:14% 14% 70% 14%;background:#a8a39c"></div></div>
         <div class="lib__name">Repisa flotante</div>
         <div class="lib__dim">90 × 25 cm · MDF 18</div>
       </div>
       <div class="lib__card">
-        <div class="lib__thumb"></div>
+        <div class="lib__thumb"><div style="position:absolute;inset:14%;background:transparent;border:3px solid #a8a39c"></div><div style="position:absolute;left:14%;right:14%;top:46%;height:3px;background:#a8a39c"></div></div>
         <div class="lib__name">Cajón estándar</div>
         <div class="lib__dim">60 × 45 × 30 cm</div>
       </div>
       <div class="lib__card">
-        <div class="lib__thumb"></div>
+        <div class="lib__thumb"><div style="position:absolute;inset:14%;background:repeating-linear-gradient(0deg,#a8a39c 0 4px,transparent 4px 12px)"></div></div>
         <div class="lib__name">Persiana plegable</div>
         <div class="lib__dim">120 × 80 cm</div>
       </div>
       <div class="lib__card">
-        <div class="lib__thumb"></div>
+        <div class="lib__thumb"><div style="position:absolute;inset:18%;background:#fff;border:3px solid #a8a39c"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:32px;background:#222;border-radius:2px"></div></div>
         <div class="lib__name">Puerta abatible</div>
         <div class="lib__dim">50 × 100 cm</div>
       </div>
@@ -421,8 +517,8 @@ const landingMarkup = `
 <section class="shell" id="cta" data-screen-label="CTA">
   <div class="cta">
     <div class="cta__inner">
-      <h2>Deja de calcular en <em>papel</em>.</h2>
-      <p>Empezá a diseñar y cubicar en un solo lugar. Gratis para tu primer proyecto.</p>
+      <h2>Dejá de calcular en <em>servilleta</em>.</h2>
+      <p>Empezá a diseñar y cubicar en un solo lugar. Gratis para tu primer proyecto, sin tarjeta.</p>
       <div class="cta__btns">
         <a href="#" class="btn btn--primary" data-login="true">Crear mi cuenta →</a>
         <a href="#" class="btn btn--outline">Ver demo (3 min)</a>
@@ -448,6 +544,7 @@ const landingMarkup = `
           <li>Cubicación</li>
           <li>Biblioteca</li>
           <li>Exportar a CNC</li>
+          <li>Cambios v2.4</li>
         </ul>
       </div>
       <div class="footer__col">
@@ -456,6 +553,8 @@ const landingMarkup = `
           <li>Documentación</li>
           <li>Tutoriales</li>
           <li>Plantillas</li>
+          <li>Calculadora de costos</li>
+          <li>Comunidad</li>
         </ul>
       </div>
       <div class="footer__col">
@@ -464,6 +563,8 @@ const landingMarkup = `
           <li>Nosotros</li>
           <li>Clientes</li>
           <li>Contacto</li>
+          <li>Términos</li>
+          <li>Privacidad</li>
         </ul>
       </div>
     </div>
@@ -480,18 +581,42 @@ export default function LandingPage({ onLoginClick }) {
 
   useEffect(() => {
     const root = containerRef.current
-    if (!root || !onLoginClick) return
+    if (!root) return
 
     const handleClick = (event) => {
       const target = event.target
-      if (target && target.closest('[data-login]')) {
+      if (onLoginClick && target && target.closest('[data-login]')) {
         event.preventDefault()
         onLoginClick()
       }
     }
-
     root.addEventListener('click', handleClick)
-    return () => root.removeEventListener('click', handleClick)
+
+    // Tab switching for product preview
+    const tabs = root.querySelectorAll('.app-tab')
+    const panels = root.querySelectorAll('[data-panel]')
+
+    const activate = (name) => {
+      tabs.forEach(t => t.classList.toggle('app-tab--active', t.dataset.tab === name))
+      panels.forEach(p => { p.style.display = p.dataset.panel === name ? '' : 'none' })
+    }
+
+    let auto = true
+    tabs.forEach(t => t.addEventListener('click', () => { auto = false; activate(t.dataset.tab) }))
+    activate('diseno')
+
+    const order = ['diseno', 'cubicacion', 'biblioteca']
+    let i = 0
+    const interval = setInterval(() => {
+      if (!auto) return
+      i = (i + 1) % order.length
+      activate(order[i])
+    }, 4500)
+
+    return () => {
+      root.removeEventListener('click', handleClick)
+      clearInterval(interval)
+    }
   }, [onLoginClick])
 
   return (
