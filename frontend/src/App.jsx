@@ -189,13 +189,21 @@ export default function App() {
 
   const updateSelectedShape = (key, value) => {
     if (!selected) return
-    
+
     if (key === 'numCajones' || key === 'numEstantes' || key === 'numDivisores' || key === 'numPuertas') {
       const numValue = value === '' ? null : Number(value)
       updateShape(selected.id, { [key]: numValue })
+    } else if (key === 'numZocaloDivisiones') {
+      updateShape(selected.id, { [key]: value === '' ? 0 : Math.max(0, Number(value)) })
     } else {
       updateShape(selected.id, { [key]: Number(value) })
     }
+  }
+
+  const updateZocaloCaras = (cara, checked) => {
+    if (!selected) return
+    const current = selected.zocaloCaras || { frontal: true, lateral_izq: true, lateral_der: true, trasera: false }
+    updateShape(selected.id, { zocaloCaras: { ...current, [cara]: checked } })
   }
 
   const handleLoadDesign = (design) => {
@@ -445,8 +453,80 @@ export default function App() {
                           </div>
                         </>
                       )}
-                      
-                      <button 
+
+                      {/* Fondo del módulo - cajonera y modular */}
+                      {(selected.type === 'cajonera' || selected.type === 'modular') && (
+                        <>
+                          <div style={{ gridColumn: '1/-1', borderTop: '1px solid var(--color-slate-border)', paddingTop: '8px', marginTop: '4px' }}>
+                            <label style={{ fontSize: '10px', color: 'var(--color-faded-grey)', letterSpacing: '0.05em' }}>FONDO</label>
+                          </div>
+                          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--color-paper-grey)', cursor: 'pointer', gridColumn: '1/-1' }}>
+                            <input
+                              type="checkbox"
+                              checked={!!selected.noFondo}
+                              onChange={e => updateShape(selected.id, { noFondo: e.target.checked })}
+                              style={{ accentColor: 'var(--color-ideation-blue)', width: '14px', height: '14px' }}
+                            />
+                            Sin fondo
+                          </label>
+                          {!selected.noFondo && (
+                            <div className="measure-field" style={{ gridColumn: '1/-1' }}>
+                              <label>Material fondo</label>
+                              <select
+                                value={selected.fondoMaterialId || ''}
+                                onChange={e => updateShape(selected.id, { fondoMaterialId: e.target.value || null })}
+                                style={{ width: '100%', background: 'var(--color-dark-surface)', color: 'var(--color-paper-grey)', border: '1px solid var(--color-slate-border)', borderRadius: '4px', padding: '4px 6px', fontSize: '12px' }}
+                              >
+                                <option value="">— mismo material —</option>
+                                {materials.filter(m => m.categoria === 'material').map(m => (
+                                  <option key={m._id} value={m._id}>{m.nombre}</option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {/* Configuración de caras para base/zócalo en mobile */}
+                      {selected.type === 'base' && (() => {
+                        const caras = selected.zocaloCaras || { frontal: true, lateral_izq: true, lateral_der: true, trasera: false }
+                        return (
+                          <>
+                            <div style={{ gridColumn: '1/-1', borderTop: '1px solid var(--color-slate-border)', paddingTop: '8px', marginTop: '4px' }}>
+                              <label style={{ fontSize: '10px', color: 'var(--color-faded-grey)', letterSpacing: '0.05em' }}>CARAS DEL ZÓCALO</label>
+                            </div>
+                            {[
+                              { key: 'frontal',     label: 'Frente' },
+                              { key: 'lateral_izq', label: 'Lateral izq.' },
+                              { key: 'lateral_der', label: 'Lateral der.' },
+                              { key: 'trasera',     label: 'Trasera' },
+                            ].map(({ key, label }) => (
+                              <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--color-paper-grey)', cursor: 'pointer', gridColumn: '1/-1' }}>
+                                <input
+                                  type="checkbox"
+                                  checked={!!caras[key]}
+                                  onChange={e => updateZocaloCaras(key, e.target.checked)}
+                                  style={{ accentColor: 'var(--color-ideation-blue)', width: '14px', height: '14px' }}
+                                />
+                                {label}
+                              </label>
+                            ))}
+                            <div className="measure-field">
+                              <label>Divisiones int.</label>
+                              <input
+                                type="number"
+                                min="0"
+                                max="10"
+                                value={selected.numZocaloDivisiones ?? 0}
+                                onChange={e => updateSelectedShape('numZocaloDivisiones', e.target.value)}
+                                placeholder="0"
+                              />
+                            </div>
+                          </>
+                        )
+                      })()}
+
+                      <button
                         className="delete-shape-btn"
                         onClick={() => {
                           setShapes(prev => prev.filter(s => s.id !== selected.id))
@@ -744,8 +824,80 @@ export default function App() {
                   </div>
                 </>
               )}
+
+              {/* Fondo del módulo - cajonera y modular */}
+              {(selected.type === 'cajonera' || selected.type === 'modular') && (
+                <>
+                  <div style={{ gridColumn: '1/-1', borderTop: '1px solid var(--color-slate-border)', paddingTop: '8px', marginTop: '4px' }}>
+                    <label style={{ fontSize: '10px', color: 'var(--color-faded-grey)', letterSpacing: '0.05em' }}>FONDO</label>
+                  </div>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--color-paper-grey)', cursor: 'pointer', gridColumn: '1/-1' }}>
+                    <input
+                      type="checkbox"
+                      checked={!!selected.noFondo}
+                      onChange={e => updateShape(selected.id, { noFondo: e.target.checked })}
+                      style={{ accentColor: 'var(--color-ideation-blue)', width: '14px', height: '14px' }}
+                    />
+                    Sin fondo
+                  </label>
+                  {!selected.noFondo && (
+                    <div className="sidebar-measure-item" style={{ gridColumn: '1/-1' }}>
+                      <label>MATERIAL FONDO</label>
+                      <select
+                        value={selected.fondoMaterialId || ''}
+                        onChange={e => updateShape(selected.id, { fondoMaterialId: e.target.value || null })}
+                        style={{ width: '100%', background: 'var(--color-dark-surface)', color: 'var(--color-paper-grey)', border: '1px solid var(--color-slate-border)', borderRadius: '4px', padding: '4px 6px', fontSize: '11px' }}
+                      >
+                        <option value="">— mismo material —</option>
+                        {materials.filter(m => m.categoria === 'material').map(m => (
+                          <option key={m._id} value={m._id}>{m.nombre}</option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* Configuración de caras para base/zócalo en desktop */}
+              {selected.type === 'base' && (() => {
+                const caras = selected.zocaloCaras || { frontal: true, lateral_izq: true, lateral_der: true, trasera: false }
+                return (
+                  <>
+                    <div style={{ gridColumn: '1/-1', borderTop: '1px solid var(--color-slate-border)', paddingTop: '8px', marginTop: '4px' }}>
+                      <label style={{ fontSize: '10px', color: 'var(--color-faded-grey)', letterSpacing: '0.05em' }}>CARAS DEL ZÓCALO</label>
+                    </div>
+                    {[
+                      { key: 'frontal',     label: 'Frente' },
+                      { key: 'lateral_izq', label: 'Lateral izq.' },
+                      { key: 'lateral_der', label: 'Lateral der.' },
+                      { key: 'trasera',     label: 'Trasera' },
+                    ].map(({ key, label }) => (
+                      <label key={key} style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--color-paper-grey)', cursor: 'pointer', gridColumn: '1/-1' }}>
+                        <input
+                          type="checkbox"
+                          checked={!!caras[key]}
+                          onChange={e => updateZocaloCaras(key, e.target.checked)}
+                          style={{ accentColor: 'var(--color-ideation-blue)', width: '14px', height: '14px' }}
+                        />
+                        {label}
+                      </label>
+                    ))}
+                    <div className="sidebar-measure-item" style={{ gridColumn: '1/-1' }}>
+                      <label>DIVISIONES INT.</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="10"
+                        value={selected.numZocaloDivisiones ?? 0}
+                        onChange={e => updateSelectedShape('numZocaloDivisiones', e.target.value)}
+                        placeholder="0"
+                      />
+                    </div>
+                  </>
+                )
+              })()}
             </div>
-            <button 
+            <button
               className="sidebar-delete-btn"
               onClick={() => {
                 setShapes(prev => prev.filter(s => s.id !== selected.id))

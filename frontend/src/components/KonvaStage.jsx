@@ -12,7 +12,11 @@ const defaultSizes = {
     numDivisores: 1, 
     numPuertas: 2 
   },
-  base: { width: 70, height: 10, depth: 65 },
+  base: {
+    width: 70, height: 10, depth: 65,
+    zocaloCaras: { frontal: true, lateral_izq: true, lateral_der: true, trasera: false },
+    numZocaloDivisiones: 0,
+  },
   divisor: { width: 1.5, height: 30, depth: 70 },
   cubierta: { width: 110, height: 3, depth: 70 },
   puerta: { width: 70, height: 70, depth: 1.5 },
@@ -692,10 +696,14 @@ const KonvaStage = forwardRef(function KonvaStage({
         depth: base.depth,
         rotation: 0,
         ...(selectedModule === 'cajonera' && { numCajones: base.numCajones || 3 }),
-        ...(selectedModule === 'modular' && { 
+        ...(selectedModule === 'modular' && {
           numEstantes: base.numEstantes !== undefined ? base.numEstantes : 2,
           numDivisores: base.numDivisores !== undefined ? base.numDivisores : 1,
           numPuertas: base.numPuertas !== undefined ? base.numPuertas : 2
+        }),
+        ...(selectedModule === 'base' && {
+          zocaloCaras: base.zocaloCaras || { frontal: true, lateral_izq: true, lateral_der: true, trasera: false },
+          numZocaloDivisiones: base.numZocaloDivisiones ?? 0,
         })
       }
 

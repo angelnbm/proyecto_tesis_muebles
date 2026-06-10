@@ -12,6 +12,8 @@ function sendError(res, status, message, error, details) {
   })
 }
 
+const devError = (err) => process.env.NODE_ENV !== 'production' ? err.message : undefined
+
 function validateMaterialPayload(body) {
   const payload = body || {}
   const categoria = (payload.categoria || '').toLowerCase().trim()
@@ -67,26 +69,28 @@ function normalizePayload(body) {
   }
 }
 
+const VALID_CATEGORIAS = ['material', 'accesorio', 'tapa-canto']
+
 // Listado con filtros
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const filters = {}
+    const filters = { userId: req.userId }
 
-    if (req.query.categoria) {
+    if (req.query.categoria && VALID_CATEGORIAS.includes(req.query.categoria)) {
       filters.categoria = req.query.categoria
     }
-    if (req.query.accesorio_tipo) {
-      filters.accesorio_tipo = req.query.accesorio_tipo
+    if (req.query.accesorio_tipo && typeof req.query.accesorio_tipo === 'string') {
+      filters.accesorio_tipo = String(req.query.accesorio_tipo).slice(0, 50)
     }
-    if (req.query.tipo) {
-      filters.tipo = req.query.tipo
+    if (req.query.tipo && typeof req.query.tipo === 'string') {
+      filters.tipo = String(req.query.tipo).slice(0, 50)
     }
 
     const materials = await Material.find(filters).sort({ createdAt: -1 })
     return res.json({ success: true, data: materials })
   } catch (error) {
     console.error('Error al listar materiales:', error)
-    return sendError(res, 500, 'Error al listar materiales', 'MATERIALS_LIST_ERROR', error.message)
+    return sendError(res, 500, 'Error al listar materiales', 'MATERIALS_LIST_ERROR', devError(error))
   }
 })
 
@@ -98,13 +102,13 @@ router.post('/', authMiddleware, async (req, res) => {
       return sendError(res, 400, validationError, 'INVALID_MATERIAL_PAYLOAD')
     }
 
-    const material = new Material(normalizePayload(req.body))
+    const material = new Material({ ...normalizePayload(req.body), userId: req.userId })
     await material.save()
 
     return res.status(201).json({ success: true, data: material })
   } catch (error) {
     console.error('Error al crear material:', error)
-    return sendError(res, 500, 'Error al crear material', 'MATERIAL_CREATE_ERROR', error.message)
+    return sendError(res, 500, 'Error al crear material', 'MATERIAL_CREATE_ERROR', devError(error))
   }
 })
 
@@ -116,8 +120,8 @@ router.put('/:id', authMiddleware, async (req, res) => {
       return sendError(res, 400, validationError, 'INVALID_MATERIAL_PAYLOAD')
     }
 
-    const material = await Material.findByIdAndUpdate(
-      req.params.id,
+    const material = await Material.findOneAndUpdate(
+      { _id: req.params.id, userId: req.userId },
       normalizePayload(req.body),
       { new: true }
     )
@@ -129,14 +133,14 @@ router.put('/:id', authMiddleware, async (req, res) => {
     return res.json({ success: true, data: material })
   } catch (error) {
     console.error('Error al actualizar material:', error)
-    return sendError(res, 500, 'Error al actualizar material', 'MATERIAL_UPDATE_ERROR', error.message)
+    return sendError(res, 500, 'Error al actualizar material', 'MATERIAL_UPDATE_ERROR', devError(error))
   }
 })
 
 // Eliminar
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
-    const material = await Material.findByIdAndDelete(req.params.id)
+    const material = await Material.findOneAndDelete({ _id: req.params.id, userId: req.userId })
     if (!material) {
       return sendError(res, 404, 'Material no encontrado', 'MATERIAL_NOT_FOUND')
     }
@@ -144,7 +148,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     return res.json({ success: true, message: 'Material eliminado correctamente' })
   } catch (error) {
     console.error('Error al eliminar material:', error)
-    return sendError(res, 500, 'Error al eliminar material', 'MATERIAL_DELETE_ERROR', error.message)
+    return sendError(res, 500, 'Error al eliminar material', 'MATERIAL_DELETE_ERROR', devError(error))
   }
 })
 

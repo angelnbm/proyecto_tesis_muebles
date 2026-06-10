@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken')
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secreto_super_seguro'
+const JWT_SECRET = process.env.JWT_SECRET
+if (!JWT_SECRET || JWT_SECRET.length < 32) {
+  throw new Error('JWT_SECRET no está configurado o es demasiado corto — el servidor no puede arrancar de forma segura')
+}
 
 function authenticateToken(req, res, next) {
   const token = req.headers.authorization?.split(' ')[1]

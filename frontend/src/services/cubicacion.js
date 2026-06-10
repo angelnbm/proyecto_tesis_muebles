@@ -132,12 +132,15 @@ export function generateStructuredCuts(shapes, options = {}) {
           height: h,
           quantity: 2,
         })
-        addPiece(modulePieces, {
-          description: 'Fondo',
-          width: w,
-          height: d,
-          quantity: 1,
-        })
+        if (!shape.noFondo) {
+          addPiece(modulePieces, {
+            description: 'Fondo',
+            width: w,
+            height: d,
+            quantity: 1,
+            materialId: shape.fondoMaterialId || undefined,
+          })
+        }
 
         addTapaCanto(shape.tapaCantoId, w)
 
@@ -205,22 +208,23 @@ export function generateStructuredCuts(shapes, options = {}) {
         const numPuertas = shape.numPuertas !== undefined && shape.numPuertas !== null ? shape.numPuertas : 0
 
         // No incluir "Marco" - las puertas ya cumplen ese rol como frontal
-        modulePieces.push(
-          {
-            description: `Laterales`,
-            width: d,
-            height: h,
-            quantity: 2,
-            area: d * h,
-          },
-          {
+        modulePieces.push({
+          description: `Laterales`,
+          width: d,
+          height: h,
+          quantity: 2,
+          area: d * h,
+        })
+        if (!shape.noFondo) {
+          modulePieces.push({
             description: `Fondo`,
             width: w,
             height: d,
             quantity: 1,
             area: w * d,
-          }
-        )
+            materialId: shape.fondoMaterialId || undefined,
+          })
+        }
 
         addTapaCanto(shape.tapaCantoId, w)
 
@@ -292,15 +296,24 @@ export function generateStructuredCuts(shapes, options = {}) {
         addTapaCanto(shape.tapaCantoId, 2 * w + 2 * h)
         break
 
-      case 'base':
-        modulePieces.push({
-          description: `Base`,
-          width: w,
-          height: h,
-          quantity: 1,
-          area: w * h,
-        })
+      case 'base': {
+        const caras = shape.zocaloCaras || { frontal: true, lateral_izq: false, lateral_der: false, trasera: false }
+        const numDiv = shape.numZocaloDivisiones > 0 ? shape.numZocaloDivisiones : 0
+
+        if (caras.frontal)
+          modulePieces.push({ description: 'Zócalo frontal',  width: w, height: h, quantity: 1, area: w * h })
+        if (caras.trasera)
+          modulePieces.push({ description: 'Zócalo trasero',  width: w, height: h, quantity: 1, area: w * h })
+        if (caras.lateral_izq)
+          modulePieces.push({ description: 'Zócalo lat. izq', width: d, height: h, quantity: 1, area: d * h })
+        if (caras.lateral_der)
+          modulePieces.push({ description: 'Zócalo lat. der', width: d, height: h, quantity: 1, area: d * h })
+
+        for (let i = 0; i < numDiv; i++) {
+          modulePieces.push({ description: `Zócalo división ${i + 1}`, width: d, height: h, quantity: 1, area: d * h })
+        }
         break
+      }
 
       case 'divisor':
         modulePieces.push({

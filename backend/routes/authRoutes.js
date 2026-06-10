@@ -35,7 +35,7 @@ router.post('/register', async (req, res, next) => {
     // Generar token JWT
     const token = jwt.sign(
       { id: newUser._id, email: newUser.email },
-      process.env.JWT_SECRET || 'secreto_super_seguro',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     )
 
@@ -82,7 +82,7 @@ router.post('/login', async (req, res, next) => {
     // Generar token JWT
     const token = jwt.sign(
       { id: user._id, email: user.email },
-      process.env.JWT_SECRET || 'secreto_super_seguro',
+      process.env.JWT_SECRET,
       { expiresIn: '7d' }
     )
 
@@ -113,7 +113,7 @@ router.get('/verify', async (req, res) => {
       })
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secreto_super_seguro')
+    const decoded = jwt.verify(token, process.env.JWT_SECRET)
     const user = await Mueblista.findById(decoded.id).select('-contrasena')
 
     if (!user) {

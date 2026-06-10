@@ -12,6 +12,8 @@ function sendError(res, status, message, error, details) {
   })
 }
 
+const devError = (err) => process.env.NODE_ENV !== 'production' ? err.message : undefined
+
 function normalizeShapes(shapes) {
   return shapes.map((shape) => ({
     id: shape.id,
@@ -28,6 +30,17 @@ function normalizeShapes(shapes) {
     numPuertas: shape.numPuertas !== undefined ? shape.numPuertas : null,
     drawerTypeId: shape.drawerTypeId || undefined,
     tapaCantoId: shape.tapaCantoId || undefined,
+    fondoMaterialId: shape.fondoMaterialId || undefined,
+    noFondo: !!shape.noFondo,
+    zocaloCaras: shape.zocaloCaras
+      ? {
+          frontal:     !!shape.zocaloCaras.frontal,
+          lateral_izq: !!shape.zocaloCaras.lateral_izq,
+          lateral_der: !!shape.zocaloCaras.lateral_der,
+          trasera:     !!shape.zocaloCaras.trasera,
+        }
+      : undefined,
+    numZocaloDivisiones: shape.numZocaloDivisiones != null ? Number(shape.numZocaloDivisiones) : null,
     drawers: Array.isArray(shape.drawers)
       ? shape.drawers
         .filter((drawer) => drawer && drawer.drawerTypeId !== undefined && drawer.drawerTypeId !== null)
@@ -81,7 +94,7 @@ router.post('/', authMiddleware, async (req, res) => {
     })
   } catch (error) {
     console.error('Error al guardar:', error)
-    return sendError(res, 500, 'Error al guardar el diseño', 'FURNITURE_SAVE_ERROR', error.message)
+    return sendError(res, 500, 'Error al guardar el diseño', 'FURNITURE_SAVE_ERROR', devError(error))
   }
 })
 
@@ -114,7 +127,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
     })
   } catch (error) {
     console.error('Error al actualizar:', error)
-    return sendError(res, 500, 'Error al actualizar el diseno', 'FURNITURE_UPDATE_ERROR', error.message)
+    return sendError(res, 500, 'Error al actualizar el diseno', 'FURNITURE_UPDATE_ERROR', devError(error))
   }
 })
 
@@ -128,7 +141,7 @@ router.get('/', authMiddleware, async (req, res) => {
     })
   } catch (error) {
     console.error('Error al cargar diseños:', error)
-    return sendError(res, 500, 'Error al cargar disenos', 'FURNITURE_LOAD_ERROR', error.message)
+    return sendError(res, 500, 'Error al cargar disenos', 'FURNITURE_LOAD_ERROR', devError(error))
   }
 })
 
@@ -150,7 +163,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     })
   } catch (error) {
     console.error('Error al eliminar:', error)
-    return sendError(res, 500, 'Error al eliminar el diseno', 'FURNITURE_DELETE_ERROR', error.message)
+    return sendError(res, 500, 'Error al eliminar el diseno', 'FURNITURE_DELETE_ERROR', devError(error))
   }
 })
 

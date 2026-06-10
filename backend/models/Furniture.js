@@ -21,7 +21,19 @@ const ShapeSchema = new mongoose.Schema({
   drawerTypeId: { type: mongoose.Schema.Types.ObjectId, ref: 'DrawerType' },
   drawers: { type: [DrawerOverrideSchema], default: undefined },
   tapaCantoId: { type: mongoose.Schema.Types.ObjectId, ref: 'Material' },
-}, { _id: false }) 
+  fondoMaterialId: { type: mongoose.Schema.Types.ObjectId, ref: 'Material', default: null },
+  noFondo: { type: Boolean, default: false },
+  zocaloCaras: {
+    type: {
+      frontal:     { type: Boolean, default: true },
+      lateral_izq: { type: Boolean, default: true },
+      lateral_der: { type: Boolean, default: true },
+      trasera:     { type: Boolean, default: false },
+    },
+    default: undefined,
+  },
+  numZocaloDivisiones: { type: Number, default: null },
+}, { _id: false })
 
 const FurnitureSchema = new mongoose.Schema({
   userId: {
