@@ -5,13 +5,17 @@ import {
   BOARD_CONFIGS,
 } from '../services/cubicacion'
 
-/**
- * CubicacionPanel - Complete cutting visualization
- * Shows:
- * 1. Grouped pieces table by module
- * 2. Visual board layout with packed pieces
- * 3. Statistics and summaries
- */
+function parseMaterialBoardConfig(material) {
+  if (material?.dimensiones) {
+    const match = material.dimensiones.match(/(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)/i)
+    if (match) {
+      const a = parseFloat(match[1]), b = parseFloat(match[2])
+      return { width: Math.max(a, b), height: Math.min(a, b), name: material.nombre || 'Material', kerf: BOARD_CONFIGS.melamina.kerf }
+    }
+  }
+  return BOARD_CONFIGS.melamina
+}
+
 export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial, drawerTypes, tapaCantos, materials, accessories, selectedAccessories, currentDesignName, selectedTapaCantoId, selectedDrawerTypeId }) {
   const [selectedModule, setSelectedModule] = useState(null)
   const [emailForm, setEmailForm] = useState({
@@ -29,6 +33,8 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
   const emailTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_egzw8fd'
   const emailPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'S1uLBrr9Cn3CVH4Nq'
 
+  const boardConfig = useMemo(() => parseMaterialBoardConfig(selectedMaterial), [selectedMaterial])
+
   // Process all data: group pieces and optimize board packing
   const cubicacionData = useMemo(() => {
     if (!shapes || shapes.length === 0) {
@@ -42,10 +48,8 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     }
 
     try {
-    const { byModule, allPieces, tapaCantoList } = generateStructuredCuts(shapes, { drawerTypes, tapaCantos, selectedTapaCantoId, selectedDrawerTypeId })
-    
-    const { boards, statistics } = optimizePiecesInBoards(allPieces)
-
+      const { byModule, allPieces, tapaCantoList } = generateStructuredCuts(shapes, { drawerTypes, tapaCantos, selectedTapaCantoId, selectedDrawerTypeId })
+      const { boards, statistics } = optimizePiecesInBoards(allPieces, boardConfig)
       return { byModule, allPieces, boards, statistics, tapaCantoList }
     } catch (error) {
       console.error('❌ Error in cubicacionData:', error)
@@ -57,7 +61,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         tapaCantoList: [],
       }
     }
-  }, [shapes, drawerTypes, tapaCantos])
+  }, [shapes, drawerTypes, tapaCantos, boardConfig])
 
   const { byModule, boards, statistics, tapaCantoList = [] } = cubicacionData
 
@@ -167,7 +171,6 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     return result
   }, [selectedAccessories, accessories, shapes])
 
-  const boardArea = BOARD_CONFIGS.melamina.width * BOARD_CONFIGS.melamina.height
   const boardsCost = useMemo(() => {
     if (!selectedMaterial || !boards || boards.length === 0) return null
     const unitPrice = Number(selectedMaterial.precio)
@@ -392,7 +395,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
             <BoardVisualization
               key={board.id}
               board={board}
-              boardConfig={BOARD_CONFIGS.melamina}
+              boardConfig={boardConfig}
               getModuleColor={getModuleColor}
             />
           ))}
@@ -408,7 +411,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
             <div className="stat-card">
               <div className="stat-label">Planchas Necesarias</div>
               <div className="stat-value">{statistics.boardsNeeded}</div>
-              <div className="stat-detail">de {BOARD_CONFIGS.melamina.width} x {BOARD_CONFIGS.melamina.height} cm</div>
+              <div className="stat-detail">de {boardConfig.width} × {boardConfig.height} cm</div>
             </div>
 
             <div className="stat-card">
