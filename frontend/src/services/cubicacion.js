@@ -240,13 +240,12 @@ export function generateStructuredCuts(shapes, options = {}) {
         }
 
         if (numDivisores > 0) {
-          const divisorHeight = Math.round(h / (numDivisores + 1))
           modulePieces.push({
-            description: `Divisores`,
-            width: w,
-            height: divisorHeight,
+            description: 'Divisores',
+            width: d,
+            height: h,
             quantity: numDivisores,
-            area: w * divisorHeight,
+            area: d * h,
           })
         }
 

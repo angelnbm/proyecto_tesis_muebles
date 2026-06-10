@@ -10,6 +10,16 @@ router.post('/register', async (req, res, next) => {
   try {
     const { nombre, email, contrasena } = req.body
 
+    if (!nombre?.trim() || !email?.trim() || !contrasena) {
+      return res.status(400).json({ success: false, message: 'Todos los campos son requeridos', error: 'MISSING_FIELDS' })
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ success: false, message: 'Email inválido', error: 'INVALID_EMAIL' })
+    }
+    if (contrasena.length < 6) {
+      return res.status(400).json({ success: false, message: 'La contraseña debe tener al menos 6 caracteres', error: 'PASSWORD_TOO_SHORT' })
+    }
+
     // Verifica si el usuario ya existe
     const existingUser = await Mueblista.findOne({ email })
     if (existingUser) {
@@ -58,6 +68,10 @@ router.post('/register', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
   try {
     const { email, contrasena } = req.body
+
+    if (!email?.trim() || !contrasena) {
+      return res.status(400).json({ success: false, message: 'Email y contraseña son requeridos', error: 'MISSING_FIELDS' })
+    }
 
     // Busca el usuario
     const user = await Mueblista.findOne({ email })

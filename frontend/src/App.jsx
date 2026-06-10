@@ -46,23 +46,25 @@ export default function App() {
 
   // Verificar token al cargar
   useEffect(() => {
+    let isMounted = true
     const token = getToken()
     const startTime = Date.now()
-    
+
     if (token) {
       verifyToken(token)
         .then(data => {
-          
-          // Esperar al menos 500ms para evitar parpadeo
+          if (!isMounted) return
           const elapsed = Date.now() - startTime
           const delay = Math.max(0, 500 - elapsed)
-          
+
           setTimeout(() => {
+            if (!isMounted) return
             setUser(data.user)
             setLoading(false)
           }, delay)
         })
-        .catch(err => {
+        .catch(() => {
+          if (!isMounted) return
           removeToken()
           setUser(null)
           setLoading(false)
@@ -70,6 +72,8 @@ export default function App() {
     } else {
       setLoading(false)
     }
+
+    return () => { isMounted = false }
   }, [])
 
   // Cargar diseños guardados
@@ -78,7 +82,7 @@ export default function App() {
       loadFurniture()
         .then(data => setDesigns(data))
         .catch(err => {
-          // Error silencioso en carga de diseños
+          console.error('Error al cargar diseños:', err)
         })
     }
   }, [user])
@@ -360,6 +364,8 @@ export default function App() {
                         <label>Alto (CM)</label>
                         <input
                           type="number"
+                          min="0.5"
+                          step="0.5"
                           value={selected.height}
                           onChange={e => updateSelectedShape('height', e.target.value)}
                         />
@@ -368,6 +374,8 @@ export default function App() {
                         <label>Ancho (CM)</label>
                         <input
                           type="number"
+                          min="0.5"
+                          step="0.5"
                           value={selected.width}
                           onChange={e => updateSelectedShape('width', e.target.value)}
                         />
@@ -376,6 +384,8 @@ export default function App() {
                         <label>Profundidad (CM)</label>
                         <input
                           type="number"
+                          min="0.5"
+                          step="0.5"
                           value={selected.depth}
                           onChange={e => updateSelectedShape('depth', e.target.value)}
                         />
@@ -744,6 +754,8 @@ export default function App() {
                 <label>ALTO (CM)</label>
                 <input
                   type="number"
+                  min="0.5"
+                  step="0.5"
                   value={selected.height}
                   onChange={e => updateSelectedShape('height', e.target.value)}
                 />
@@ -752,6 +764,8 @@ export default function App() {
                 <label>ANCHO (CM)</label>
                 <input
                   type="number"
+                  min="0.5"
+                  step="0.5"
                   value={selected.width}
                   onChange={e => updateSelectedShape('width', e.target.value)}
                 />
@@ -760,6 +774,8 @@ export default function App() {
                 <label>PROFUNDIDAD (CM)</label>
                 <input
                   type="number"
+                  min="0.5"
+                  step="0.5"
                   value={selected.depth}
                   onChange={e => updateSelectedShape('depth', e.target.value)}
                 />

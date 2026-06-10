@@ -2,7 +2,6 @@ import React, { useMemo, useState, useEffect } from 'react'
 import {
   generateStructuredCuts,
   optimizePiecesInBoards,
-  BOARD_CONFIGS,
 } from '../services/cubicacion'
 import { parseBoardConfig } from '../services/boardUtils'
 
@@ -51,7 +50,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         tapaCantoList: [],
       }
     }
-  }, [shapes, drawerTypes, tapaCantos, boardConfig])
+  }, [shapes, drawerTypes, tapaCantos, boardConfig, selectedTapaCantoId, selectedDrawerTypeId])
 
   const { byModule, boards, statistics, tapaCantoList = [] } = cubicacionData
 
