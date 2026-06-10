@@ -12,12 +12,11 @@ const landingMarkup = `
       <a href="#producto">Producto</a>
       <a href="#cubicacion">Cubicación</a>
       <a href="#biblioteca">Biblioteca</a>
-      <a href="#precios">Precios</a>
       <a href="#docs">Docs</a>
     </nav>
     <div class="nav__cta">
       <a href="#" class="btn" data-login="true" style="font-size:14px;color:var(--color-paper-grey);padding:8px 12px">Ingresar</a>
-      <a href="#cta" class="btn btn--primary" data-login="true" style="padding:8px 14px">Probar gratis</a>
+      <a href="#" class="btn btn--primary" data-login="true" style="padding:8px 14px">Empezar</a>
     </div>
   </div>
 </header>
@@ -27,7 +26,7 @@ const landingMarkup = `
   <div class="shell hero__inner">
     <div class="hero__eyebrow">
       <span class="dot"></span>
-      <span>v2.4 — diseño + cubicación en una sola mesa</span>
+      <span>Beta · diseñado para el mueblista artesanal</span>
     </div>
 
     <h1>
@@ -37,7 +36,7 @@ const landingMarkup = `
     </h1>
 
     <p class="hero__sub">
-      Tablón es la mesa de trabajo digital para carpinteros y diseñadores de mobiliario. Bocetea estantes, cajoneras y modulares por arrastre, y obtén al instante la cubicación óptima de planchas con menor desperdicio.
+      Tablón es la mesa de trabajo digital para mueblistas artesanales y carpinteros. Diseña estantes, cajoneras y modulares en 2D por arrastre, calcula automáticamente la cantidad de planchas y genera cotizaciones detalladas para tu cliente.
     </p>
 
     <div class="hero__cta">
@@ -46,11 +45,11 @@ const landingMarkup = `
     </div>
 
     <div class="hero__meta">
-      <span><strong>+12,400</strong> piezas cubicadas esta semana</span>
+      <span><strong>−90%</strong> en tiempo de cubicación</span>
       <span class="meta-sep">|</span>
       <span><strong>81.1%</strong> utilización promedio de plancha</span>
       <span class="meta-sep">|</span>
-      <span><strong>0</strong> instalación · navegador</span>
+      <span><strong>0</strong> instalación · solo navegador</span>
     </div>
 
     <div id="producto" style="margin-top:64px" data-screen-label="Product preview">
@@ -221,17 +220,17 @@ const landingMarkup = `
       <span>· corte por plancha</span><span class="dot"></span>
       <span>· cubicación automática</span><span class="dot"></span>
       <span>· biblioteca de piezas</span><span class="dot"></span>
-      <span>· exporta a CSV / PDF</span><span class="dot"></span>
-      <span>· conexión a CNC</span><span class="dot"></span>
+      <span>· cotizaciones en PDF</span><span class="dot"></span>
+      <span>· historial de diseños</span><span class="dot"></span>
       <span>· optimización de desperdicio</span><span class="dot"></span>
-      <span>· planos por pieza</span><span class="dot"></span>
+      <span>· estadísticas de ventas</span><span class="dot"></span>
       <span>· corte por plancha</span><span class="dot"></span>
       <span>· cubicación automática</span><span class="dot"></span>
       <span>· biblioteca de piezas</span><span class="dot"></span>
-      <span>· exporta a CSV / PDF</span><span class="dot"></span>
-      <span>· conexión a CNC</span><span class="dot"></span>
+      <span>· cotizaciones en PDF</span><span class="dot"></span>
+      <span>· historial de diseños</span><span class="dot"></span>
       <span>· optimización de desperdicio</span><span class="dot"></span>
-      <span>· planos por pieza</span><span class="dot"></span>
+      <span>· estadísticas de ventas</span><span class="dot"></span>
     </span>
   </div>
 </div>
@@ -259,7 +258,7 @@ const landingMarkup = `
           <div class="box b3"></div>
         </div>
         <h3>Diseño paramétrico por arrastre</h3>
-        <p>Suelta estantes, cajoneras, modulares y bases sobre un canvas a escala. Cada pieza es un componente con cotas que viven con tu diseño — cambiá el ancho y todo se reajusta.</p>
+        <p>Suelta estantes, cajoneras, modulares y bases sobre un canvas a escala. Cada pieza es un componente con cotas que viven con tu diseño — cambia el ancho y todo se reajusta.</p>
       </div>
 
       <div class="feat__card">
@@ -274,7 +273,7 @@ const landingMarkup = `
           <div class="t" style="grid-column:span 2"></div>
         </div>
         <h3>Empaquetado óptimo en planchas reales</h3>
-        <p>El motor toma cada pieza, la corta contra el formato de plancha que uses (1.83×2.50, 1.22×2.44…) y resuelve el corte que minimiza desperdicio. Vas a saber exactamente cuántas planchas comprar.</p>
+        <p>El motor toma cada pieza, la corta contra el formato de plancha que elijas (1.83×2.50, 1.22×2.44…) y resuelve el corte que minimiza desperdicio. Sabrás exactamente cuántas planchas comprar.</p>
       </div>
 
       <div class="feat__card">
@@ -291,7 +290,7 @@ const landingMarkup = `
           <div class="item">zócalo</div>
         </div>
         <h3>Tu propia biblioteca de piezas</h3>
-        <p>Guardá cada componente que diseñes — un cajón de 60×45, una puerta abatible — y reutilizalo en el próximo trabajo. Tu propio kit, tus propias medidas estándar.</p>
+        <p>Guarda cada componente que diseñes — un cajón de 60×45, una puerta abatible — y reutilízalo en el próximo trabajo. Tu propio kit, tus propias medidas estándar.</p>
       </div>
     </div>
   </div>
@@ -302,23 +301,23 @@ const landingMarkup = `
     <div class="flow">
       <div class="flow__step">
         <div class="flow__num">— paso 01</div>
-        <div class="flow__title">Bocetá</div>
-        <div class="flow__desc">Arrastrá módulos al canvas, definí medidas y separadores. Sin instalar nada.</div>
+        <div class="flow__title">Diseña</div>
+        <div class="flow__desc">Arrastra módulos al canvas, define medidas y separadores. Sin instalar nada.</div>
       </div>
       <div class="flow__step">
         <div class="flow__num">— paso 02</div>
-        <div class="flow__title">Cubicá</div>
-        <div class="flow__desc">Una pestaña: Tablón distribuye cada pieza en planchas reales y reporta utilización.</div>
+        <div class="flow__title">Cubica</div>
+        <div class="flow__desc">Una pestaña: Tablón distribuye cada pieza en planchas reales y reporta utilización y desperdicio.</div>
       </div>
       <div class="flow__step">
         <div class="flow__num">— paso 03</div>
-        <div class="flow__title">Cotizá</div>
-        <div class="flow__desc">Exportá lista de cortes, costos por material y plano por pieza para el taller.</div>
+        <div class="flow__title">Cotiza</div>
+        <div class="flow__desc">Exporta la lista de cortes y los costos por material en un presupuesto PDF listo para el cliente.</div>
       </div>
       <div class="flow__step">
         <div class="flow__num">— paso 04</div>
-        <div class="flow__title">Cortá</div>
-        <div class="flow__desc">Mandá el corte a la sierra o a la CNC con el archivo listo. Cero re-medir.</div>
+        <div class="flow__title">Envía</div>
+        <div class="flow__desc">Envía la cotización al cliente directamente desde la plataforma. El presupuesto llega listo, sin re-calcular.</div>
       </div>
     </div>
   </div>
@@ -327,15 +326,15 @@ const landingMarkup = `
 <section class="section" id="cubicacion" data-screen-label="Big stat">
   <div class="shell">
     <div class="bigstat">
-      <div class="bigstat__num">−<em>23</em>%</div>
+      <div class="bigstat__num">−<em>90</em>%</div>
       <div class="bigstat__copy">
-        <h3>Menos plancha tirada al fondo del taller.</h3>
-        <p>El motor de empaquetamiento prueba miles de combinaciones de orientación, rotación y agrupamiento por color/grano para resolver el corte con mayor utilización posible. Comparado con cubicaciones manuales típicas, los talleres beta reducen un 23% el desperdicio promedio.</p>
+        <h3>Menos tiempo calculando, más tiempo fabricando.</h3>
+        <p>El proceso manual de cubicación puede tomar entre 2 y 8 horas para un mueble complejo. Tablón lo resuelve automáticamente al finalizar el diseño, reduciendo ese tiempo en un 90%. Más horas para fabricar, menos horas frente a la calculadora.</p>
         <ul>
           <li>Bin-packing 2D con rotación y agrupado por material</li>
           <li>Soporta planchas múltiples y formatos personalizados</li>
-          <li>Respeta el grano de la madera cuando lo marcás</li>
-          <li>Exporta el patrón a DXF / SVG para CNC</li>
+          <li>Respeta el grano de la madera cuando lo marcas</li>
+          <li>Genera lista de cortes y cotización en PDF para el cliente</li>
         </ul>
       </div>
     </div>
@@ -355,7 +354,7 @@ const landingMarkup = `
     <div class="detail">
       <div class="detail__copy">
         <h3>De la <em>idea</em> al corte, sin planilla.</h3>
-        <p>Tablón calcula automáticamente cuántas planchas necesitás y cómo se acomoda cada pieza. Cambiás una medida en el diseño y la cubicación se reactualiza al instante.</p>
+        <p>Tablón calcula automáticamente cuántas planchas necesitas y cómo se acomoda cada pieza. Cambias una medida en el diseño y la cubicación se reactualiza al instante.</p>
         <p>Esto sirve para cotizar más rápido, comprar la cantidad justa, y entregar al cliente un presupuesto que respeta el material disponible.</p>
 
         <div class="detail__bullets">
@@ -365,11 +364,11 @@ const landingMarkup = `
           </div>
           <div class="b">
             <div class="n">02</div>
-            <div><strong>Costo por plancha</strong><span>Cargá tu precio actual y Tablón te devuelve el costo total de materia prima del proyecto.</span></div>
+            <div><strong>Costo por plancha</strong><span>Carga tu precio actual y Tablón te devuelve el costo total de materia prima del proyecto.</span></div>
           </div>
           <div class="b">
             <div class="n">03</div>
-            <div><strong>Lista de cortes</strong><span>Exportá un PDF listo para el operario con cada pieza numerada y referenciada al plano.</span></div>
+            <div><strong>Lista de cortes</strong><span>Exporta un PDF listo para el operario con cada pieza numerada y su cotización detallada para el cliente.</span></div>
           </div>
         </div>
       </div>
@@ -417,7 +416,7 @@ const landingMarkup = `
         <div class="s-head__num">[ 03 / biblioteca ]</div>
         <h2>Tus piezas, <em>tu</em> kit.</h2>
       </div>
-      <p class="s-head__lede">Cada pieza guardada se vuelve un ladrillo: combinala con otras para armar el siguiente mueble en minutos.</p>
+      <p class="s-head__lede">Cada pieza guardada se vuelve un ladrillo: combínala con otras para armar el siguiente mueble en minutos.</p>
     </div>
     <div class="lib">
       <div class="lib__card">
@@ -448,10 +447,10 @@ const landingMarkup = `
   <div class="shell">
     <div class="quote">
       <div>
-        <q>Antes me tomaba media tarde sentarme con la calculadora a ver cuántas planchas pedir. Ahora lo veo mientras dibujo — y compro justo.</q>
+        <q>Antes me demoraba toda una tarde calculando cuántas planchas necesitaba para cada encargo. Ahora lo tengo al instante mientras diseño — y compro exactamente lo que necesito.</q>
         <div class="quote__att">
-          <strong>Mariano Sotelo</strong>
-          Maestro carpintero · Taller La Astilla, Córdoba
+          <strong>Juan Pérez</strong>
+          Mueblista artesanal · Taller de muebles, Teno
         </div>
       </div>
       <div class="quote__avatar"></div>
@@ -459,69 +458,13 @@ const landingMarkup = `
   </div>
 </section>
 
-<section class="section" id="precios" data-screen-label="Precios">
-  <div class="shell">
-    <div class="s-head">
-      <div>
-        <div class="s-head__num">[ 04 / precios ]</div>
-        <h2>Pagás por proyecto, no por <em>asiento</em>.</h2>
-      </div>
-      <p class="s-head__lede">Sin contratos anuales. Cancelás cuando quieras. Cobramos por trabajo terminado, no por estar logueado.</p>
-    </div>
-
-    <div class="price">
-      <div class="price__card">
-        <div class="price__name">Banco</div>
-        <div class="price__amt">US$ 0<span class="per">/ siempre</span></div>
-        <p style="color:var(--color-paper-grey);font-size:14px">Para diseñar tu primer mueble y probar el flujo completo.</p>
-        <ul class="price__list">
-          <li>1 proyecto activo</li>
-          <li>Cubicación con marca de agua</li>
-          <li>Biblioteca de 5 piezas</li>
-          <li>Soporte por mail</li>
-        </ul>
-        <a href="#" class="btn btn--outline" data-login="true" style="margin-top:auto;justify-content:center">Empezar</a>
-      </div>
-
-      <div class="price__card featured">
-        <div class="price__name">Taller</div>
-        <div class="price__amt">US$ 19<span class="per">/ mes</span></div>
-        <p style="color:var(--color-paper-grey);font-size:14px">Para carpinteros y diseñadores que cotizan varios trabajos por mes.</p>
-        <ul class="price__list">
-          <li>Proyectos ilimitados</li>
-          <li>Cubicación multi-material</li>
-          <li>Biblioteca ilimitada</li>
-          <li>Exporta DXF / SVG / PDF</li>
-          <li>Lista de cortes para operario</li>
-        </ul>
-        <a href="#" class="btn btn--primary" data-login="true" style="margin-top:auto;justify-content:center">Empezar 14 días gratis</a>
-      </div>
-
-      <div class="price__card">
-        <div class="price__name">Fábrica</div>
-        <div class="price__amt">a medida<span class="per"></span></div>
-        <p style="color:var(--color-paper-grey);font-size:14px">Para fábricas con CNC, multi-equipo y catálogo propio.</p>
-        <ul class="price__list">
-          <li>Equipo y permisos</li>
-          <li>Conector CNC y SSO</li>
-          <li>Catálogo compartido</li>
-          <li>API y webhooks</li>
-          <li>Soporte dedicado</li>
-        </ul>
-        <a href="#" class="btn btn--outline" data-login="true" style="margin-top:auto;justify-content:center">Hablar con ventas</a>
-      </div>
-    </div>
-  </div>
-</section>
-
 <section class="shell" id="cta" data-screen-label="CTA">
   <div class="cta">
     <div class="cta__inner">
-      <h2>Dejá de calcular en <em>servilleta</em>.</h2>
-      <p>Empezá a diseñar y cubicar en un solo lugar. Gratis para tu primer proyecto, sin tarjeta.</p>
+      <h2>Deja de calcular en <em>servilleta</em>.</h2>
+      <p>Diseña y cubica en un solo lugar, directo desde el navegador.</p>
       <div class="cta__btns">
         <a href="#" class="btn btn--primary" data-login="true">Crear mi cuenta →</a>
-        <a href="#" class="btn btn--outline">Ver demo (3 min)</a>
       </div>
     </div>
   </div>
@@ -543,8 +486,8 @@ const landingMarkup = `
           <li>Diseño</li>
           <li>Cubicación</li>
           <li>Biblioteca</li>
-          <li>Exportar a CNC</li>
-          <li>Cambios v2.4</li>
+          <li>Cotizaciones</li>
+          <li>Novedades</li>
         </ul>
       </div>
       <div class="footer__col">
@@ -569,8 +512,8 @@ const landingMarkup = `
       </div>
     </div>
     <div class="footer__bottom">
-      <span>© 2026 Tablón Studio · hecho con aserrín digital</span>
-      <span>v2.4.1 · estado: operativo</span>
+      <span>© 2026 Tablón · hecho con aserrín digital</span>
+      <span>Beta · estado: operativo</span>
     </div>
   </div>
 </footer>
