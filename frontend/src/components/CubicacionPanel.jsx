@@ -4,17 +4,7 @@ import {
   optimizePiecesInBoards,
   BOARD_CONFIGS,
 } from '../services/cubicacion'
-
-function parseMaterialBoardConfig(material) {
-  if (material?.dimensiones) {
-    const match = material.dimensiones.match(/(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)/i)
-    if (match) {
-      const a = parseFloat(match[1]), b = parseFloat(match[2])
-      return { width: Math.max(a, b), height: Math.min(a, b), name: material.nombre || 'Material', kerf: BOARD_CONFIGS.melamina.kerf }
-    }
-  }
-  return BOARD_CONFIGS.melamina
-}
+import { parseBoardConfig } from '../services/boardUtils'
 
 export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial, drawerTypes, tapaCantos, materials, accessories, selectedAccessories, currentDesignName, selectedTapaCantoId, selectedDrawerTypeId }) {
   const [selectedModule, setSelectedModule] = useState(null)
@@ -33,7 +23,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
   const emailTemplateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_egzw8fd'
   const emailPublicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'S1uLBrr9Cn3CVH4Nq'
 
-  const boardConfig = useMemo(() => parseMaterialBoardConfig(selectedMaterial), [selectedMaterial])
+  const boardConfig = useMemo(() => parseBoardConfig(selectedMaterial), [selectedMaterial])
 
   // Process all data: group pieces and optimize board packing
   const cubicacionData = useMemo(() => {

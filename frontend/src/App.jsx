@@ -10,35 +10,7 @@ import { saveFurniture, loadFurniture, deleteFurniture, updateFurniture } from '
 import { listDrawerTypes } from './services/drawerTypes.js'
 import { listMaterials } from './services/materials.js'
 import { getToken, removeToken, verifyToken } from './services/auth.js'
-
-function parseBoardLimits(material) {
-  const DEFAULT = { long: 250, short: 183 }
-  if (!material?.dimensiones) return DEFAULT
-  const match = material.dimensiones.match(/(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)/i)
-  if (!match) return DEFAULT
-  const a = parseFloat(match[1]), b = parseFloat(match[2])
-  return { long: Math.max(a, b), short: Math.min(a, b) }
-}
-
-function getDimensionWarnings(shape, limits) {
-  if (!shape) return []
-  const { long, short } = limits
-  const w = Number(shape.width) || 0
-  const h = Number(shape.height) || 0
-  const d = Number(shape.depth) || 0
-  const warnings = []
-  if (w > long)
-    warnings.push(`Ancho ${w} cm supera el largo de plancha (${long} cm)`)
-  if (h > long)
-    warnings.push(`Alto ${h} cm supera el largo de plancha (${long} cm)`)
-  if (d > long)
-    warnings.push(`Profundidad ${d} cm supera el largo de plancha (${long} cm)`)
-  if (d > 0 && h > 0 && Math.min(d, h) > short)
-    warnings.push(`Laterales ${d}×${h} cm: ambas dimensiones superan ${short} cm, la pieza no cabe en la plancha`)
-  if (w > 0 && d > 0 && Math.min(w, d) > short)
-    warnings.push(`Fondo ${w}×${d} cm: ambas dimensiones superan ${short} cm, la pieza no cabe en la plancha`)
-  return warnings
-}
+import { parseBoardConfig, getDimensionWarnings } from './services/boardUtils.js'
 
 export default function App() {
   const [user, setUser] = useState(null)
@@ -411,7 +383,7 @@ export default function App() {
 
                       {/* Advertencias de dimensiones vs plancha */}
                       {(() => {
-                        const warnings = getDimensionWarnings(selected, parseBoardLimits(selectedMaterial))
+                        const warnings = getDimensionWarnings(selected, parseBoardConfig(selectedMaterial))
                         if (warnings.length === 0) return null
                         return (
                           <div style={{ gridColumn: '1/-1', background: 'rgba(255,180,0,0.1)', border: '1px solid rgba(255,180,0,0.4)', borderRadius: '6px', padding: '6px 8px', marginTop: '2px' }}>
@@ -795,7 +767,7 @@ export default function App() {
 
               {/* Advertencias de dimensiones vs plancha */}
               {(() => {
-                const warnings = getDimensionWarnings(selected, parseBoardLimits(selectedMaterial))
+                const warnings = getDimensionWarnings(selected, parseBoardConfig(selectedMaterial))
                 if (warnings.length === 0) return null
                 return (
                   <div style={{ gridColumn: '1/-1', background: 'rgba(255,180,0,0.1)', border: '1px solid rgba(255,180,0,0.4)', borderRadius: '6px', padding: '6px 8px', marginTop: '2px' }}>
