@@ -246,22 +246,19 @@ function resolveInternalPlacement(candidateShape, shapes, canvasWidth, canvasHei
   }
 
   const container = getContainerAtPoint(shapes, dropPoint)
+
+  // INTERNOs solo son válidos dentro de un módulo principal
+  if (!container) {
+    return { shape: candidateShape, isValid: false }
+  }
+
   let adjusted = { ...candidateShape }
 
-  if (container) {
-    const divisions = getDivisionLines(container, shapes)
-    const compartment = computeCompartmentBounds(container, dropPoint, divisions)
+  const divisions = getDivisionLines(container, shapes)
+  const compartment = computeCompartmentBounds(container, dropPoint, divisions)
 
-    adjusted = fitInternalToCompartment(adjusted, compartment, dropPoint)
-    adjusted = snapInternalToCompartmentEdges(adjusted, compartment, SNAP_THRESHOLD)
-  } else {
-    const referenceShapes = shapes.filter(s =>
-      s.type === 'cubierta' || COLLISION_GROUPS.PRINCIPALES.includes(s.type)
-    )
-    const snapped = findSnapPositionToEdges(adjusted, referenceShapes, canvasWidth, canvasHeight, SNAP_THRESHOLD)
-    adjusted.x = snapped.x
-    adjusted.y = snapped.y
-  }
+  adjusted = fitInternalToCompartment(adjusted, compartment, dropPoint)
+  adjusted = snapInternalToCompartmentEdges(adjusted, compartment, SNAP_THRESHOLD)
 
   const clamped = clampToCanvas(adjusted, canvasWidth, canvasHeight)
   adjusted.x = clamped.x
@@ -637,34 +634,18 @@ const KonvaStage = forwardRef(function KonvaStage({
       return
     }
 
+    // Solo HORIZONTALES llega aquí (INTERNOS y PRINCIPALES retornan antes)
     const hasCollision = shapes.some(s => checkCollision(candidateShape, s))
 
     if (hasCollision) {
-      let processedShape = null
-
-      if (COLLISION_GROUPS.HORIZONTALES.includes(selectedModule)) {
-        processedShape = handleHorizontalesCollision({ ...candidateShape }, shapes, BASE_WIDTH, BASE_HEIGHT)
-      }
-      else if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule)) {
-        processedShape = handlePrincipalesCollision({ ...candidateShape }, shapes, BASE_WIDTH, BASE_HEIGHT)
-      }
-
+      const processedShape = handleHorizontalesCollision({ ...candidateShape }, shapes, BASE_WIDTH, BASE_HEIGHT)
       if (processedShape) {
         setGhostShape({ ...processedShape, isValid: true })
       } else {
         setGhostShape({ ...candidateShape, isValid: false })
       }
     } else {
-      let processedShape = candidateShape
-
-      if (COLLISION_GROUPS.PRINCIPALES.includes(selectedModule)) {
-        const snappedPos = findSnapPositionPrincipales(candidateShape, shapes, BASE_WIDTH, BASE_HEIGHT)
-        const snappedCandidate = { ...candidateShape, x: snappedPos.x, y: snappedPos.y }
-        const stillValid = !shapes.some(s => checkCollision(snappedCandidate, s))
-        processedShape = stillValid ? snappedCandidate : candidateShape
-      }
-
-      setGhostShape({ ...processedShape, isValid: true })
+      setGhostShape({ ...candidateShape, isValid: true })
     }
   }
 
