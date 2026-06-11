@@ -648,24 +648,18 @@ function BoardVisualization({ board, boardConfig, getModuleColor }) {
   const boardArea = boardConfig.width * boardConfig.height
   const usedArea = usedWidth * usedHeight
 
-  // Zoom factor: if pieces use <30% of board, zoom in to make them visible
-  // Base zoom is 1.0 (full board). If they use only 10% space, zoom to ~3.5x
+  // When pieces occupy <30% of board, crop viewBox to occupied area so pieces are visible
   const occupancyRatio = usedArea / boardArea
-  let zoomFactor = 1
-  if (occupancyRatio < 0.3) {
-    // Inverse: lower occupancy = higher zoom
-    // occupancyRatio 0.1 => zoom 3.5
-    // occupancyRatio 0.3 => zoom 1.2
-    zoomFactor = Math.min(3.5, 1 + (0.3 - occupancyRatio) / 0.08)
+  let vbX = 0, vbY = 0, vbW = boardConfig.width, vbH = boardConfig.height
+  if (occupancyRatio < 0.3 && usedWidth > 0 && usedHeight > 0) {
+    const pad = Math.min(boardConfig.width, boardConfig.height) * 0.06
+    vbX = Math.max(0, minX - pad)
+    vbY = Math.max(0, minY - pad)
+    vbW = Math.min(boardConfig.width - vbX, maxX + pad - vbX)
+    vbH = Math.min(boardConfig.height - vbY, maxY + pad - vbY)
   }
 
-  // Now calculate SVG size with zoom
-  const maxWidth = 700
-  const baseScale = maxWidth / boardConfig.width
-  const scale = baseScale * zoomFactor
-
-  const svgWidth = boardConfig.width * scale
-  const svgHeight = boardConfig.height * scale
+  const maxBoardPx = 700
 
   // Flattened pieces for rendering
   const displayPieces = board.pieces || (board.shelves ? board.shelves.flatMap((shelf) => shelf.pieces) : [])
@@ -689,12 +683,11 @@ function BoardVisualization({ board, boardConfig, getModuleColor }) {
         </div>
       </div>
 
-      <div className="board-canvas-wrapper" style={{ maxWidth: `${svgWidth + 20}px` }}>
+      <div className="board-canvas-wrapper" style={{ maxWidth: `${maxBoardPx + 16}px` }}>
         <svg
           className="board-canvas"
-          viewBox={`0 0 ${boardConfig.width} ${boardConfig.height}`}
-          width={svgWidth}
-          height={svgHeight}
+          viewBox={`${vbX} ${vbY} ${vbW} ${vbH}`}
+          style={{ width: '100%', height: 'auto', display: 'block' }}
         >
           {/* Board background - light grid */}
           <defs>
@@ -728,14 +721,23 @@ function BoardVisualization({ board, boardConfig, getModuleColor }) {
           {/* Render each piece */}
           {displayPieces.map((piece, idx) => {
             const color = getModuleColor(piece.moduleType)
-            const x = piece.x
-            const y = piece.y
-            const width = piece.width
-            const height = piece.height
+            const { x, y, width, height } = piece
+
+            // Adaptive font size: proportional to piece dimensions, capped at 9
+            const dimFont = Math.min(9, width * 0.28, height * 0.28)
+            const showDims = dimFont >= 2.5
+            const showDesc = dimFont >= 4.5 && width >= 32 && height >= 16
+            const descFont = Math.min(7, dimFont * 0.78)
+            const desc = (piece.description || '').slice(0, 13)
+            const clipId = `clip-${board.id}-${idx}`
 
             return (
               <g key={idx} className="piece-group">
-                {/* Piece rectangle */}
+                <defs>
+                  <clipPath id={clipId}>
+                    <rect x={x + 1} y={y + 1} width={Math.max(0, width - 2)} height={Math.max(0, height - 2)} />
+                  </clipPath>
+                </defs>
                 <rect
                   x={x}
                   y={y}
@@ -746,46 +748,48 @@ function BoardVisualization({ board, boardConfig, getModuleColor }) {
                   strokeWidth="1.5"
                   opacity="0.9"
                 />
-
-                {/* Piece label - dimensions */}
-                <text
-                  x={x + width / 2}
-                  y={y + height / 2 - 3}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="piece-label"
-                  fontSize="11"
-                  fill="#fff"
-                  fontWeight="bold"
-                  pointerEvents="none"
-                >
-                  {`${width}×${height}`}
-                </text>
-
-                {/* Module type as subtitle */}
-                <text
-                  x={x + width / 2}
-                  y={y + height / 2 + 10}
-                  textAnchor="middle"
-                  dominantBaseline="middle"
-                  className="piece-module"
-                  fontSize="9"
-                  fill="#ccc"
-                  pointerEvents="none"
-                >
-                  {piece.description}
-                </text>
+                {showDims && (
+                  <text
+                    x={x + width / 2}
+                    y={showDesc ? y + height / 2 - dimFont * 0.65 : y + height / 2}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="piece-label"
+                    fontSize={dimFont}
+                    fill="#fff"
+                    fontWeight="bold"
+                    pointerEvents="none"
+                    clipPath={`url(#${clipId})`}
+                  >
+                    {`${width}×${height}`}
+                  </text>
+                )}
+                {showDesc && (
+                  <text
+                    x={x + width / 2}
+                    y={y + height / 2 + descFont * 0.9}
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    className="piece-module"
+                    fontSize={descFont}
+                    fill="#ddd"
+                    pointerEvents="none"
+                    clipPath={`url(#${clipId})`}
+                  >
+                    {desc}
+                  </text>
+                )}
               </g>
             )
           })}
 
-          {/* Board dimensions label */}
+          {/* Board dimensions label — anchored to bottom-right of current viewBox */}
           <text
-            x={boardConfig.width - 5}
-            y={boardConfig.height - 5}
+            x={vbX + vbW - 2}
+            y={vbY + vbH - 2}
             textAnchor="end"
-            dominantBaseline="hanging"
-            fontSize="9"
+            dominantBaseline="auto"
+            fontSize={Math.min(9, vbW * 0.04)}
             fill="#7F8C8D"
             pointerEvents="none"
           >

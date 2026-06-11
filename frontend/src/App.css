@@ -1795,18 +1795,17 @@ body {
   background: var(--color-dots-black);
   border-radius: var(--radius-default);
   padding: 8px;
-  overflow: auto;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  max-height: 500px;
+  overflow: hidden;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .board-canvas {
   background: #fff;
   border-radius: 4px;
-  max-width: 100%;
+  width: 100%;
   height: auto;
+  display: block;
   filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.6));
 }
 
