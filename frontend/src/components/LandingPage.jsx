@@ -159,24 +159,28 @@ const landingMarkup = `
             <div class="app-canvas" data-panel="biblioteca" style="display:none;background:var(--color-ink-black);border-color:var(--color-slate-border);padding:14px;display:none">
               <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
                 <div style="background:var(--color-dots-black);border:1px solid var(--color-slate-border);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px">
-                  <div style="aspect-ratio:1;background:var(--color-paper-grey);border-radius:4px"></div>
-                  <div style="font-size:11px">Repisa flotante</div>
-                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">90×25</div>
+                  <div style="aspect-ratio:1;background:#e8e3dd;border-radius:4px;position:relative;overflow:hidden"><div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 18px,rgba(0,0,0,.06) 18px 19px)"></div></div>
+                  <div style="font-size:9px;color:var(--color-faded-grey);text-transform:uppercase;letter-spacing:.08em">Material</div>
+                  <div style="font-size:11px">Melamina Blanca 18</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">$ 18.500 / plancha</div>
                 </div>
                 <div style="background:var(--color-dots-black);border:1px solid var(--color-slate-border);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px">
-                  <div style="aspect-ratio:1;background:var(--color-paper-grey);border-radius:4px;position:relative"><div style="position:absolute;inset:6px;border:2px solid var(--color-faded-grey)"></div></div>
+                  <div style="aspect-ratio:1;background:var(--color-dark-card);border-radius:4px;position:relative;display:flex;align-items:center;justify-content:center;gap:3px;flex-direction:column"><div style="width:70%;height:3px;background:var(--color-faded-grey);border-radius:2px"></div><div style="width:70%;height:3px;background:var(--color-faded-grey);border-radius:2px"></div><div style="width:14px;height:14px;border:2px solid var(--color-faded-grey);border-radius:50%;position:absolute;right:14%;bottom:14%"></div></div>
+                  <div style="font-size:9px;color:var(--color-faded-grey);text-transform:uppercase;letter-spacing:.08em">Accesorio</div>
+                  <div style="font-size:11px">Corredera telescópica</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">$ 4.200 / par</div>
+                </div>
+                <div style="background:var(--color-dots-black);border:1px solid var(--color-slate-border);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px">
+                  <div style="aspect-ratio:1;background:var(--color-dark-card);border-radius:4px;position:relative"><div style="position:absolute;inset:18% 12%;border:2px solid var(--color-faded-grey);border-radius:2px"></div><div style="position:absolute;top:50%;left:12%;right:12%;height:2px;background:var(--color-faded-grey)"></div></div>
+                  <div style="font-size:9px;color:var(--color-faded-grey);text-transform:uppercase;letter-spacing:.08em">Tipo cajón</div>
                   <div style="font-size:11px">Cajón estándar</div>
-                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">60×45</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">MDF 15 · fondo 9mm</div>
                 </div>
-                <div style="background:var(--color-dots-black);border:1px solid var(--color-slate-border);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px">
-                  <div style="aspect-ratio:1;background:var(--color-paper-grey);border-radius:4px;position:relative"><div style="position:absolute;inset:6px;background:repeating-linear-gradient(0deg,var(--color-faded-grey) 0 2px,transparent 2px 12px)"></div></div>
-                  <div style="font-size:11px">Persiana</div>
-                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">120×80</div>
-                </div>
-                <div style="background:var(--color-dots-black);border:1px solid var(--color-slate-border);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px;border-color:var(--color-ideation-blue)">
-                  <div style="aspect-ratio:1;background:var(--color-paper-grey);border-radius:4px;position:relative"><div style="position:absolute;inset:8px;border:2px solid var(--color-faded-grey);background:#fff"></div></div>
-                  <div style="font-size:11px;color:var(--color-ideation-blue)">Puerta abatible</div>
-                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">50×100</div>
+                <div style="background:var(--color-dots-black);border:1px solid var(--color-ideation-blue);border-radius:6px;padding:10px;display:flex;flex-direction:column;gap:6px">
+                  <div style="aspect-ratio:1;background:var(--color-dark-card);border-radius:4px;position:relative;overflow:hidden"><div style="position:absolute;top:0;left:0;right:0;height:22%;background:#e8e3dd"></div><div style="position:absolute;top:22%;left:0;right:0;bottom:0;background:var(--color-dark-card)"></div></div>
+                  <div style="font-size:9px;color:var(--color-ideation-blue);text-transform:uppercase;letter-spacing:.08em">Tapa canto</div>
+                  <div style="font-size:11px;color:var(--color-ideation-blue)">Enchape PVC blanco</div>
+                  <div style="font-family:var(--font-mono);font-size:9px;color:var(--color-faded-grey)">$ 650 / ml</div>
                 </div>
               </div>
             </div>
@@ -219,14 +223,14 @@ const landingMarkup = `
     <span>
       <span>· corte por plancha</span><span class="dot"></span>
       <span>· cubicación automática</span><span class="dot"></span>
-      <span>· biblioteca de piezas</span><span class="dot"></span>
+      <span>· catálogo de materiales</span><span class="dot"></span>
       <span>· cotizaciones en PDF</span><span class="dot"></span>
       <span>· historial de diseños</span><span class="dot"></span>
       <span>· optimización de desperdicio</span><span class="dot"></span>
       <span>· estadísticas de ventas</span><span class="dot"></span>
       <span>· corte por plancha</span><span class="dot"></span>
       <span>· cubicación automática</span><span class="dot"></span>
-      <span>· biblioteca de piezas</span><span class="dot"></span>
+      <span>· catálogo de materiales</span><span class="dot"></span>
       <span>· cotizaciones en PDF</span><span class="dot"></span>
       <span>· historial de diseños</span><span class="dot"></span>
       <span>· optimización de desperdicio</span><span class="dot"></span>
@@ -279,18 +283,18 @@ const landingMarkup = `
       <div class="feat__card">
         <span class="tag">/ biblioteca</span>
         <div class="glyph gl-lib">
-          <div class="item">repisa</div>
-          <div class="item active">cajón</div>
-          <div class="item">puerta</div>
-          <div class="item">divisor</div>
-          <div class="item active">base</div>
-          <div class="item">tapa</div>
-          <div class="item">copete</div>
-          <div class="item">marco</div>
-          <div class="item">zócalo</div>
+          <div class="item">material</div>
+          <div class="item active">accesorio</div>
+          <div class="item">tipo cajón</div>
+          <div class="item active">tapa canto</div>
+          <div class="item">melamina</div>
+          <div class="item">MDF</div>
+          <div class="item">corredera</div>
+          <div class="item">visagra</div>
+          <div class="item">enchape</div>
         </div>
-        <h3>Tu propia biblioteca de piezas</h3>
-        <p>Guarda cada componente que diseñes — un cajón de 60×45, una puerta abatible — y reutilízalo en el próximo trabajo. Tu propio kit, tus propias medidas estándar.</p>
+        <h3>Tu catálogo de materiales y herrajes</h3>
+        <p>Registrá tus planchas (melamina, MDF, contrachapado) con precio y formato. Agregá correderas, visagras y tiradores. Definí plantillas de cajón por material. La cubicación los usa todos automáticamente.</p>
       </div>
     </div>
   </div>
@@ -414,30 +418,34 @@ const landingMarkup = `
     <div class="s-head">
       <div>
         <div class="s-head__num">[ 03 / biblioteca ]</div>
-        <h2>Tus piezas, <em>tu</em> kit.</h2>
+        <h2>Tu catálogo, <em>siempre</em> listo.</h2>
       </div>
-      <p class="s-head__lede">Cada pieza guardada se vuelve un ladrillo: combínala con otras para armar el siguiente mueble en minutos.</p>
+      <p class="s-head__lede">Cargá una vez tus planchas, herrajes y tapa canto con precio. Cada proyecto los usa automáticamente — sin re-ingresar nada.</p>
     </div>
     <div class="lib">
       <div class="lib__card">
-        <div class="lib__thumb"><div style="position:absolute;inset:14% 14% 70% 14%;background:#a8a39c"></div></div>
-        <div class="lib__name">Repisa flotante</div>
-        <div class="lib__dim">90 × 25 cm · MDF 18</div>
+        <div class="lib__thumb" style="background:#e8e3dd;overflow:hidden"><div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(0,0,0,.05) 22px 23px)"></div></div>
+        <div style="font-size:10px;color:var(--color-ideation-blue);text-transform:uppercase;letter-spacing:.1em;font-weight:600">Material</div>
+        <div class="lib__name">Melamina Blanca 18mm</div>
+        <div class="lib__dim">244 × 183 cm · $ 18.500</div>
       </div>
       <div class="lib__card">
-        <div class="lib__thumb"><div style="position:absolute;inset:14%;background:transparent;border:3px solid #a8a39c"></div><div style="position:absolute;left:14%;right:14%;top:46%;height:3px;background:#a8a39c"></div></div>
+        <div class="lib__thumb"><div style="position:absolute;inset:22% 14%;border:2px solid #a8a39c;border-radius:2px"></div><div style="position:absolute;top:50%;left:14%;right:14%;height:2px;background:#a8a39c"></div><div style="position:absolute;right:18%;bottom:24%;width:12px;height:12px;border:2px solid #a8a39c;border-radius:50%"></div></div>
+        <div style="font-size:10px;color:var(--color-ideation-blue);text-transform:uppercase;letter-spacing:.1em;font-weight:600">Tipo de cajón</div>
         <div class="lib__name">Cajón estándar</div>
-        <div class="lib__dim">60 × 45 × 30 cm</div>
+        <div class="lib__dim">Laterales MDF 15 · fondo 9mm</div>
       </div>
       <div class="lib__card">
-        <div class="lib__thumb"><div style="position:absolute;inset:14%;background:repeating-linear-gradient(0deg,#a8a39c 0 4px,transparent 4px 12px)"></div></div>
-        <div class="lib__name">Persiana plegable</div>
-        <div class="lib__dim">120 × 80 cm</div>
+        <div class="lib__thumb"><div style="position:absolute;inset:30% 14%;display:flex;flex-direction:column;gap:6px"><div style="height:3px;background:#a8a39c;border-radius:2px"></div><div style="height:3px;background:#a8a39c;border-radius:2px"></div><div style="height:3px;width:60%;background:#a8a39c;border-radius:2px"></div></div><div style="position:absolute;right:14%;bottom:22%;width:14px;height:14px;border:2px solid #a8a39c;border-radius:50%"></div></div>
+        <div style="font-size:10px;color:var(--color-ideation-blue);text-transform:uppercase;letter-spacing:.1em;font-weight:600">Accesorio</div>
+        <div class="lib__name">Corredera telescópica</div>
+        <div class="lib__dim">45 cm · $ 4.200 / par</div>
       </div>
       <div class="lib__card">
-        <div class="lib__thumb"><div style="position:absolute;inset:18%;background:#fff;border:3px solid #a8a39c"></div><div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:6px;height:32px;background:#222;border-radius:2px"></div></div>
-        <div class="lib__name">Puerta abatible</div>
-        <div class="lib__dim">50 × 100 cm</div>
+        <div class="lib__thumb" style="overflow:hidden"><div style="position:absolute;top:0;left:0;right:0;height:28%;background:#e8e3dd"></div><div style="position:absolute;top:28%;left:0;right:0;bottom:0;background:var(--color-dark-card)"></div><div style="position:absolute;top:22%;left:0;right:0;height:3px;background:var(--color-ideation-blue);opacity:.6"></div></div>
+        <div style="font-size:10px;color:var(--color-ideation-blue);text-transform:uppercase;letter-spacing:.1em;font-weight:600">Tapa canto</div>
+        <div class="lib__name">Enchape PVC blanco</div>
+        <div class="lib__dim">Se calcula en ml · $ 650 / ml</div>
       </div>
     </div>
   </div>
