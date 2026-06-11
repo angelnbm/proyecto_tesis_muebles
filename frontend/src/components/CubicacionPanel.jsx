@@ -344,7 +344,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         material_nombre: selectedMaterial?.nombre || 'Sin material seleccionado',
         material_precio: selectedMaterial?.precio != null ? clp(selectedMaterial.precio) : 'Sin definir',
         planchas_total: boards?.length || 0,
-        nombre_empresa: 'Tablón',
+        nombre_empresa: 'Amedida',
       }
 
       if (!window.emailjs) {
@@ -702,8 +702,8 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
       <div className="cubicacion-print">
         <div className="print-header">
           <div className="print-brand">
-            <span className="print-brand-mark" />
-            <span className="print-brand-name">Tablón</span>
+            <svg className="print-brand-mark" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="11" height="11" rx="2" fill="#4586da"/><rect x="15" width="11" height="11" rx="2" stroke="#111" strokeWidth="1.5"/><rect y="15" width="11" height="11" rx="2" stroke="#111" strokeWidth="1.5"/><rect x="15" y="15" width="11" height="11" rx="2" stroke="#ccc" strokeWidth="1.5"/></svg>
+            <span className="print-brand-name">Amedida</span>
           </div>
           <div className="print-meta">
             <h1>Cotización de proyecto</h1>
@@ -738,7 +738,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         </div>
 
         <div className="print-footer">
-          Cotización válida 15 días · Tablón — hecho con aserrín digital
+          Cotización válida 15 días · Amedida — precisión artesanal, velocidad digital
         </div>
       </div>
     </div>

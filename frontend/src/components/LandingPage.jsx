@@ -5,8 +5,8 @@ const landingMarkup = `
 <header class="nav" data-screen-label="Nav">
   <div class="shell nav__inner">
     <a href="#" class="brand">
-      <span class="brand__mark"></span>
-      TABLÓN
+      <svg class="brand__mark" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="11" height="11" rx="2" fill="#4586da"/><rect x="13" width="11" height="11" rx="2" stroke="#f8f4f1" stroke-width="1.5"/><rect y="13" width="11" height="11" rx="2" stroke="#f8f4f1" stroke-width="1.5"/><rect x="13" y="13" width="11" height="11" rx="2" stroke="#3c3c3e" stroke-width="1.5"/></svg>
+      AMEDIDA
     </a>
     <nav class="nav__links">
       <a href="#producto">Producto</a>
@@ -26,7 +26,7 @@ const landingMarkup = `
   <div class="shell hero__inner">
     <div class="hero__eyebrow">
       <span class="dot"></span>
-      <span>Beta · diseñado para el mueblista artesanal</span>
+      <span>Precisión artesanal, velocidad digital</span>
     </div>
 
     <h1>
@@ -36,7 +36,7 @@ const landingMarkup = `
     </h1>
 
     <p class="hero__sub">
-      Tablón es la mesa de trabajo digital para mueblistas artesanales y carpinteros. Diseña estantes, cajoneras y modulares en 2D por arrastre, calcula automáticamente la cantidad de planchas y genera cotizaciones detalladas para tu cliente.
+      Amedida es la mesa de trabajo digital para mueblistas artesanales y carpinteros. Diseña estantes, cajoneras y modulares en 2D por arrastre, calcula automáticamente la cantidad de planchas y genera cotizaciones detalladas para tu cliente.
     </p>
 
     <div class="hero__cta">
@@ -60,7 +60,7 @@ const landingMarkup = `
             <div class="window__dot"></div>
             <div class="window__dot"></div>
           </div>
-          <div class="window__addr">app.tablon.studio / proyecto · 1234</div>
+          <div class="window__addr">app.amedida.cl / proyecto · 1234</div>
           <div style="width:60px"></div>
         </div>
         <div class="window__body" id="appBody">
@@ -307,7 +307,7 @@ const landingMarkup = `
       <div class="flow__step">
         <div class="flow__num">— paso 02</div>
         <div class="flow__title">Cubica</div>
-        <div class="flow__desc">Una pestaña: Tablón distribuye cada pieza en planchas reales y reporta utilización y desperdicio.</div>
+        <div class="flow__desc">Una pestaña: Amedida distribuye cada pieza en planchas reales y reporta utilización y desperdicio.</div>
       </div>
       <div class="flow__step">
         <div class="flow__num">— paso 03</div>
@@ -329,7 +329,7 @@ const landingMarkup = `
       <div class="bigstat__num">−<em>90</em>%</div>
       <div class="bigstat__copy">
         <h3>Menos tiempo calculando, más tiempo fabricando.</h3>
-        <p>El proceso manual de cubicación puede tomar entre 2 y 8 horas para un mueble complejo. Tablón lo resuelve automáticamente al finalizar el diseño, reduciendo ese tiempo en un 90%. Más horas para fabricar, menos horas frente a la calculadora.</p>
+        <p>El proceso manual de cubicación puede tomar entre 2 y 8 horas para un mueble complejo. Amedida lo resuelve automáticamente al finalizar el diseño, reduciendo ese tiempo en un 90%. Más horas para fabricar, menos horas frente a la calculadora.</p>
         <ul>
           <li>Bin-packing 2D con rotación y agrupado por material</li>
           <li>Soporta planchas múltiples y formatos personalizados</li>
@@ -354,7 +354,7 @@ const landingMarkup = `
     <div class="detail">
       <div class="detail__copy">
         <h3>De la <em>idea</em> al corte, sin planilla.</h3>
-        <p>Tablón calcula automáticamente cuántas planchas necesitas y cómo se acomoda cada pieza. Cambias una medida en el diseño y la cubicación se reactualiza al instante.</p>
+        <p>Amedida calcula automáticamente cuántas planchas necesitas y cómo se acomoda cada pieza. Cambias una medida en el diseño y la cubicación se reactualiza al instante.</p>
         <p>Esto sirve para cotizar más rápido, comprar la cantidad justa, y entregar al cliente un presupuesto que respeta el material disponible.</p>
 
         <div class="detail__bullets">
@@ -364,7 +364,7 @@ const landingMarkup = `
           </div>
           <div class="b">
             <div class="n">02</div>
-            <div><strong>Costo por plancha</strong><span>Carga tu precio actual y Tablón te devuelve el costo total de materia prima del proyecto.</span></div>
+            <div><strong>Costo por plancha</strong><span>Carga tu precio actual y Amedida te devuelve el costo total de materia prima del proyecto.</span></div>
           </div>
           <div class="b">
             <div class="n">03</div>
@@ -475,10 +475,10 @@ const landingMarkup = `
     <div class="footer__row">
       <div class="footer__col">
         <a href="#" class="brand" style="margin-bottom:12px">
-          <span class="brand__mark"></span>
-          TABLÓN
+          <svg class="brand__mark" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="11" height="11" rx="2" fill="#4586da"/><rect x="13" width="11" height="11" rx="2" stroke="#f8f4f1" stroke-width="1.5"/><rect y="13" width="11" height="11" rx="2" stroke="#f8f4f1" stroke-width="1.5"/><rect x="13" y="13" width="11" height="11" rx="2" stroke="#3c3c3e" stroke-width="1.5"/></svg>
+          AMEDIDA
         </a>
-        <p style="font-size:13px;color:var(--color-paper-grey);max-width:220px">La mesa de trabajo digital para carpinteros y diseñadores de muebles.</p>
+        <p style="font-size:13px;color:var(--color-paper-grey);max-width:220px">Precisión artesanal, velocidad digital.</p>
       </div>
       <div class="footer__col">
         <h5>Producto</h5>
@@ -512,7 +512,7 @@ const landingMarkup = `
       </div>
     </div>
     <div class="footer__bottom">
-      <span>© 2026 Tablón · hecho con aserrín digital</span>
+      <span>© 2026 Amedida · hecho con aserrín digital</span>
       <span>Beta · estado: operativo</span>
     </div>
   </div>
