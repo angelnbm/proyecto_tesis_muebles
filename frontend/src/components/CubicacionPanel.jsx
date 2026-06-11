@@ -32,10 +32,13 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     try {
       const { byModule, allPieces, tapaCantoList } = generateStructuredCuts(shapes, { drawerTypes, tapaCantos, selectedTapaCantoId, selectedDrawerTypeId })
 
-      // Separar piezas por material: cada material usa su propia plancha con sus medidas
+      // Separar piezas por material: cada material usa su propia plancha con sus medidas.
+      // Si una pieza tiene materialId === selectedMaterial._id va al pool por defecto
+      // (ej: partes de cajón cuyo tipo de cajón apunta al mismo material general).
+      const defaultMatId = selectedMaterial?._id
       const piecesByMat = new Map()
       allPieces.forEach(piece => {
-        const key = piece.materialId || '__default__'
+        const key = (!piece.materialId || piece.materialId === defaultMatId) ? '__default__' : piece.materialId
         if (!piecesByMat.has(key)) piecesByMat.set(key, [])
         piecesByMat.get(key).push(piece)
       })
