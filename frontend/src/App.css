@@ -586,6 +586,11 @@ body {
   padding: 2px 7px;
 }
 
+.emailjs-computed-detail span strong {
+  color: #27AE60;
+  font-weight: 600;
+}
+
 .emailjs-submit-btn {
   width: 100%;
   padding: 10px;
@@ -1887,6 +1892,11 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.stat-card--total {
+  border-color: #27AE60;
+  background: rgba(39, 174, 96, 0.07);
 }
 
 .stat-label {

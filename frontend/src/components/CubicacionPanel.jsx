@@ -476,6 +476,41 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
                 ).join(' · ')}
               </div>
             </div>
+
+            {(Object.keys(hardwareList).length > 0 || tapaCantoList.length > 0) && (() => {
+              const accesoriosCost = Object.values(hardwareList).reduce((s, i) => s + i.total, 0)
+              const tapaCost = tapaCantoList.reduce((s, i) => s + i.totalCost, 0)
+              const extrasCost = accesoriosCost + tapaCost
+              return (
+                <div className="stat-card">
+                  <div className="stat-label">Accesorios y enchape</div>
+                  <div className="stat-value">$ {extrasCost.toFixed(2)}</div>
+                  <div className="stat-detail">
+                    {Object.entries(hardwareList).map(([id, item]) =>
+                      `${item.nombre}: ${item.cantidad}u × $${item.precio.toFixed(2)}`
+                    ).join(' · ')}
+                    {Object.keys(hardwareList).length > 0 && tapaCantoList.length > 0 && ' · '}
+                    {tapaCantoList.map(item =>
+                      `Enchape ${item.materialName}: ${item.linealMeters.toFixed(2)}m`
+                    ).join(' · ')}
+                  </div>
+                </div>
+              )
+            })()}
+
+            {totalCost > 0 && (
+              <div className="stat-card stat-card--total">
+                <div className="stat-label">Total estimado</div>
+                <div className="stat-value">$ {totalCost.toFixed(2)}</div>
+                <div className="stat-detail">
+                  {[
+                    boardsCost != null && `planchas $${boardsCost.toFixed(2)}`,
+                    Object.keys(hardwareList).length > 0 && `accesorios $${Object.values(hardwareList).reduce((s, i) => s + i.total, 0).toFixed(2)}`,
+                    tapaCantoList.length > 0 && `enchape $${tapaCantoList.reduce((s, i) => s + i.totalCost, 0).toFixed(2)}`,
+                  ].filter(Boolean).join(' + ')}
+                </div>
+              </div>
+            )}
           </div>
         )}
       </section>
@@ -558,12 +593,16 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
             </div>
             <div className="emailjs-computed-detail">
               {boardsSummary.split('\n').map((line, i) => <span key={i}>{line}</span>)}
-              {Object.keys(hardwareList).length > 0 && (
-                <span>{Object.keys(hardwareList).length} accesorio{Object.keys(hardwareList).length > 1 ? 's' : ''}</span>
-              )}
-              {tapaCantoList.length > 0 && (
-                <span>Tapa canto incluido</span>
-              )}
+              {Object.entries(hardwareList).map(([id, item]) => (
+                <span key={id}>
+                  {item.nombre}{item.color ? ` (${item.color})` : ''}: {item.cantidad}u × ${item.precio.toFixed(2)} = <strong>${item.total.toFixed(2)}</strong>
+                </span>
+              ))}
+              {tapaCantoList.map((item, idx) => (
+                <span key={`tc-${idx}`}>
+                  Enchape {item.materialName}{item.color ? ` (${item.color})` : ''}: {item.linealMeters.toFixed(2)}m × ${item.precio.toFixed(2)}/m = <strong>${item.totalCost.toFixed(2)}</strong>
+                </span>
+              ))}
             </div>
           </div>
 
