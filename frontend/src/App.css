@@ -2088,3 +2088,225 @@ body {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* =============================================
+   PDF EXPORT
+   ============================================= */
+
+.pdf-divider {
+  border: none;
+  border-top: 1px solid var(--color-slate-border);
+  margin: 16px 0 14px;
+}
+
+.pdf-export-btn {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  color: var(--color-paper-grey);
+  border: 1px solid var(--color-slate-border);
+  border-radius: var(--radius-buttons);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.pdf-export-btn:hover {
+  border-color: var(--color-canvas-white);
+  color: var(--color-canvas-white);
+}
+
+/* Sección solo visible al imprimir */
+.cubicacion-print {
+  display: none;
+}
+
+/* =============================================
+   @MEDIA PRINT — Cotización PDF
+   ============================================= */
+
+@media print {
+  /* Ocultar toda la UI de la app */
+  .left-toolbar,
+  .right-sidebar,
+  .canvas-tabs,
+  .konva-wrapper,
+  .mobile-header,
+  .mobile-toolbar,
+  .mobile-tabs,
+  .mobile-canvas,
+  .mobile-recent-designs,
+  .bottom-panel,
+  .canvas-buttons-container,
+  .cubicacion-pieces,
+  .cubicacion-boards,
+  .cubicacion-pieces-list,
+  .cubicacion-hardware,
+  .cubicacion-stats,
+  .cubicacion-email,
+  .pdf-export-btn,
+  .pdf-divider { display: none !important; }
+
+  /* Mostrar la sección de impresión */
+  .cubicacion-print { display: block !important; }
+
+  /* Reset de layout */
+  html, body, #root { background: #fff !important; color: #111 !important; }
+
+  .app-root,
+  .canvas-area,
+  .mobile-content,
+  .cubicacion-panel {
+    display: block !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #fff !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* ── Cabecera ── */
+  .print-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 0 20px;
+    border-bottom: 2px solid #111;
+    margin-bottom: 24px;
+  }
+
+  .print-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .print-brand-mark {
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    border: 1.5px solid #111;
+    border-radius: 4px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .print-brand-mark::before {
+    content: '';
+    position: absolute;
+    top: 4px; right: 4px;
+    width: 8px; height: 8px;
+    background: #4586da;
+    border-radius: 1px;
+  }
+
+  .print-brand-mark::after {
+    content: '';
+    position: absolute;
+    bottom: 4px; left: 4px;
+    width: 8px; height: 8px;
+    border: 1.5px solid #111;
+    border-radius: 1px;
+  }
+
+  .print-brand-name {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    color: #111;
+  }
+
+  .print-meta h1 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #111;
+    margin: 0 0 6px;
+    text-align: right;
+  }
+
+  .print-meta p {
+    font-size: 12px;
+    color: #444;
+    margin: 2px 0;
+    text-align: right;
+  }
+
+  /* ── Secciones ── */
+  .print-section {
+    margin-bottom: 20px;
+  }
+
+  .print-section h2 {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #666;
+    margin: 0 0 8px;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 4px;
+  }
+
+  .print-section pre {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    color: #111;
+    white-space: pre-wrap;
+    line-height: 1.7;
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 12px;
+    margin: 0;
+  }
+
+  .print-design-img {
+    width: 100%;
+    max-width: 560px;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    display: block;
+  }
+
+  /* ── Total ── */
+  .print-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 2px solid #111;
+    padding-top: 14px;
+    margin-top: 20px;
+  }
+
+  .print-total span {
+    font-size: 12px;
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .print-total strong {
+    font-size: 24px;
+    font-weight: 700;
+    color: #4586da;
+  }
+
+  /* ── Footer ── */
+  .print-footer {
+    margin-top: 24px;
+    font-size: 10px;
+    color: #aaa;
+    text-align: center;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+  }
+
+  @page {
+    margin: 20mm 18mm;
+  }
+}

@@ -121,6 +121,12 @@ export function generateStructuredCuts(shapes, options = {}) {
         )
 
         addPiece(modulePieces, {
+          description: 'Techo/Piso',
+          width: w,
+          height: d,
+          quantity: 2,
+        })
+        addPiece(modulePieces, {
           description: 'Frente',
           width: w,
           height: drawerFrontHeight,
@@ -202,7 +208,13 @@ export function generateStructuredCuts(shapes, options = {}) {
         const numDivisores = shape.numDivisores !== undefined && shape.numDivisores !== null ? shape.numDivisores : 0
         const numPuertas = shape.numPuertas !== undefined && shape.numPuertas !== null ? shape.numPuertas : 0
 
-        // No incluir "Marco" - las puertas ya cumplen ese rol como frontal
+        modulePieces.push({
+          description: 'Techo/Piso',
+          width: w,
+          height: d,
+          quantity: 2,
+          area: w * d,
+        })
         modulePieces.push({
           description: `Laterales`,
           width: d,
@@ -310,12 +322,13 @@ export function generateStructuredCuts(shapes, options = {}) {
       }
 
       case 'divisor':
+        // El divisor ocupa profundidad × alto en la plancha (w canvas = grosor visual, no el corte real)
         modulePieces.push({
           description: `Divisor`,
-          width: w,
+          width: d,
           height: h,
           quantity: 1,
-          area: w * h,
+          area: d * h,
         })
         break
 

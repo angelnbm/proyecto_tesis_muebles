@@ -258,6 +258,12 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     setEmailForm((prev) => ({ ...prev, [field]: event.target.value }))
   }
 
+  const handleExportPdf = () => {
+    const imageDataUrl = exportStageImage ? exportStageImage() : null
+    setPreviewImage(imageDataUrl)
+    setTimeout(() => window.print(), 250)
+  }
+
   // Comprime un dataUrl hasta que su base64 quepa en maxChars.
   // Reduce la escala primero, luego la calidad JPEG, iterando hasta encajar.
   const compressImageToFit = (dataUrl, maxChars = 40000) => new Promise((resolve) => {
@@ -684,7 +690,57 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
             {isSending ? 'Enviando…' : 'Enviar cotización'}
           </button>
         </form>
+
+        <div className="pdf-divider" />
+
+        <button className="pdf-export-btn" onClick={handleExportPdf}>
+          Descargar cotización PDF
+        </button>
       </section>
+
+      {/* SECCIÓN SOLO VISIBLE EN IMPRESIÓN / PDF */}
+      <div className="cubicacion-print">
+        <div className="print-header">
+          <div className="print-brand">
+            <span className="print-brand-mark" />
+            <span className="print-brand-name">Tablón</span>
+          </div>
+          <div className="print-meta">
+            <h1>Cotización de proyecto</h1>
+            <p>Cliente: <strong>{emailForm.nombre_cliente || '—'}</strong></p>
+            <p>Proyecto: <strong>{emailForm.nombre_proyecto || currentDesignName || '—'}</strong></p>
+            <p>Fecha: {new Date().toLocaleDateString('es-CL')}</p>
+          </div>
+        </div>
+
+        <div className="print-section">
+          <h2>Planchas</h2>
+          <pre>{boardsSummary}</pre>
+        </div>
+
+        {(Object.keys(hardwareList).length > 0 || tapaCantoList.length > 0) && (
+          <div className="print-section">
+            <h2>Herrajes y extras</h2>
+            <pre>{extrasSummary}</pre>
+          </div>
+        )}
+
+        {previewImage && (
+          <div className="print-section">
+            <h2>Diseño</h2>
+            <img src={previewImage} alt="Diseño del proyecto" className="print-design-img" />
+          </div>
+        )}
+
+        <div className="print-total">
+          <span>Total estimado del proyecto</span>
+          <strong>{clp(totalCost)}</strong>
+        </div>
+
+        <div className="print-footer">
+          Cotización válida 15 días · Tablón — hecho con aserrín digital
+        </div>
+      </div>
     </div>
   )
 }
