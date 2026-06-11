@@ -162,28 +162,24 @@ export function generateStructuredCuts(shapes, options = {}) {
           width: d,
           height: drawerHeight,
           quantity: 2,
-          materialId: drawerType.laterales,
         })
           addPiece(modulePieces, {
             description: 'Frente interno cajon',
             width: internalWidth,
             height: drawerHeight,
             quantity: 1,
-            materialId: drawerType.frenteInterno,
           })
           addPiece(modulePieces, {
             description: 'Trasera cajon',
             width: internalWidth,
             height: drawerHeight,
             quantity: 1,
-            materialId: drawerType.trasera,
           })
           addPiece(modulePieces, {
             description: 'Fondo cajon',
             width: internalWidth,
             height: d,
             quantity: 1,
-            materialId: drawerType.fondo,
           })
 
           if (drawerType.hasRefuerzo) {
@@ -192,7 +188,6 @@ export function generateStructuredCuts(shapes, options = {}) {
               width: internalWidth,
               height: drawerHeight,
               quantity: 1,
-              materialId: drawerType.refuerzo,
             })
           }
 
