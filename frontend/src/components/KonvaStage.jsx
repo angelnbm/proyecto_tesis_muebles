@@ -40,8 +40,11 @@ function checkCollision(rect1, rect2) {
   )
 }
 
-const SNAP_THRESHOLD = 8
-const SNAP_THRESHOLD_PRINCIPALES = 22
+const isTouchDevice = typeof window !== 'undefined' && ('ontouchstart' in window || navigator.maxTouchPoints > 0)
+// En móvil el dedo tiene ~40px de imprecisión vs ~5px del cursor.
+// Los umbrales están en unidades de canvas (700px base), escala ~0.5 en móvil.
+const SNAP_THRESHOLD = isTouchDevice ? 30 : 8
+const SNAP_THRESHOLD_PRINCIPALES = isTouchDevice ? 65 : 22
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value))
@@ -434,6 +437,10 @@ function findAttachPositionPrincipales(newShape, existingShapes, canvasWidth, ca
   const references = getSnapReferencesForPrincipales(existingShapes)
   let bestPosition = null
   let minDistance = Number.POSITIVE_INFINITY
+  // Limitar cuánto puede "volar" un módulo al resolver colisión.
+  // En móvil el dedo es impreciso, así que el límite es más generoso
+  // pero evita que el módulo salte al otro extremo del canvas.
+  const maxAllowedDist = isTouchDevice ? 160 : 80
 
   references.forEach(other => {
     const candidates = [
@@ -446,7 +453,7 @@ function findAttachPositionPrincipales(newShape, existingShapes, canvasWidth, ca
     candidates.forEach(candidate => {
       const clamped = clampToCanvas({ ...newShape, x: candidate.x, y: candidate.y }, canvasWidth, canvasHeight)
       const distance = Math.abs(newShape.x - clamped.x) + Math.abs(newShape.y - clamped.y)
-      if (distance >= minDistance) return
+      if (distance >= minDistance || distance > maxAllowedDist) return
 
       const testShape = { ...newShape, x: clamped.x, y: clamped.y }
       const hasCollision = existingShapes.some(s => checkCollision(testShape, s))
@@ -946,6 +953,8 @@ const KonvaStage = forwardRef(function KonvaStage({
         onMouseDown={handleStageMouseDown}
         onMouseUp={handleStageMouseUp}
         onTouchStart={handleStageMouseDown}
+        onTouchMove={handleMouseMove}
+        onTouchEnd={handleStageMouseUp}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => setGhostShape(null)}
         style={{ 
@@ -1011,14 +1020,15 @@ const KonvaStage = forwardRef(function KonvaStage({
               }}
             >
               {s.type === 'estante' && (
-                <Rect 
-                  x={0} 
-                  y={0} 
-                  width={s.width} 
-                  height={s.height} 
-                  fill="#e8e8e8" 
-                  stroke={selectedId === s.id ? '#4A90E2' : '#999'} 
+                <Rect
+                  x={0}
+                  y={0}
+                  width={s.width}
+                  height={s.height}
+                  fill="#e8e8e8"
+                  stroke={selectedId === s.id ? '#4A90E2' : '#999'}
                   strokeWidth={selectedId === s.id ? 3 : 2}
+                  hitStrokeWidth={isTouchDevice ? 22 : 0}
                   shadowColor="black"
                   shadowBlur={4}
                   shadowOpacity={0.3}
@@ -1142,14 +1152,15 @@ const KonvaStage = forwardRef(function KonvaStage({
               })()}
 
               {s.type === 'base' && (
-                <Rect 
-                  x={0} 
-                  y={0} 
-                  width={s.width} 
-                  height={s.height} 
-                  fill="#c8c8c8" 
+                <Rect
+                  x={0}
+                  y={0}
+                  width={s.width}
+                  height={s.height}
+                  fill="#c8c8c8"
                   stroke={selectedId === s.id ? '#4A90E2' : '#666'}
                   strokeWidth={selectedId === s.id ? 3 : 2}
+                  hitStrokeWidth={isTouchDevice ? 16 : 0}
                   shadowColor="black"
                   shadowBlur={3}
                   shadowOpacity={0.2}
@@ -1158,26 +1169,28 @@ const KonvaStage = forwardRef(function KonvaStage({
               )}
 
               {s.type === 'divisor' && (
-                <Rect 
-                  x={0} 
-                  y={0} 
-                  width={s.width} 
-                  height={s.height} 
-                  fill="#b8b8b8" 
+                <Rect
+                  x={0}
+                  y={0}
+                  width={s.width}
+                  height={s.height}
+                  fill="#b8b8b8"
                   stroke={selectedId === s.id ? '#4A90E2' : '#777'}
                   strokeWidth={selectedId === s.id ? 2 : 1}
+                  hitStrokeWidth={isTouchDevice ? 22 : 0}
                 />
               )}
 
               {s.type === 'cubierta' && (
-                <Rect 
-                  x={0} 
-                  y={0} 
-                  width={s.width} 
-                  height={s.height} 
-                  fill="#f0f0f0" 
+                <Rect
+                  x={0}
+                  y={0}
+                  width={s.width}
+                  height={s.height}
+                  fill="#f0f0f0"
                   stroke={selectedId === s.id ? '#4A90E2' : '#999'}
                   strokeWidth={selectedId === s.id ? 3 : 2}
+                  hitStrokeWidth={isTouchDevice ? 16 : 0}
                   shadowColor="black"
                   shadowBlur={4}
                   shadowOpacity={0.3}
