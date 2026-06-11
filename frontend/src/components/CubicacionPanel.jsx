@@ -11,8 +11,6 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     nombre_cliente: '',
     to_email: '',
     nombre_proyecto: currentDesignName || '',
-    precio_total: '',
-    nombre_empresa: '',
   })
   const [isSending, setIsSending] = useState(false)
   const [emailStatus, setEmailStatus] = useState({ type: null, message: '' })
@@ -214,14 +212,13 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     return total
   }, [boardsCost, hardwareList, tapaCantoList])
 
-  // Auto-poblar form cuando cambian los datos
+  // Auto-poblar nombre del proyecto cuando cambia el diseño activo
   useEffect(() => {
     setEmailForm(prev => ({
       ...prev,
       nombre_proyecto: currentDesignName || prev.nombre_proyecto,
-      precio_total: totalCost > 0 ? totalCost.toFixed(2) : '',
     }))
-  }, [currentDesignName, totalCost])
+  }, [currentDesignName])
 
   const boardsSummary = useMemo(() => {
     if (!boardGroups || boardGroups.length === 0) return 'Sin planchas calculadas'
@@ -298,10 +295,9 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         nombre_cliente: emailForm.nombre_cliente.trim(),
         to_email: emailForm.to_email.trim(),
         reply_to: emailForm.to_email.trim(),
-        from_name: emailForm.nombre_empresa.trim() || emailForm.nombre_cliente.trim(),
+        from_name: emailForm.nombre_cliente.trim(),
         nombre_proyecto: emailForm.nombre_proyecto.trim(),
-        precio_total: emailForm.precio_total.trim() || 'Sin definir',
-        nombre_empresa: emailForm.nombre_empresa.trim() || 'Sin definir',
+        precio_total: totalCost > 0 ? `$ ${totalCost.toFixed(2)}` : 'Sin calcular',
         planchas_resumen: boardsSummary,
         extras_resumen: extrasSummary,
         imagen_base64: imageBase64 || '',
@@ -530,7 +526,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
             </div>
 
             <div className="emailjs-field">
-              <label>Correo de destino</label>
+              <label>Correo del cliente</label>
               <input
                 type="email"
                 value={emailForm.to_email}
@@ -540,7 +536,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
               />
             </div>
 
-            <div className="emailjs-field">
+            <div className="emailjs-field emailjs-field--full">
               <label>Nombre del proyecto</label>
               <input
                 type="text"
@@ -550,49 +546,25 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
                 required
               />
             </div>
-
-            <div className="emailjs-field">
-              <label>Precio total</label>
-              <input
-                type="text"
-                value={emailForm.precio_total}
-                onChange={handleEmailFieldChange('precio_total')}
-                placeholder="$ 0,00"
-              />
-            </div>
-
-            <div className="emailjs-field">
-              <label>Nombre de la empresa</label>
-              <input
-                type="text"
-                value={emailForm.nombre_empresa}
-                onChange={handleEmailFieldChange('nombre_empresa')}
-                placeholder="Muebles S.A."
-              />
-            </div>
           </div>
 
-          <div className="emailjs-summary">
-            <h4>Planchas a utilizar</h4>
-            <pre>{boardsSummary}</pre>
-            <h4>Extras</h4>
-            <pre>{extrasSummary}</pre>
-            {selectedMaterial && (
-              <>
-                <h4>Material seleccionado</h4>
-                <p>{selectedMaterial.nombre} · ${Number(selectedMaterial.precio).toFixed(2)} c/u</p>
-              </>
-            )}
-            <h4>Imagen del diseño</h4>
-            {previewImage ? (
-              <img
-                src={previewImage}
-                alt="Diseño"
-                style={{ width: '100%', height: 'auto', borderRadius: '6px', marginTop: '8px' }}
-              />
-            ) : (
-              <p></p>
-            )}
+          {/* Resumen calculado automáticamente — no editable */}
+          <div className="emailjs-computed">
+            <div className="emailjs-computed-price">
+              <span className="emailjs-computed-label">Total cotización</span>
+              <span className="emailjs-computed-value">
+                {totalCost > 0 ? `$ ${totalCost.toLocaleString('es-CL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : '—'}
+              </span>
+            </div>
+            <div className="emailjs-computed-detail">
+              {boardsSummary.split('\n').map((line, i) => <span key={i}>{line}</span>)}
+              {Object.keys(hardwareList).length > 0 && (
+                <span>{Object.keys(hardwareList).length} accesorio{Object.keys(hardwareList).length > 1 ? 's' : ''}</span>
+              )}
+              {tapaCantoList.length > 0 && (
+                <span>Tapa canto incluido</span>
+              )}
+            </div>
           </div>
 
           {emailStatus.message && (
@@ -601,8 +573,8 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
             </div>
           )}
 
-          <button type="submit" disabled={isSending}>
-            {isSending ? 'Enviando...' : 'Enviar cotización'}
+          <button type="submit" disabled={isSending} className="emailjs-submit-btn">
+            {isSending ? 'Enviando…' : 'Enviar cotización'}
           </button>
         </form>
       </section>

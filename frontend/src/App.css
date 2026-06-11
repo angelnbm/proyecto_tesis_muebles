@@ -496,6 +496,145 @@ body {
   border: 1px solid var(--color-slate-border);
 }
 
+/* ── Formulario de cotización rediseñado ── */
+.emailjs-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.emailjs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.emailjs-field--full {
+  grid-column: 1 / -1;
+}
+
+.emailjs-field label {
+  display: block;
+  font-size: 11px;
+  color: var(--color-faded-grey);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.emailjs-field input {
+  width: 100%;
+  padding: 8px 10px;
+  background: var(--color-dark-card);
+  border: 1px solid var(--color-slate-border);
+  border-radius: var(--radius-buttons);
+  color: var(--color-canvas-white);
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s;
+}
+
+.emailjs-field input:focus {
+  border-color: var(--color-ideation-blue);
+}
+
+/* Bloque de precio calculado — no editable */
+.emailjs-computed {
+  background: var(--color-dark-card);
+  border: 1px solid var(--color-slate-border);
+  border-radius: var(--radius-buttons);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.emailjs-computed-price {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.emailjs-computed-label {
+  font-size: 11px;
+  color: var(--color-faded-grey);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.emailjs-computed-value {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-canvas-white);
+  letter-spacing: -0.02em;
+}
+
+.emailjs-computed-detail {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.emailjs-computed-detail span {
+  font-size: 11px;
+  color: var(--color-faded-grey);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--color-slate-border);
+  border-radius: 4px;
+  padding: 2px 7px;
+}
+
+.emailjs-submit-btn {
+  width: 100%;
+  padding: 10px;
+  background: var(--color-ideation-blue);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-buttons);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.emailjs-submit-btn:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.emailjs-submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.emailjs-status {
+  padding: 8px 12px;
+  border-radius: var(--radius-buttons);
+  font-size: 12px;
+}
+
+.emailjs-status.success {
+  background: rgba(0, 200, 100, 0.1);
+  border: 1px solid rgba(0, 200, 100, 0.3);
+  color: #4caf82;
+}
+
+.emailjs-status.error {
+  background: rgba(255, 80, 80, 0.1);
+  border: 1px solid rgba(255, 80, 80, 0.3);
+  color: #ff6b6b;
+}
+
+@media (max-width: 600px) {
+  .emailjs-grid {
+    grid-template-columns: 1fr;
+  }
+  .emailjs-field--full {
+    grid-column: 1;
+  }
+}
+
 @media (max-width: 900px) {
   .material-grid {
     grid-template-columns: 1fr;
