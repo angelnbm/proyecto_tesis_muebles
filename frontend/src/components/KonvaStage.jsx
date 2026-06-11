@@ -507,7 +507,7 @@ const KonvaStage = forwardRef(function KonvaStage({
 
       const dataUrl = stage.toDataURL({
         mimeType: 'image/jpeg',
-        quality: 0.6,
+        quality: 0.7,
         pixelRatio: 1,
         backgroundColor: '#ffffff',
       })
@@ -660,14 +660,19 @@ const KonvaStage = forwardRef(function KonvaStage({
     const stage = e.target.getStage()
     const pos = stage.getPointerPosition()
     if (!pos) return
-    
+
     if (e.target === stage && !selectedModule) {
       setIsPanning(true)
       setSelectedId(null)
       return
     }
-    
-    if (e.target === stage && selectedModule) {
+
+    // INTERNOS (estante/divisor/puerta) deben colocarse dentro de un container.
+    // En móvil el usuario toca el container directamente, por lo que e.target
+    // es el Rect del container (no el Stage). Permitimos placement igualmente.
+    const canPlaceInternal = selectedModule && COLLISION_GROUPS.INTERNOS.includes(selectedModule)
+
+    if (selectedModule && (e.target === stage || canPlaceInternal)) {
       const base = defaultSizes[selectedModule] || { width: 60, height: 60, depth: 20 }
       const id = Date.now()
       
@@ -1002,11 +1007,11 @@ const KonvaStage = forwardRef(function KonvaStage({
               key={s.id}
               x={s.x}
               y={s.y}
-              draggable
+              draggable={!selectedModule}
               rotation={s.rotation}
               onDragEnd={e => handleDragEnd(s.id, e)}
-              onClick={() => setSelectedId(s.id)}
-              onTap={() => setSelectedId(s.id)}
+              onClick={() => { if (!selectedModule) setSelectedId(s.id) }}
+              onTap={() => { if (!selectedModule) setSelectedId(s.id) }}
               dragBoundFunc={(pos) => {
                 const minX = 8
                 const minY = 8

@@ -5,6 +5,8 @@ import {
 } from '../services/cubicacion'
 import { parseBoardConfig } from '../services/boardUtils'
 
+const clp = (n) => `$ ${Math.round(n).toLocaleString('es-CL')}`
+
 export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial, drawerTypes, tapaCantos, materials, accessories, selectedAccessories, currentDesignName, selectedTapaCantoId, selectedDrawerTypeId }) {
   const [selectedModule, setSelectedModule] = useState(null)
   const [emailForm, setEmailForm] = useState({
@@ -238,14 +240,14 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     if (accEntries.length > 0) {
       parts.push('Accesorios:')
       accEntries.forEach(([id, item]) => {
-        parts.push(`  ${item.nombre}${item.color ? ` (${item.color})` : ''}: ${item.cantidad} u x $${item.precio.toFixed(2)}/u = $${item.total.toFixed(2)}`)
+        parts.push(`  ${item.nombre}${item.color ? ` (${item.color})` : ''}: ${item.cantidad} u x ${clp(item.precio)}/u = ${clp(item.total)}`)
       })
     }
 
     if (tapaCantoList.length > 0) {
       parts.push('Tapa canto:')
       tapaCantoList.forEach((item) => {
-        parts.push(`  ${item.materialName}${item.color ? ` (${item.color})` : ''}: ${item.linealMeters.toFixed(2)}m x $${item.precio.toFixed(2)}/m = $${item.totalCost.toFixed(2)}`)
+        parts.push(`  ${item.materialName}${item.color ? ` (${item.color})` : ''}: ${item.linealMeters.toFixed(2)}m x ${clp(item.precio)}/m = ${clp(item.totalCost)}`)
       })
     }
 
@@ -255,6 +257,36 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
   const handleEmailFieldChange = (field) => (event) => {
     setEmailForm((prev) => ({ ...prev, [field]: event.target.value }))
   }
+
+  // Comprime un dataUrl hasta que su base64 quepa en maxChars.
+  // Reduce la escala primero, luego la calidad JPEG, iterando hasta encajar.
+  const compressImageToFit = (dataUrl, maxChars = 40000) => new Promise((resolve) => {
+    if (!dataUrl) { resolve(''); return }
+    const raw = dataUrl.split(',')[1] || ''
+    if (raw.length <= maxChars) { resolve(raw); return }
+
+    const img = new Image()
+    img.onload = () => {
+      // Factor de escala inicial basado en cuánto hay que reducir (más conservador)
+      const ratio = Math.min(1, Math.sqrt(maxChars / raw.length) * 0.85)
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.max(1, Math.floor(img.width * ratio))
+      canvas.height = Math.max(1, Math.floor(img.height * ratio))
+      const ctx = canvas.getContext('2d')
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+      // Reducir calidad hasta encajar
+      let quality = 0.7
+      let b64 = canvas.toDataURL('image/jpeg', quality).split(',')[1]
+      while (b64.length > maxChars && quality > 0.15) {
+        quality = Math.round((quality - 0.1) * 10) / 10
+        b64 = canvas.toDataURL('image/jpeg', quality).split(',')[1]
+      }
+      resolve(b64)
+    }
+    img.onerror = () => resolve(raw.length <= maxChars ? raw : '')
+    img.src = dataUrl
+  })
 
   const handleSendEmail = async (event) => {
     event.preventDefault()
@@ -290,21 +322,23 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     setIsSending(true)
 
     try {
-      const imageBase64 = imageDataUrl ? imageDataUrl.split(',')[1] : ''
+      // Comprimir imagen adaptativamente para no superar el límite de 50KB de EmailJS
+      const imageBase64 = await compressImageToFit(imageDataUrl, 40000)
+
       const templateParams = {
         nombre_cliente: emailForm.nombre_cliente.trim(),
         to_email: emailForm.to_email.trim(),
         reply_to: emailForm.to_email.trim(),
         from_name: emailForm.nombre_cliente.trim(),
         nombre_proyecto: emailForm.nombre_proyecto.trim(),
-        precio_total: totalCost > 0 ? `$ ${totalCost.toFixed(2)}` : 'Sin calcular',
+        precio_total: totalCost > 0 ? clp(totalCost) : 'Sin calcular',
         planchas_resumen: boardsSummary,
         extras_resumen: extrasSummary,
         imagen_base64: imageBase64 || '',
-        imagen_data_url: imageDataUrl || '',
         material_nombre: selectedMaterial?.nombre || 'Sin material seleccionado',
-        material_precio: selectedMaterial?.precio != null ? `$ ${Number(selectedMaterial.precio).toFixed(2)}` : 'Sin definir',
+        material_precio: selectedMaterial?.precio != null ? clp(selectedMaterial.precio) : 'Sin definir',
         planchas_total: boards?.length || 0,
+        nombre_empresa: 'Tablón',
       }
 
       if (!window.emailjs) {
@@ -419,7 +453,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
           {boardGroups.filter(g => g.boards.length > 0).map((group, gIdx) => (
             <React.Fragment key={gIdx}>
               {boardGroups.filter(g => g.boards.length > 0).length > 1 && (
-                <p style={{ color: 'var(--color-faded-grey)', fontSize: '11px', fontWeight: 600, margin: '12px 0 4px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                <p style={{ color: 'var(--color-faded-grey)', fontSize: '11px', fontWeight: 600, margin: '12px 0 4px', letterSpacing: '0.06em', textTransform: 'uppercase', gridColumn: '1 / -1' }}>
                   {group.materialName}{group.material?.color ? ` (${group.material.color})` : ''} — plancha {group.config.width}×{group.config.height}cm
                 </p>
               )}
@@ -473,7 +507,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
               <div key={id} className="hardware-item">
                 <div className="hardware-label">{item.nombre}{item.color ? ` (${item.color})` : ''}</div>
                 <div className="hardware-value">{item.cantidad} u</div>
-                <div className="hardware-desc">${item.precio.toFixed(2)}/u · Total: ${item.total.toFixed(2)}</div>
+                <div className="hardware-desc">{clp(item.precio)}/u · Total: {clp(item.total)}</div>
               </div>
             ))}
           </div>
@@ -490,7 +524,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
               <div key={idx} className="hardware-item">
                 <div className="hardware-label">{item.materialName}{item.color ? ` (${item.color})` : ''}</div>
                 <div className="hardware-value">{item.linealMeters.toFixed(2)} m</div>
-                <div className="hardware-desc">${item.precio.toFixed(2)}/m · Total: ${item.totalCost.toFixed(2)}</div>
+                <div className="hardware-desc">{clp(item.precio)}/m · Total: {clp(item.totalCost)}</div>
               </div>
             ))}
           </div>
@@ -530,11 +564,11 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
             <div className="stat-card">
               <div className="stat-label">Costo de planchas</div>
               <div className="stat-value">
-                {boardsCost !== null ? `$ ${boardsCost.toFixed(2)}` : 'Sin material seleccionado'}
+                {boardsCost !== null ? clp(boardsCost) : 'Sin material seleccionado'}
               </div>
               <div className="stat-detail">
                 {boardGroups.filter(g => g.boards.length > 0 && g.material?.precio != null).map(g =>
-                  `${g.materialName}: ${g.boards.length} × $${Number(g.material.precio).toFixed(2)}`
+                  `${g.materialName}: ${g.boards.length} × ${clp(g.material.precio)}`
                 ).join(' · ')}
               </div>
             </div>
@@ -546,10 +580,10 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
               return (
                 <div className="stat-card">
                   <div className="stat-label">Accesorios y enchape</div>
-                  <div className="stat-value">$ {extrasCost.toFixed(2)}</div>
+                  <div className="stat-value">{clp(extrasCost)}</div>
                   <div className="stat-detail">
                     {Object.entries(hardwareList).map(([id, item]) =>
-                      `${item.nombre}: ${item.cantidad}u × $${item.precio.toFixed(2)}`
+                      `${item.nombre}: ${item.cantidad}u × ${clp(item.precio)}`
                     ).join(' · ')}
                     {Object.keys(hardwareList).length > 0 && tapaCantoList.length > 0 && ' · '}
                     {tapaCantoList.map(item =>
@@ -563,12 +597,12 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
             {totalCost > 0 && (
               <div className="stat-card stat-card--total">
                 <div className="stat-label">Total estimado</div>
-                <div className="stat-value">$ {totalCost.toFixed(2)}</div>
+                <div className="stat-value">{clp(totalCost)}</div>
                 <div className="stat-detail">
                   {[
-                    boardsCost != null && `planchas $${boardsCost.toFixed(2)}`,
-                    Object.keys(hardwareList).length > 0 && `accesorios $${Object.values(hardwareList).reduce((s, i) => s + i.total, 0).toFixed(2)}`,
-                    tapaCantoList.length > 0 && `enchape $${tapaCantoList.reduce((s, i) => s + i.totalCost, 0).toFixed(2)}`,
+                    boardsCost != null && `planchas ${clp(boardsCost)}`,
+                    Object.keys(hardwareList).length > 0 && `accesorios ${clp(Object.values(hardwareList).reduce((s, i) => s + i.total, 0))}`,
+                    tapaCantoList.length > 0 && `enchape ${clp(tapaCantoList.reduce((s, i) => s + i.totalCost, 0))}`,
                   ].filter(Boolean).join(' + ')}
                 </div>
               </div>
@@ -622,19 +656,19 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
             <div className="emailjs-computed-price">
               <span className="emailjs-computed-label">Total cotización</span>
               <span className="emailjs-computed-value">
-                {totalCost > 0 ? `$ ${totalCost.toLocaleString('es-CL', { minimumFractionDigits: 0, maximumFractionDigits: 0 })}` : '—'}
+                {totalCost > 0 ? clp(totalCost) : '—'}
               </span>
             </div>
             <div className="emailjs-computed-detail">
               {boardsSummary.split('\n').map((line, i) => <span key={i}>{line}</span>)}
               {Object.entries(hardwareList).map(([id, item]) => (
                 <span key={id}>
-                  {item.nombre}{item.color ? ` (${item.color})` : ''}: {item.cantidad}u × ${item.precio.toFixed(2)} = <strong>${item.total.toFixed(2)}</strong>
+                  {item.nombre}{item.color ? ` (${item.color})` : ''}: {item.cantidad}u × {clp(item.precio)} = <strong>{clp(item.total)}</strong>
                 </span>
               ))}
               {tapaCantoList.map((item, idx) => (
                 <span key={`tc-${idx}`}>
-                  Enchape {item.materialName}{item.color ? ` (${item.color})` : ''}: {item.linealMeters.toFixed(2)}m × ${item.precio.toFixed(2)}/m = <strong>${item.totalCost.toFixed(2)}</strong>
+                  Enchape {item.materialName}{item.color ? ` (${item.color})` : ''}: {item.linealMeters.toFixed(2)}m × {clp(item.precio)}/m = <strong>{clp(item.totalCost)}</strong>
                 </span>
               ))}
             </div>

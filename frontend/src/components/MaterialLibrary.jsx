@@ -540,7 +540,7 @@ export default function MaterialLibrary({
                     )}
                     {item.color && <p>Color: {item.color}</p>}
                     {item.dimensiones && <p>Dimensiones: {item.dimensiones}</p>}
-                    <p>Precio: ${item.precio}</p>
+                    <p>Precio: $ {Math.round(item.precio).toLocaleString('es-CL')}</p>
                   </div>
                   <div className="actions">
                     <button onClick={() => handleEdit(item)}>Editar</button>
