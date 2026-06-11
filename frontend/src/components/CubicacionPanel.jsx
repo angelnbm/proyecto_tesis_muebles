@@ -26,33 +26,60 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
 
   // Process all data: group pieces and optimize board packing
   const cubicacionData = useMemo(() => {
-    if (!shapes || shapes.length === 0) {
-      return {
-        byModule: new Map(),
-        allPieces: [],
-        boards: [],
-        statistics: null,
-        tapaCantoList: [],
-      }
-    }
+    const empty = { byModule: new Map(), allPieces: [], boards: [], boardGroups: [], statistics: null, tapaCantoList: [] }
+    if (!shapes || shapes.length === 0) return empty
 
     try {
       const { byModule, allPieces, tapaCantoList } = generateStructuredCuts(shapes, { drawerTypes, tapaCantos, selectedTapaCantoId, selectedDrawerTypeId })
-      const { boards, statistics } = optimizePiecesInBoards(allPieces, boardConfig)
-      return { byModule, allPieces, boards, statistics, tapaCantoList }
+
+      // Separar piezas por material: cada material usa su propia plancha con sus medidas
+      const piecesByMat = new Map()
+      allPieces.forEach(piece => {
+        const key = piece.materialId || '__default__'
+        if (!piecesByMat.has(key)) piecesByMat.set(key, [])
+        piecesByMat.get(key).push(piece)
+      })
+
+      // El material principal va primero, luego los materiales de fondo/etc.
+      const orderedKeys = ['__default__', ...Array.from(piecesByMat.keys()).filter(k => k !== '__default__')]
+
+      const boardGroups = []
+      const allBoards = []
+      let totalUsedArea = 0
+      let totalBoardArea = 0
+
+      orderedKeys.forEach(key => {
+        if (!piecesByMat.has(key)) return
+        const pieces = piecesByMat.get(key)
+        const isDefault = key === '__default__'
+        const material = isDefault
+          ? selectedMaterial
+          : (Array.isArray(materials) ? materials.find(m => m._id === key) ?? null : null)
+        const config = parseBoardConfig(material)
+        const { boards, statistics } = optimizePiecesInBoards(pieces, config)
+
+        boardGroups.push({ materialId: isDefault ? null : key, materialName: material?.nombre || 'Material', material, boards, statistics, config })
+        allBoards.push(...boards)
+        totalUsedArea += statistics.totalUsedArea
+        totalBoardArea += statistics.totalBoardArea
+      })
+
+      const statistics = totalBoardArea > 0 ? {
+        boardsNeeded: allBoards.length,
+        totalUsedArea,
+        totalBoardArea,
+        utilizationPercentage: Math.round(totalUsedArea / totalBoardArea * 1000) / 10,
+        wastePercentage: Math.round((1 - totalUsedArea / totalBoardArea) * 1000) / 10,
+      } : null
+
+      return { byModule, allPieces, boards: allBoards, boardGroups, statistics, tapaCantoList }
     } catch (error) {
       console.error('❌ Error in cubicacionData:', error)
-      return {
-        byModule: new Map(),
-        allPieces: [],
-        boards: [],
-        statistics: null,
-        tapaCantoList: [],
-      }
+      return empty
     }
-  }, [shapes, drawerTypes, tapaCantos, boardConfig, selectedTapaCantoId, selectedDrawerTypeId])
+  }, [shapes, drawerTypes, tapaCantos, selectedTapaCantoId, selectedDrawerTypeId, selectedMaterial, materials])
 
-  const { byModule, boards, statistics, tapaCantoList = [] } = cubicacionData
+  const { byModule, boards, boardGroups, statistics, tapaCantoList = [] } = cubicacionData
 
 
   if (!shapes || shapes.length === 0) {
@@ -161,11 +188,19 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
   }, [selectedAccessories, accessories, shapes])
 
   const boardsCost = useMemo(() => {
-    if (!selectedMaterial || !boards || boards.length === 0) return null
-    const unitPrice = Number(selectedMaterial.precio)
-    if (Number.isNaN(unitPrice)) return null
-    return unitPrice * boards.length
-  }, [selectedMaterial, boards])
+    if (!boardGroups || boardGroups.length === 0) return null
+    let total = 0
+    let hasPrice = false
+    boardGroups.forEach(group => {
+      if (!group.material || !group.boards.length) return
+      const price = Number(group.material.precio)
+      if (!Number.isNaN(price)) {
+        total += price * group.boards.length
+        hasPrice = true
+      }
+    })
+    return hasPrice ? total : null
+  }, [boardGroups])
 
   // Costo total: planchas + accesorios + tapa-canto
   const totalCost = useMemo(() => {
@@ -186,13 +221,15 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
   }, [currentDesignName, totalCost])
 
   const boardsSummary = useMemo(() => {
-    if (!boards || boards.length === 0) return 'Sin planchas calculadas'
-    const matNombre = selectedMaterial?.nombre || 'Material'
-    const matColor = selectedMaterial?.color || ''
-    const colorStr = matColor ? ` (${matColor})` : ''
-    const cant = boards.length
-    return `${cant} plancha${cant > 1 ? 's' : ''} de ${matNombre}${colorStr}`
-  }, [boards, selectedMaterial])
+    if (!boardGroups || boardGroups.length === 0) return 'Sin planchas calculadas'
+    return boardGroups
+      .filter(g => g.boards.length > 0)
+      .map(g => {
+        const colorStr = g.material?.color ? ` (${g.material.color})` : ''
+        return `${g.boards.length} plancha${g.boards.length > 1 ? 's' : ''} de ${g.materialName}${colorStr} (${g.config.width}×${g.config.height}cm)`
+      })
+      .join('\n') || 'Sin planchas calculadas'
+  }, [boardGroups])
 
   const extrasSummary = useMemo(() => {
     let parts = []
@@ -380,13 +417,22 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         <h2>Visualización de Empaquetamiento en Planchas</h2>
 
         <div className="boards-container">
-          {boards.map((board) => (
-            <BoardVisualization
-              key={board.id}
-              board={board}
-              boardConfig={boardConfig}
-              getModuleColor={getModuleColor}
-            />
+          {boardGroups.filter(g => g.boards.length > 0).map((group, gIdx) => (
+            <React.Fragment key={gIdx}>
+              {boardGroups.filter(g => g.boards.length > 0).length > 1 && (
+                <p style={{ color: 'var(--color-faded-grey)', fontSize: '11px', fontWeight: 600, margin: '12px 0 4px', letterSpacing: '0.06em', textTransform: 'uppercase' }}>
+                  {group.materialName}{group.material?.color ? ` (${group.material.color})` : ''} — plancha {group.config.width}×{group.config.height}cm
+                </p>
+              )}
+              {group.boards.map((board) => (
+                <BoardVisualization
+                  key={`${gIdx}-${board.id}`}
+                  board={board}
+                  boardConfig={group.config}
+                  getModuleColor={getModuleColor}
+                />
+              ))}
+            </React.Fragment>
           ))}
         </div>
       </section>
@@ -400,7 +446,11 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
             <div className="stat-card">
               <div className="stat-label">Planchas Necesarias</div>
               <div className="stat-value">{statistics.boardsNeeded}</div>
-              <div className="stat-detail">de {boardConfig.width} × {boardConfig.height} cm</div>
+              <div className="stat-detail">
+                {boardGroups.filter(g => g.boards.length > 0).map(g =>
+                  `${g.boards.length} de ${g.materialName} (${g.config.width}×${g.config.height})`
+                ).join(' · ')}
+              </div>
             </div>
 
             <div className="stat-card">
@@ -421,11 +471,11 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
               <div className="stat-value">
                 {boardsCost !== null ? `$ ${boardsCost.toFixed(2)}` : 'Sin material seleccionado'}
               </div>
-              {selectedMaterial && (
-                <div className="stat-detail">
-                  {selectedMaterial.nombre} · ${Number(selectedMaterial.precio).toFixed(2)} c/u
-                </div>
-              )}
+              <div className="stat-detail">
+                {boardGroups.filter(g => g.boards.length > 0 && g.material?.precio != null).map(g =>
+                  `${g.materialName}: ${g.boards.length} × $${Number(g.material.precio).toFixed(2)}`
+                ).join(' · ')}
+              </div>
             </div>
           </div>
         )}
