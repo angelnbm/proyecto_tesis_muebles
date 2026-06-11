@@ -436,7 +436,68 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         </div>
       </section>
 
-      {/* SECTION 3: STATISTICS */}
+      {/* SECTION 3: CONSOLIDATED PIECES LIST */}
+      <section className="cubicacion-section cubicacion-pieces-list">
+        <h2>Listado de Piezas General</h2>
+
+        <div className="consolidated-pieces-wrapper">
+          <table className="consolidated-pieces-table">
+            <thead>
+              <tr>
+                <th>Dimensiones (cm)</th>
+                <th>Cantidad</th>
+                <th>Material</th>
+                <th>Descripciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {consolidatedPieces.map((piece, idx) => (
+                <tr key={idx}>
+                  <td className="dimensions">{piece.width} × {piece.height}</td>
+                  <td className="quantity">{piece.quantity}</td>
+                  <td className="material">{piece.materialName || '-'}</td>
+                  <td className="descriptions">{Array.from(piece.descriptions).join(', ')}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* SECTION 4: ACCESORIOS — antepenúltimo */}
+      {Object.keys(hardwareList).length > 0 && (
+        <section className="cubicacion-section cubicacion-hardware">
+          <h2>Accesorios</h2>
+          <div className="hardware-grid">
+            {Object.entries(hardwareList).map(([id, item]) => (
+              <div key={id} className="hardware-item">
+                <div className="hardware-label">{item.nombre}{item.color ? ` (${item.color})` : ''}</div>
+                <div className="hardware-value">{item.cantidad} u</div>
+                <div className="hardware-desc">${item.precio.toFixed(2)}/u · Total: ${item.total.toFixed(2)}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* SECTION 5: TAPA-CANTO */}
+      {tapaCantoList.length > 0 && (
+        <section className="cubicacion-section cubicacion-hardware">
+          <h2>Tapa canto</h2>
+
+          <div className="hardware-grid">
+            {tapaCantoList.map((item, idx) => (
+              <div key={idx} className="hardware-item">
+                <div className="hardware-label">{item.materialName}{item.color ? ` (${item.color})` : ''}</div>
+                <div className="hardware-value">{item.linealMeters.toFixed(2)} m</div>
+                <div className="hardware-desc">${item.precio.toFixed(2)}/m · Total: ${item.totalCost.toFixed(2)}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* SECTION 6: STATISTICS — penúltimo */}
       <section className="cubicacion-section cubicacion-stats">
         <h2>Resumen</h2>
 
@@ -465,6 +526,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
                 {(statistics.totalUsedArea / 10000).toFixed(2)} m²
               </div>
             </div>
+
             <div className="stat-card">
               <div className="stat-label">Costo de planchas</div>
               <div className="stat-value">
@@ -515,35 +577,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         )}
       </section>
 
-      {/* SECTION 4: CONSOLIDATED PIECES LIST */}
-      <section className="cubicacion-section cubicacion-pieces-list">
-        <h2>Listado de Piezas General</h2>
-        
-        <div className="consolidated-pieces-wrapper">
-          <table className="consolidated-pieces-table">
-            <thead>
-              <tr>
-                <th>Dimensiones (cm)</th>
-                <th>Cantidad</th>
-                <th>Material</th>
-                <th>Descripciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {consolidatedPieces.map((piece, idx) => (
-                <tr key={idx}>
-                  <td className="dimensions">{piece.width} × {piece.height}</td>
-                  <td className="quantity">{piece.quantity}</td>
-                  <td className="material">{piece.materialName || '-'}</td>
-                  <td className="descriptions">{Array.from(piece.descriptions).join(', ')}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* SECTION 5: COTIZACION EMAILJS */}
+      {/* SECTION 7: COTIZACION EMAILJS — último */}
       <section className="cubicacion-section cubicacion-email">
         <h2>Enviar cotización por Email</h2>
 
@@ -617,39 +651,6 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
           </button>
         </form>
       </section>
-
-      {/* SECTION 6: ACCESORIOS */}
-      {Object.keys(hardwareList).length > 0 && (
-        <section className="cubicacion-section cubicacion-hardware">
-          <h2>Accesorios</h2>
-          <div className="hardware-grid">
-            {Object.entries(hardwareList).map(([id, item]) => (
-              <div key={id} className="hardware-item">
-                <div className="hardware-label">{item.nombre}{item.color ? ` (${item.color})` : ''}</div>
-                <div className="hardware-value">{item.cantidad} u</div>
-                <div className="hardware-desc">${item.precio.toFixed(2)}/u · Total: ${item.total.toFixed(2)}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* SECTION 7: TAPA-CANTO */}
-      {tapaCantoList.length > 0 && (
-        <section className="cubicacion-section cubicacion-hardware">
-          <h2>Tapa canto</h2>
-
-          <div className="hardware-grid">
-            {tapaCantoList.map((item, idx) => (
-              <div key={idx} className="hardware-item">
-                <div className="hardware-label">{item.materialName}{item.color ? ` (${item.color})` : ''}</div>
-                <div className="hardware-value">{item.linealMeters.toFixed(2)} m</div>
-                <div className="hardware-desc">${item.precio.toFixed(2)}/m · Total: ${item.totalCost.toFixed(2)}</div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
     </div>
   )
 }
