@@ -358,7 +358,7 @@ export default function MaterialLibrary({
                       <p>Refuerzo: {materialMap[item.refuerzo]?.nombre || 'Sin material'}</p>
                     )}
                     {item.heightDiscountPct ? (
-                      <p>Descuento altura: {item.heightDiscountPct}%</p>
+                      <p>Descuento altura: {item.heightDiscountPct} cm</p>
                     ) : null}
                   </div>
                   <div className="actions">
@@ -445,7 +445,7 @@ export default function MaterialLibrary({
               )}
 
               <label>
-                Descuento altura (%)
+                Descuento altura (cm)
                 <input
                   type="number"
                   min="0"

@@ -142,7 +142,7 @@ export function generateStructuredCuts(shapes, options = {}) {
           addPiece(modulePieces, {
             description: 'Fondo',
             width: w,
-            height: d,
+            height: h,
             quantity: 1,
             materialId: shape.fondoMaterialId || undefined,
           })
@@ -158,17 +158,16 @@ export function generateStructuredCuts(shapes, options = {}) {
             continue
           }
 
-          const heightDiscountPct = Number(drawerType.heightDiscountPct) || 0
-          const drawerHeight = roundToTenth(
-            drawerFrontHeight * (1 - heightDiscountPct / 100)
-          )
+          const heightDiscountCm = Number(drawerType.heightDiscountPct) || 0
+          const drawerHeight = Math.max(1, roundToTenth(drawerFrontHeight - heightDiscountCm))
+          const lateralHeight = Math.max(1, roundToTenth(drawerHeight - 5))
 
-        addPiece(modulePieces, {
-          description: 'Laterales cajon',
-          width: d,
-          height: drawerHeight,
-          quantity: 2,
-        })
+          addPiece(modulePieces, {
+            description: 'Laterales cajon',
+            width: d,
+            height: lateralHeight,
+            quantity: 2,
+          })
           addPiece(modulePieces, {
             description: 'Frente interno cajon',
             width: internalWidth,
@@ -191,8 +190,8 @@ export function generateStructuredCuts(shapes, options = {}) {
           if (drawerType.hasRefuerzo) {
             addPiece(modulePieces, {
               description: 'Refuerzo cajon',
-              width: internalWidth,
-              height: drawerHeight,
+              width: w,
+              height: roundToTenth(Math.max(0.3, drawerFrontHeight - 0.3)),
               quantity: 1,
             })
           }
@@ -226,9 +225,9 @@ export function generateStructuredCuts(shapes, options = {}) {
           modulePieces.push({
             description: `Fondo`,
             width: w,
-            height: d,
+            height: h,
             quantity: 1,
-            area: w * d,
+            area: w * h,
             materialId: shape.fondoMaterialId || undefined,
           })
         }

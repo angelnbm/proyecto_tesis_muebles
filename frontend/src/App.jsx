@@ -639,7 +639,7 @@ export default function App() {
           )}
 
           {activeTab === 'estadisticas' && (
-            <StatsPanel designs={designs} />
+            <StatsPanel designs={designs} materials={materials} />
           )}
         </main>
       </div>
@@ -757,7 +757,7 @@ export default function App() {
         )}
 
         {activeTab === 'estadisticas' && (
-          <StatsPanel designs={designs} />
+          <StatsPanel designs={designs} materials={materials} />
         )}
       </main>
 

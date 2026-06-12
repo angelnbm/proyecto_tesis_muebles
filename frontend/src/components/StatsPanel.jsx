@@ -43,7 +43,11 @@ function BarChart({ data, maxValue, colorFn, labelKey, valueKey, unit = '' }) {
   )
 }
 
-export default function StatsPanel({ designs }) {
+export default function StatsPanel({ designs, materials = [] }) {
+  const materialMap = useMemo(() => {
+    return materials.reduce((acc, m) => { acc[m._id] = m; return acc }, {})
+  }, [materials])
+
   const stats = useMemo(() => {
     if (!designs || designs.length === 0) return null
 
@@ -79,12 +83,43 @@ export default function StatsPanel({ designs }) {
     const totalModules = designs.reduce((sum, d) => sum + (d.shapes?.length || 0), 0)
     const avgModules = designs.length > 0 ? (totalModules / designs.length).toFixed(1) : 0
 
+    // 4. Materiales más utilizados (por materialId en shapes)
+    const matCount = {}
+    designs.forEach(d => {
+      (d.shapes || []).forEach(s => {
+        if (s.materialId) matCount[s.materialId] = (matCount[s.materialId] || 0) + 1
+      })
+    })
+    const byMaterial = Object.entries(matCount)
+      .map(([id, count]) => ({
+        label: materialMap[id]?.nombre || 'Sin nombre',
+        value: count,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 6)
+
+    // 5. Estimación de accesorios acumulada
+    let totalCajones = 0
+    let totalPuertas = 0
+    designs.forEach(d => {
+      (d.shapes || []).forEach(s => {
+        if (s.type === 'cajonera') totalCajones += s.numCajones || 3
+        if (s.type === 'puerta')   totalPuertas++
+        if (s.type === 'modular')  totalPuertas += s.numPuertas || 0
+      })
+    })
+    const accesorios = [
+      { label: 'Correderas',  value: totalCajones * 2 },
+      { label: 'Tiradores',   value: totalCajones + totalPuertas },
+      { label: 'Visagras',    value: totalPuertas * 2 },
+    ]
+
     // Totales para KPIs
     const totalDesigns = designs.length
     const totalShapes  = totalModules
 
-    return { byMonth, byType, avgModules, totalDesigns, totalShapes }
-  }, [designs])
+    return { byMonth, byType, avgModules, totalDesigns, totalShapes, byMaterial, accesorios, totalCajones, totalPuertas }
+  }, [designs, materialMap])
 
   if (!designs || designs.length === 0) {
     return (
@@ -96,8 +131,10 @@ export default function StatsPanel({ designs }) {
     )
   }
 
-  const maxMonth = Math.max(...stats.byMonth.map(r => r.value), 1)
-  const maxType  = Math.max(...stats.byType.map(r => r.value), 1)
+  const maxMonth    = Math.max(...stats.byMonth.map(r => r.value), 1)
+  const maxType     = Math.max(...stats.byType.map(r => r.value), 1)
+  const maxMaterial = Math.max(...stats.byMaterial.map(r => r.value), 1)
+  const maxAcc      = Math.max(...stats.accesorios.map(r => r.value), 1)
 
   return (
     <div className="stats-panel">
@@ -115,6 +152,14 @@ export default function StatsPanel({ designs }) {
         <div className="stats-kpi">
           <span className="stats-kpi-value">{stats.avgModules}</span>
           <span className="stats-kpi-label">Módulos por diseño</span>
+        </div>
+        <div className="stats-kpi">
+          <span className="stats-kpi-value">{stats.totalCajones}</span>
+          <span className="stats-kpi-label">Cajones totales</span>
+        </div>
+        <div className="stats-kpi">
+          <span className="stats-kpi-value">{stats.totalPuertas}</span>
+          <span className="stats-kpi-label">Puertas totales</span>
         </div>
       </div>
 
@@ -142,6 +187,32 @@ export default function StatsPanel({ designs }) {
           colorFn={row => MODULE_COLORS[row.type] || 'var(--color-ideation-blue)'}
           labelKey="label"
           valueKey="value"
+        />
+      </section>
+
+      {/* Materiales más usados */}
+      {stats.byMaterial.length > 0 && (
+        <section className="stats-section">
+          <h3 className="stats-section-title">Materiales más utilizados</h3>
+          <BarChart
+            data={stats.byMaterial}
+            maxValue={maxMaterial}
+            labelKey="label"
+            valueKey="value"
+            unit=" módulos"
+          />
+        </section>
+      )}
+
+      {/* Estimación accesorios */}
+      <section className="stats-section">
+        <h3 className="stats-section-title">Estimación de accesorios (acumulado)</h3>
+        <BarChart
+          data={stats.accesorios}
+          maxValue={maxAcc}
+          labelKey="label"
+          valueKey="value"
+          unit=" uds"
         />
       </section>
 
