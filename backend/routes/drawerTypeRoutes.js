@@ -26,6 +26,12 @@ function normalizePayload(body) {
     heightDiscountPct: payload.heightDiscountPct !== undefined && payload.heightDiscountPct !== null
       ? Number(payload.heightDiscountPct)
       : 0,
+    lateralDiscount: payload.lateralDiscount !== undefined && payload.lateralDiscount !== null
+      ? Number(payload.lateralDiscount)
+      : 5,
+    separacionFondo: payload.separacionFondo !== undefined && payload.separacionFondo !== null
+      ? Number(payload.separacionFondo)
+      : 0,
   }
 }
 

@@ -14,6 +14,8 @@ const drawerTypeSchema = new mongoose.Schema({
   refuerzo: { type: mongoose.Schema.Types.ObjectId, ref: 'Material' },
   hasRefuerzo: { type: Boolean, default: false },
   heightDiscountPct: { type: Number, default: 0 },
+  lateralDiscount:   { type: Number, default: 5 },
+  separacionFondo:   { type: Number, default: 0 },
 }, { timestamps: true })
 
 module.exports = mongoose.model('DrawerType', drawerTypeSchema)
