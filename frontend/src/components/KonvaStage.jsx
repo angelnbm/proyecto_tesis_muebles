@@ -363,74 +363,45 @@ function findSnapPositionPrincipales(newShape, existingShapes, canvasWidth, canv
   }
 
   const threshold = SNAP_THRESHOLD_PRINCIPALES
-  let bestSingle = { x: newShape.x, y: newShape.y, distance: threshold + 1 }
-  let bestCorner = null
-  let bestCornerScore = Number.POSITIVE_INFINITY
-  const xCandidates = []
+  // X e Y se evalúan de forma completamente independiente.
+  // El ganador de cada eje es el candidato con menor distancia dentro del umbral.
+  // Así el resultado es determinístico: misma posición del cursor → misma posición snapped.
+  let bestX = null // { value, distance }
+  let bestY = null // { value, distance }
 
   references.forEach(other => {
-    const xOptions = [
-      { value: other.x, distance: Math.abs(newShape.x - other.x), refId: other.id },
-      { value: other.x + other.width - newShape.width, distance: Math.abs(newShape.x - (other.x + other.width - newShape.width)), refId: other.id },
-      { value: other.x - newShape.width, distance: Math.abs(newShape.x - (other.x - newShape.width)), refId: other.id },
-      { value: other.x + other.width, distance: Math.abs(newShape.x - (other.x + other.width)), refId: other.id }
+    const xCandidates = [
+      other.x,                                    // alinear bordes izquierdos
+      other.x + other.width,                      // pegar a la derecha del otro
+      other.x - newShape.width,                   // pegar a la izquierda del otro
+      other.x + other.width - newShape.width,     // alinear bordes derechos
+    ]
+    const yCandidates = [
+      other.y,                                    // alinear bordes superiores
+      other.y + other.height,                     // pegar debajo del otro
+      other.y - newShape.height,                  // pegar encima del otro
+      other.y + other.height - newShape.height,   // alinear bordes inferiores
     ]
 
-    const yOptions = [
-      { value: other.y, distance: Math.abs(newShape.y - other.y), refId: other.id },
-      { value: other.y + other.height - newShape.height, distance: Math.abs(newShape.y - (other.y + other.height - newShape.height)), refId: other.id },
-      { value: other.y - newShape.height, distance: Math.abs(newShape.y - (other.y - newShape.height)), refId: other.id },
-      { value: other.y + other.height, distance: Math.abs(newShape.y - (other.y + other.height)), refId: other.id }
-    ]
-
-    xOptions.forEach(option => {
-      if (option.distance > threshold) return
-      xCandidates.push(option)
-      if (option.distance < bestSingle.distance) {
-        const clamped = clampToCanvas({ ...newShape, x: option.value, y: newShape.y }, canvasWidth, canvasHeight)
-        bestSingle = { x: clamped.x, y: clamped.y, distance: option.distance }
+    xCandidates.forEach(cx => {
+      const dist = Math.abs(newShape.x - cx)
+      if (dist <= threshold && (!bestX || dist < bestX.distance)) {
+        bestX = { value: cx, distance: dist }
       }
     })
 
-    yOptions.forEach(option => {
-      if (option.distance > threshold) return
-      if (option.distance < bestSingle.distance) {
-        const clamped = clampToCanvas({ ...newShape, x: newShape.x, y: option.value }, canvasWidth, canvasHeight)
-        bestSingle = { x: clamped.x, y: clamped.y, distance: option.distance }
+    yCandidates.forEach(cy => {
+      const dist = Math.abs(newShape.y - cy)
+      if (dist <= threshold && (!bestY || dist < bestY.distance)) {
+        bestY = { value: cy, distance: dist }
       }
-    })
-
-    xOptions.forEach(xOption => {
-      if (xOption.distance > threshold) return
-      yOptions.forEach(yOption => {
-        if (yOption.distance > threshold) return
-        const clamped = clampToCanvas({ ...newShape, x: xOption.value, y: yOption.value }, canvasWidth, canvasHeight)
-        const score = xOption.distance + yOption.distance
-        if (score < bestCornerScore) {
-          bestCornerScore = score
-          bestCorner = { x: clamped.x, y: clamped.y }
-        }
-      })
     })
   })
 
-  if (bestCorner) {
-    return { x: Math.round(bestCorner.x), y: Math.round(bestCorner.y) }
-  }
-
-  if (xCandidates.length > 1) {
-    const left = xCandidates.filter(c => c.value <= newShape.x)
-    const right = xCandidates.filter(c => c.value >= newShape.x)
-    if (left.length > 0 && right.length > 0) {
-      const bestX = xCandidates.reduce((best, current) =>
-        current.distance < best.distance ? current : best
-      , xCandidates[0])
-      const clamped = clampToCanvas({ ...newShape, x: bestX.value, y: newShape.y }, canvasWidth, canvasHeight)
-      return { x: Math.round(clamped.x), y: Math.round(clamped.y) }
-    }
-  }
-
-  return { x: Math.round(bestSingle.x), y: Math.round(bestSingle.y) }
+  const snapX = bestX ? bestX.value : newShape.x
+  const snapY = bestY ? bestY.value : newShape.y
+  const clamped = clampToCanvas({ ...newShape, x: snapX, y: snapY }, canvasWidth, canvasHeight)
+  return { x: Math.round(clamped.x), y: Math.round(clamped.y) }
 }
 
 function findAttachPositionPrincipales(newShape, existingShapes, canvasWidth, canvasHeight) {
@@ -786,80 +757,58 @@ const KonvaStage = forwardRef(function KonvaStage({
         node.y(draggedShape.y)
         return
       }
-
       updatedShape.x = resolved.shape.x
       updatedShape.y = resolved.shape.y
       updatedShape.width = resolved.shape.width
       updatedShape.height = resolved.shape.height
       node.x(updatedShape.x)
       node.y(updatedShape.y)
-    } else {
-      let snappedForPrincipal = null
-      const hasCollision = otherShapes.some(s => checkCollision(updatedShape, s))
-      
-      if (hasCollision) {
-        let snappedPos = null
-        let attachPos = null
 
-        if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
-          attachPos = findAttachPositionPrincipales(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
-        }
+    } else if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
+      // Mismo orden que el ghost preview: snap primero, attach como fallback.
+      // Garantiza que el módulo quede exactamente donde mostraba el preview.
+      const snappedPos = findSnapPositionPrincipales(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
+      const snappedCandidate = { ...updatedShape, x: snappedPos.x, y: snappedPos.y }
+      const snapValid = !otherShapes.some(s => checkCollision(snappedCandidate, s))
 
-        if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
-          snappedPos = findSnapPositionPrincipales(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
-        } else if (COLLISION_GROUPS.HORIZONTALES.includes(updatedShape.type)) {
-          const centered = findCenterPositionHorizontales(otherShapes, updatedShape, BASE_WIDTH, BASE_HEIGHT)
-          snappedPos = centered
-        }
-
+      if (snapValid) {
+        updatedShape.x = snappedPos.x
+        updatedShape.y = snappedPos.y
+      } else {
+        // El snap no resolvió la colisión: buscar posición libre pegada a un borde
+        const attachPos = findAttachPositionPrincipales(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
         if (attachPos) {
           updatedShape.x = attachPos.x
           updatedShape.y = attachPos.y
-          node.x(updatedShape.x)
-          node.y(updatedShape.y)
-          snappedForPrincipal = { x: updatedShape.x, y: updatedShape.y }
-        } else if (snappedPos) {
-          updatedShape.x = snappedPos.x
-          updatedShape.y = snappedPos.y
-          node.x(updatedShape.x)
-          node.y(updatedShape.y)
-          if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
-            snappedForPrincipal = { x: updatedShape.x, y: updatedShape.y }
-          }
+        } else {
+          // Sin posición válida: volver a la última posición conocida
+          const lastValid = lastValidSnapRef.current.get(shapeId)
+          const fallback = lastValid || { x: draggedShape.x, y: draggedShape.y }
+          node.x(fallback.x)
+          node.y(fallback.y)
+          updateShape(shapeId, { x: fallback.x, y: fallback.y })
+          return
         }
-        
+      }
+
+      node.x(updatedShape.x)
+      node.y(updatedShape.y)
+      lastValidSnapRef.current.set(shapeId, { x: updatedShape.x, y: updatedShape.y })
+
+    } else if (COLLISION_GROUPS.HORIZONTALES.includes(updatedShape.type)) {
+      const hasCollision = otherShapes.some(s => checkCollision(updatedShape, s))
+      if (hasCollision) {
+        const centered = findCenterPositionHorizontales(otherShapes, updatedShape, BASE_WIDTH, BASE_HEIGHT)
+        updatedShape.x = centered.x
+        updatedShape.y = centered.y
+        node.x(updatedShape.x)
+        node.y(updatedShape.y)
         const finalCheck = otherShapes.some(s => checkCollision(updatedShape, s))
         if (finalCheck) {
-          if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
-            const lastValid = lastValidSnapRef.current.get(shapeId)
-            if (lastValid) {
-              node.x(lastValid.x)
-              node.y(lastValid.y)
-              updateShape(shapeId, { x: lastValid.x, y: lastValid.y })
-              return
-            }
-          }
           node.x(draggedShape.x)
           node.y(draggedShape.y)
           return
         }
-      } else if (COLLISION_GROUPS.PRINCIPALES.includes(updatedShape.type)) {
-        const snappedPos = findSnapPositionPrincipales(updatedShape, otherShapes, BASE_WIDTH, BASE_HEIGHT)
-        const snappedCandidate = { ...updatedShape, x: snappedPos.x, y: snappedPos.y }
-        const stillValid = !otherShapes.some(s => checkCollision(snappedCandidate, s))
-        if (stillValid) {
-          updatedShape.x = snappedCandidate.x
-          updatedShape.y = snappedCandidate.y
-          node.x(updatedShape.x)
-          node.y(updatedShape.y)
-          if (snappedPos.x !== newX || snappedPos.y !== newY) {
-            snappedForPrincipal = { x: updatedShape.x, y: updatedShape.y }
-          }
-        }
-      }
-
-      if (snappedForPrincipal) {
-        lastValidSnapRef.current.set(shapeId, snappedForPrincipal)
       }
     }
 
