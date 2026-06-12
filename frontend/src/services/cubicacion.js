@@ -174,13 +174,13 @@ export function generateStructuredCuts(shapes, options = {}) {
           addPiece(modulePieces, {
             description: 'Frente interno cajon',
             width: internalWidth,
-            height: drawerHeight,
+            height: lateralHeight,
             quantity: 1,
           })
           addPiece(modulePieces, {
             description: 'Trasera cajon',
             width: internalWidth,
-            height: drawerHeight,
+            height: lateralHeight,
             quantity: 1,
           })
           addPiece(modulePieces, {
