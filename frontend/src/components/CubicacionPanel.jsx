@@ -829,6 +829,9 @@ function BoardVisualization({ board, boardConfig, getModuleColor }) {
                 strokeWidth="0.5"
               />
             </pattern>
+            <clipPath id={`board-bounds-${board.id}`}>
+              <rect x={0} y={0} width={boardConfig.width} height={boardConfig.height} />
+            </clipPath>
           </defs>
 
           {/* Board base */}
@@ -848,7 +851,8 @@ function BoardVisualization({ board, boardConfig, getModuleColor }) {
             pointerEvents="none"
           />
 
-          {/* Render each piece */}
+          {/* Render each piece — clipped to board bounds */}
+          <g clipPath={`url(#board-bounds-${board.id})`}>
           {displayPieces.map((piece, idx) => {
             const color = getModuleColor(piece.moduleType)
             const { x, y, width, height } = piece
@@ -912,6 +916,7 @@ function BoardVisualization({ board, boardConfig, getModuleColor }) {
               </g>
             )
           })}
+          </g>
 
           {/* Board dimensions label — anchored to bottom-right of current viewBox */}
           <text

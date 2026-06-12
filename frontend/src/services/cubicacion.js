@@ -433,11 +433,13 @@ export function optimizePiecesInBoards(pieces, boardConfig = BOARD_CONFIGS.melam
 }
 
 /**
- * Intenta colocar una pieza en un tablero usando algoritmo Guillotine
+ * Intenta colocar una pieza en un tablero usando algoritmo MAXRECTS
+ * Después de colocar cada pieza, recorta TODOS los rectángulos libres que se
+ * solapan con ella — garantiza que no haya piezas superpuestas y maximiza el
+ * aprovechamiento del espacio libre.
  * @private
  */
 function tryPlacePieceInBoard(piece, board, boardConfig, kerf) {
-  // Intentar ambas orientaciones (normal y rotada)
   const orientations = [
     { width: piece.width, height: piece.height, rotated: false },
     { width: piece.height, height: piece.width, rotated: true },
@@ -447,17 +449,14 @@ function tryPlacePieceInBoard(piece, board, boardConfig, kerf) {
     const requiredWidth = orientation.width + kerf
     const requiredHeight = orientation.height + kerf
 
-    // Buscar el mejor rectángulo libre que quepa
+    // Buscar el rectángulo libre con menor desperdicio que contenga la pieza
     let bestRectIdx = -1
     let bestWaste = Infinity
 
     for (let i = 0; i < board.freeRectangles.length; i++) {
       const rect = board.freeRectangles[i]
       if (rect.width >= requiredWidth && rect.height >= requiredHeight) {
-        // Calcular desperdicio en este rectángulo
-        const waste =
-          rect.width * rect.height -
-          requiredWidth * requiredHeight
+        const waste = rect.width * rect.height - requiredWidth * requiredHeight
         if (waste < bestWaste) {
           bestWaste = waste
           bestRectIdx = i
@@ -467,48 +466,29 @@ function tryPlacePieceInBoard(piece, board, boardConfig, kerf) {
 
     if (bestRectIdx !== -1) {
       const rect = board.freeRectangles[bestRectIdx]
+      const px = rect.x
+      const py = rect.y
+      const pw = requiredWidth
+      const ph = requiredHeight
 
-      // Colocar pieza
       board.pieces.push({
         ...piece,
         width: orientation.width,
         height: orientation.height,
-        x: rect.x,
-        y: rect.y,
+        x: px,
+        y: py,
         rotated: orientation.rotated,
       })
-
       board.usedArea += orientation.width * orientation.height
 
-      // Dividir rectángulo libre (Guillotine)
-      // Crear dos nuevos rectángulos del espacio restante
-      const newRectangles = []
-
-      // Rectángulo a la derecha
-      if (rect.width > requiredWidth) {
-        newRectangles.push({
-          x: rect.x + requiredWidth,
-          y: rect.y,
-          width: rect.width - requiredWidth,
-          height: rect.height,
-        })
+      // MAXRECTS: recortar todos los rectángulos libres que se solapan con la pieza
+      const nextFreeRects = []
+      for (const freeRect of board.freeRectangles) {
+        const parts = splitRectByPlacedPiece(freeRect, px, py, pw, ph)
+        nextFreeRects.push(...parts)
       }
+      board.freeRectangles = nextFreeRects
 
-      // Rectángulo abajo
-      if (rect.height > requiredHeight) {
-        newRectangles.push({
-          x: rect.x,
-          y: rect.y + requiredHeight,
-          width: requiredWidth,
-          height: rect.height - requiredHeight,
-        })
-      }
-
-      // Remover rectángulo usado y agregar nuevos
-      board.freeRectangles.splice(bestRectIdx, 1)
-      board.freeRectangles.push(...newRectangles)
-
-      // Limpiar rectángulos que se superponen
       mergeAndCleanRectangles(board.freeRectangles)
 
       return true
@@ -516,6 +496,45 @@ function tryPlacePieceInBoard(piece, board, boardConfig, kerf) {
   }
 
   return false
+}
+
+/**
+ * Divide un rectángulo libre en las partes que quedan fuera del área ocupada.
+ * Genera hasta 4 sub-rectángulos (izquierda, derecha, arriba, abajo de la pieza).
+ * Si no hay solapamiento devuelve el rectángulo original intacto.
+ * @private
+ */
+function splitRectByPlacedPiece(freeRect, px, py, pw, ph) {
+  // Sin solapamiento — el rect queda tal cual
+  if (
+    px >= freeRect.x + freeRect.width ||
+    px + pw <= freeRect.x ||
+    py >= freeRect.y + freeRect.height ||
+    py + ph <= freeRect.y
+  ) {
+    return [freeRect]
+  }
+
+  const result = []
+
+  // Franja izquierda (entre freeRect.x y px)
+  if (px > freeRect.x) {
+    result.push({ x: freeRect.x, y: freeRect.y, width: px - freeRect.x, height: freeRect.height })
+  }
+  // Franja derecha (entre px+pw y el borde derecho de freeRect)
+  if (px + pw < freeRect.x + freeRect.width) {
+    result.push({ x: px + pw, y: freeRect.y, width: freeRect.x + freeRect.width - (px + pw), height: freeRect.height })
+  }
+  // Franja superior (entre freeRect.y y py)
+  if (py > freeRect.y) {
+    result.push({ x: freeRect.x, y: freeRect.y, width: freeRect.width, height: py - freeRect.y })
+  }
+  // Franja inferior (entre py+ph y el borde inferior de freeRect)
+  if (py + ph < freeRect.y + freeRect.height) {
+    result.push({ x: freeRect.x, y: py + ph, width: freeRect.width, height: freeRect.y + freeRect.height - (py + ph) })
+  }
+
+  return result
 }
 
 /**
