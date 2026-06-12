@@ -159,12 +159,15 @@ export function generateStructuredCuts(shapes, options = {}) {
           }
 
           const heightDiscountCm = Number(drawerType.heightDiscountPct) || 0
-          const drawerHeight = Math.max(1, roundToTenth(drawerFrontHeight - heightDiscountCm))
-          const lateralHeight = Math.max(1, roundToTenth(drawerHeight - 5))
+          const lateralDiscount  = Number(drawerType.lateralDiscount)  >= 0 ? Number(drawerType.lateralDiscount)  : 5
+          const separacionFondo  = Number(drawerType.separacionFondo)  >= 0 ? Number(drawerType.separacionFondo)  : 0
+          const drawerHeight  = Math.max(1, roundToTenth(drawerFrontHeight - heightDiscountCm))
+          const lateralHeight = Math.max(1, roundToTenth(drawerHeight - lateralDiscount))
+          const drawerDepth   = Math.max(1, roundToTenth(d - separacionFondo))
 
           addPiece(modulePieces, {
             description: 'Laterales cajon',
-            width: d,
+            width: drawerDepth,
             height: lateralHeight,
             quantity: 2,
           })
@@ -183,7 +186,7 @@ export function generateStructuredCuts(shapes, options = {}) {
           addPiece(modulePieces, {
             description: 'Fondo cajon',
             width: internalWidth,
-            height: d,
+            height: drawerDepth,
             quantity: 1,
           })
 

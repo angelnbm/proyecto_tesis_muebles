@@ -34,6 +34,8 @@ const EMPTY_DRAWER_FORM = {
   hasRefuerzo: false,
   refuerzo: '',
   heightDiscountPct: '0',
+  lateralDiscount: '5',
+  separacionFondo: '0',
 }
 
 export default function MaterialLibrary({
@@ -146,6 +148,8 @@ export default function MaterialLibrary({
       heightDiscountPct: drawerType.heightDiscountPct ?? '0',
       refuerzo: drawerType.refuerzo ?? '',
       hasRefuerzo: Boolean(drawerType.hasRefuerzo),
+      lateralDiscount: drawerType.lateralDiscount != null ? String(drawerType.lateralDiscount) : '5',
+      separacionFondo: drawerType.separacionFondo != null ? String(drawerType.separacionFondo) : '0',
     })
   }
 
@@ -209,6 +213,8 @@ export default function MaterialLibrary({
       hasRefuerzo: Boolean(drawerForm.hasRefuerzo),
       refuerzo: drawerForm.hasRefuerzo ? drawerForm.refuerzo || undefined : undefined,
       heightDiscountPct: drawerForm.heightDiscountPct === '' ? 0 : Number(drawerForm.heightDiscountPct),
+      lateralDiscount:   drawerForm.lateralDiscount   === '' ? 5 : Number(drawerForm.lateralDiscount),
+      separacionFondo:   drawerForm.separacionFondo   === '' ? 0 : Number(drawerForm.separacionFondo),
     }
 
     try {
@@ -360,6 +366,12 @@ export default function MaterialLibrary({
                     {item.heightDiscountPct ? (
                       <p>Descuento altura: {item.heightDiscountPct} cm</p>
                     ) : null}
+                    {item.lateralDiscount != null && (
+                      <p>Desc. lateral: {item.lateralDiscount} cm</p>
+                    )}
+                    {item.separacionFondo > 0 && (
+                      <p>Sep. fondo: {item.separacionFondo} cm</p>
+                    )}
                   </div>
                   <div className="actions">
                     <button onClick={() => handleDrawerEdit(item)}>Editar</button>
@@ -452,6 +464,28 @@ export default function MaterialLibrary({
                   step="0.1"
                   value={drawerForm.heightDiscountPct}
                   onChange={handleDrawerInputChange('heightDiscountPct')}
+                />
+              </label>
+
+              <label>
+                Desc. lateral (cm)
+                <input
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  value={drawerForm.lateralDiscount}
+                  onChange={handleDrawerInputChange('lateralDiscount')}
+                />
+              </label>
+
+              <label>
+                Separación fondo (cm)
+                <input
+                  type="number"
+                  min="0"
+                  step="0.1"
+                  value={drawerForm.separacionFondo}
+                  onChange={handleDrawerInputChange('separacionFondo')}
                 />
               </label>
 
