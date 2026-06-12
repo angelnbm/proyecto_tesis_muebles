@@ -2286,3 +2286,137 @@ body {
     margin: 20mm 18mm;
   }
 }
+
+/* ============================================
+   STATS PANEL
+   ============================================ */
+
+.stats-panel {
+  padding: 24px 20px;
+  overflow-y: auto;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.stats-empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--color-faded-grey);
+  font-size: 14px;
+}
+
+/* KPIs */
+.stats-kpis {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.stats-kpi {
+  background: var(--color-dots-black);
+  border: 1px solid var(--color-slate-border);
+  border-radius: var(--radius-cards);
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stats-kpi-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-ideation-blue);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.stats-kpi-label {
+  font-size: 11px;
+  color: var(--color-faded-grey);
+  text-align: center;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Sections */
+.stats-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.stats-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-faded-grey);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.stats-empty {
+  font-size: 13px;
+  color: var(--color-faded-grey);
+}
+
+/* Bar chart */
+.stats-barchart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.stats-bar-row {
+  display: grid;
+  grid-template-columns: 72px 1fr 32px;
+  align-items: center;
+  gap: 10px;
+}
+
+.stats-bar-label {
+  font-size: 12px;
+  color: var(--color-paper-grey);
+  text-align: right;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stats-bar-track {
+  height: 10px;
+  background: var(--color-dark-surface, #1e2025);
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.stats-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+}
+
+.stats-bar-value {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-canvas-white);
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .stats-kpis {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .stats-kpi-value {
+    font-size: 22px;
+  }
+  .stats-bar-row {
+    grid-template-columns: 60px 1fr 28px;
+    gap: 6px;
+  }
+}

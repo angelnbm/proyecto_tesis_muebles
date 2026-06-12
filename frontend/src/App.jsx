@@ -4,8 +4,9 @@ import Toolbar from './components/Toolbar.jsx'
 import KonvaStage from './components/KonvaStage.jsx'
 import CubicacionPanel from './components/CubicacionPanel.jsx'
 import MaterialLibrary from './components/MaterialLibrary.jsx'
-import AuthForm from './components/Login.jsx' 
+import AuthForm from './components/Login.jsx'
 import LandingPage from './components/LandingPage.jsx'
+import StatsPanel from './components/StatsPanel.jsx'
 import { saveFurniture, loadFurniture, deleteFurniture, updateFurniture } from './services/api.js'
 import { listDrawerTypes } from './services/drawerTypes.js'
 import { listMaterials } from './services/materials.js'
@@ -329,6 +330,12 @@ export default function App() {
             >
               Biblioteca
             </button>
+            <button
+              className={activeTab === 'estadisticas' ? 'active' : ''}
+              onClick={() => setActiveTab('estadisticas')}
+            >
+              Stats
+            </button>
           <button onClick={handleNewDesign} className="new-btn-mobile" title="Nuevo diseño">
             📄
           </button>
@@ -630,6 +637,10 @@ export default function App() {
               selectedAccessories={selectedAccessories}
             />
           )}
+
+          {activeTab === 'estadisticas' && (
+            <StatsPanel designs={designs} />
+          )}
         </main>
       </div>
     )
@@ -681,6 +692,12 @@ export default function App() {
             onClick={() => setActiveTab('biblioteca')}
           >
             Biblioteca
+          </button>
+          <button
+            className={`canvas-tab ${activeTab === 'estadisticas' ? 'active' : ''}`}
+            onClick={() => setActiveTab('estadisticas')}
+          >
+            Estadísticas
           </button>
 
           {/* Botones a la derecha */}
@@ -737,6 +754,10 @@ export default function App() {
             onAccessoriesChange={setSelectedAccessories}
             selectedAccessories={selectedAccessories}
           />
+        )}
+
+        {activeTab === 'estadisticas' && (
+          <StatsPanel designs={designs} />
         )}
       </main>
 
