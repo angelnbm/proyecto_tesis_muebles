@@ -372,12 +372,25 @@
   /* Ocultar separadores "|" en mobile */
   .landing-page .hero__meta .meta-sep{display:none}
 
-  /* ---- preview de la app (window) — scroll horizontal ---- */
-  .landing-page #producto{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -16px;padding:0 16px 8px;margin-top:48px}
-  .landing-page .window{min-width:600px;border-radius:8px}
-  .landing-page .window__body{min-height:340px;grid-template-columns:76px 1fr}
-  .landing-page .app-canvas{min-height:240px}
-  .landing-page .window__addr{font-size:10px;padding:3px 10px}
+  /* ---- preview de la app (window) — columna única mobile ---- */
+  .landing-page #producto{margin-top:40px;overflow:hidden}
+  .landing-page .window{border-radius:8px}
+  .landing-page .window__body{grid-template-columns:1fr;min-height:280px}
+  .landing-page .app-side{display:none}
+  .landing-page .app-recent{display:none}
+  .landing-page .app-canvas{min-height:200px}
+  .landing-page .app-canvas__furniture{width:200px}
+  .landing-page .fpiece--door{height:76px}
+  .landing-page .fpiece--drawer{height:60px}
+  .landing-page .window__addr{font-size:10px;padding:3px 8px;max-width:220px}
+  .landing-page .app-tabs{flex-wrap:wrap;gap:4px}
+  .landing-page .app-tabs__actions{display:none}
+  .landing-page .app-tab{padding:5px 10px;font-size:12px}
+  /* biblioteca 4-col → 2-col en mobile */
+  .landing-page .app-canvas[data-panel="biblioteca"] > div{grid-template-columns:repeat(2,1fr) !important}
+  /* cubicación — una sola plancha visible */
+  .landing-page .app-cub{grid-template-columns:1fr}
+  .landing-page .app-cub__title{grid-column:auto}
 
   /* ---- encabezados de sección ---- */
   .landing-page .s-head{gap:16px;margin-bottom:28px;padding-bottom:16px}
