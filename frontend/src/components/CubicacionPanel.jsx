@@ -765,39 +765,16 @@ function BoardVisualization({ board, boardConfig, getModuleColor }) {
     )
   }
 
-  let minX = Infinity, minY = Infinity, maxX = 0, maxY = 0
-  allPieces.forEach((piece) => {
-    minX = Math.min(minX, piece.x)
-    minY = Math.min(minY, piece.y)
-    maxX = Math.max(maxX, piece.x + piece.width)
-    maxY = Math.max(maxY, piece.y + piece.height)
-  })
-
-  const usedWidth = maxX - minX
-  const usedHeight = maxY - minY
-  const boardArea = boardConfig.width * boardConfig.height
-  const usedArea = usedWidth * usedHeight
-
-  // When pieces occupy <30% of board, crop viewBox to occupied area so pieces are visible
-  const occupancyRatio = usedArea / boardArea
-  let vbX = 0, vbY = 0, vbW = boardConfig.width, vbH = boardConfig.height
-  if (occupancyRatio < 0.3 && usedWidth > 0 && usedHeight > 0) {
-    const pad = Math.min(boardConfig.width, boardConfig.height) * 0.06
-    vbX = Math.max(0, minX - pad)
-    vbY = Math.max(0, minY - pad)
-    vbW = Math.min(boardConfig.width - vbX, maxX + pad - vbX)
-    vbH = Math.min(boardConfig.height - vbY, maxY + pad - vbY)
-  }
-
-  const maxBoardPx = 700
-
   // Flattened pieces for rendering
   const displayPieces = board.pieces || (board.shelves ? board.shelves.flatMap((shelf) => shelf.pieces) : [])
 
   // Calculate board utilization for this specific board
-  const boardArea2 = boardConfig.width * boardConfig.height
-  const utilization = ((board.usedArea / boardArea2) * 100).toFixed(1)
+  const boardArea = boardConfig.width * boardConfig.height
+  const utilization = ((board.usedArea / boardArea) * 100).toFixed(1)
   const waste = (100 - utilization).toFixed(1)
+
+  // Siempre viewBox del tablero completo: mismo aspect-ratio en todas las planchas.
+  const vbX = 0, vbY = 0, vbW = boardConfig.width, vbH = boardConfig.height
 
   return (
     <div className="board-visualization">
@@ -813,11 +790,11 @@ function BoardVisualization({ board, boardConfig, getModuleColor }) {
         </div>
       </div>
 
-      <div className="board-canvas-wrapper" style={{ maxWidth: `${maxBoardPx + 16}px` }}>
+      <div className="board-canvas-wrapper">
         <svg
           className="board-canvas"
           viewBox={`${vbX} ${vbY} ${vbW} ${vbH}`}
-          style={{ width: '100%', height: 'auto', display: 'block' }}
+          preserveAspectRatio="xMidYMid meet"
         >
           {/* Board background - light grid */}
           <defs>
