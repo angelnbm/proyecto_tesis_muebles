@@ -1219,9 +1219,14 @@ body {
     font-size: 10px;
   }
 
+  /* 16px mínimo en todos los inputs/selects para evitar el auto-zoom de iOS Safari */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
   .measure-field input {
     padding: 8px 10px;
-    font-size: 13px;
+    font-size: 16px;
     background: var(--color-dark-card);
   }
 
