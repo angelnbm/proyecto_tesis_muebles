@@ -293,7 +293,7 @@ const landingMarkup = `
           <div class="item">visagra</div>
           <div class="item">enchape</div>
         </div>
-        <h3>Tu catálogo de materiales y herrajes</h3>
+        <h3>Tu catálogo de materiales y accesorios</h3>
         <p>Registrá tus planchas (melamina, MDF, contrachapado) con precio y formato. Agregá correderas, visagras y tiradores. Definí plantillas de cajón por material. La cubicación los usa todos automáticamente.</p>
       </div>
     </div>
@@ -420,29 +420,93 @@ const landingMarkup = `
         <div class="s-head__num">[ 03 / biblioteca ]</div>
         <h2>Tu catálogo, <em>siempre</em> listo.</h2>
       </div>
-      <p class="s-head__lede">Cargá una vez tus planchas, herrajes y tapa canto con precio. Cada proyecto los usa automáticamente — sin re-ingresar nada.</p>
+      <p class="s-head__lede">Carga una vez tus planchas, accesorios y tapa canto con precio. Cada proyecto los usa automáticamente — sin re-ingresar nada.</p>
     </div>
     <div class="lib">
       <div class="lib__card">
-        <div class="lib__thumb" style="background:#e8e3dd;overflow:hidden"><div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 22px,rgba(0,0,0,.05) 22px 23px)"></div></div>
+        <div class="lib__thumb">
+          <svg width="100%" height="100%" viewBox="0 0 80 80" fill="none">
+            <rect width="80" height="80" fill="#1a1a1c"/>
+            <!-- Tableros apilados — corte transversal (cara blanca / aglomerado / cara blanca) -->
+            <rect x="8" y="13" width="64" height="14" rx="1.5" fill="#c4a882"/>
+            <rect x="8" y="13" width="64" height="3.5" fill="#e8e3dd"/>
+            <rect x="8" y="23.5" width="64" height="3.5" fill="#e8e3dd"/>
+            <rect x="8" y="32" width="64" height="14" rx="1.5" fill="#c4a882"/>
+            <rect x="8" y="32" width="64" height="3.5" fill="#e8e3dd"/>
+            <rect x="8" y="42.5" width="64" height="3.5" fill="#e8e3dd"/>
+            <rect x="8" y="51" width="64" height="14" rx="1.5" fill="#c4a882"/>
+            <rect x="8" y="51" width="64" height="3.5" fill="#e8e3dd"/>
+            <rect x="8" y="61.5" width="64" height="3.5" fill="#e8e3dd"/>
+            <!-- Highlight accent en el canto del tablero superior -->
+            <rect x="8" y="13" width="3" height="14" rx="1" fill="#4586da" opacity=".35"/>
+          </svg>
+        </div>
         <div style="font-size:10px;color:var(--color-ideation-blue);text-transform:uppercase;letter-spacing:.1em;font-weight:600">Material</div>
         <div class="lib__name">Melamina Blanca 18mm</div>
         <div class="lib__dim">244 × 183 cm · $ 18.500</div>
       </div>
       <div class="lib__card">
-        <div class="lib__thumb"><div style="position:absolute;inset:22% 14%;border:2px solid #a8a39c;border-radius:2px"></div><div style="position:absolute;top:50%;left:14%;right:14%;height:2px;background:#a8a39c"></div><div style="position:absolute;right:18%;bottom:24%;width:12px;height:12px;border:2px solid #a8a39c;border-radius:50%"></div></div>
+        <div class="lib__thumb">
+          <svg width="100%" height="100%" viewBox="0 0 80 80" fill="none">
+            <rect width="80" height="80" fill="#1a1a1c"/>
+            <!-- Marco del mueble (hueco del cajón) -->
+            <rect x="8" y="10" width="64" height="60" rx="2" stroke="#3c3c3e" stroke-width="1.5" fill="#131313"/>
+            <!-- Estante superior -->
+            <rect x="10" y="20" width="60" height="2" fill="#3c3c3e"/>
+            <!-- Cuerpo del cajón (interior) -->
+            <rect x="14" y="34" width="52" height="28" rx="1" fill="#242425" stroke="#3c3c3e" stroke-width="1"/>
+            <!-- Frente del cajón (panel blanco melamina) -->
+            <rect x="14" y="28" width="52" height="10" rx="1.5" fill="#e8e3dd"/>
+            <!-- Tirador centrado -->
+            <rect x="32" y="32" width="16" height="2.5" rx="1.5" fill="#8d8a88"/>
+            <!-- Correderas (dos barras azules abajo a los costados) -->
+            <rect x="14" y="61" width="24" height="3" rx="1" fill="#4586da" opacity=".55"/>
+            <rect x="42" y="61" width="24" height="3" rx="1" fill="#4586da" opacity=".55"/>
+          </svg>
+        </div>
         <div style="font-size:10px;color:var(--color-ideation-blue);text-transform:uppercase;letter-spacing:.1em;font-weight:600">Tipo de cajón</div>
         <div class="lib__name">Cajón estándar</div>
         <div class="lib__dim">Laterales MDF 15 · fondo 9mm</div>
       </div>
       <div class="lib__card">
-        <div class="lib__thumb"><div style="position:absolute;inset:30% 14%;display:flex;flex-direction:column;gap:6px"><div style="height:3px;background:#a8a39c;border-radius:2px"></div><div style="height:3px;background:#a8a39c;border-radius:2px"></div><div style="height:3px;width:60%;background:#a8a39c;border-radius:2px"></div></div><div style="position:absolute;right:14%;bottom:22%;width:14px;height:14px;border:2px solid #a8a39c;border-radius:50%"></div></div>
+        <div class="lib__thumb">
+          <svg width="100%" height="100%" viewBox="0 0 80 80" fill="none">
+            <rect width="80" height="80" fill="#1a1a1c"/>
+            <!-- Riel externo (completo) -->
+            <rect x="5" y="23" width="70" height="10" rx="2" fill="#2f2f31" stroke="#5c5b5a" stroke-width="1"/>
+            <circle cx="14" cy="28" r="2.5" fill="#1a1a1c" stroke="#5c5b5a" stroke-width="1"/>
+            <circle cx="66" cy="28" r="2.5" fill="#1a1a1c" stroke="#5c5b5a" stroke-width="1"/>
+            <!-- Riel interno (telescópico, extendido) -->
+            <rect x="5" y="47" width="54" height="10" rx="2" fill="#4586da" opacity=".6"/>
+            <circle cx="14" cy="52" r="2" fill="#131313" opacity=".8"/>
+            <circle cx="44" cy="52" r="2" fill="#131313" opacity=".8"/>
+            <!-- Indicador de extensión -->
+            <line x1="59" y1="52" x2="72" y2="52" stroke="#4586da" stroke-width="1.5" stroke-dasharray="3 2" opacity=".4"/>
+            <path d="M69 49.5 L73 52 L69 54.5" stroke="#4586da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".4"/>
+          </svg>
+        </div>
         <div style="font-size:10px;color:var(--color-ideation-blue);text-transform:uppercase;letter-spacing:.1em;font-weight:600">Accesorio</div>
         <div class="lib__name">Corredera telescópica</div>
         <div class="lib__dim">45 cm · $ 4.200 / par</div>
       </div>
       <div class="lib__card">
-        <div class="lib__thumb" style="overflow:hidden"><div style="position:absolute;top:0;left:0;right:0;height:28%;background:#e8e3dd"></div><div style="position:absolute;top:28%;left:0;right:0;bottom:0;background:var(--color-dark-card)"></div><div style="position:absolute;top:22%;left:0;right:0;height:3px;background:var(--color-ideation-blue);opacity:.6"></div></div>
+        <div class="lib__thumb">
+          <svg width="100%" height="100%" viewBox="0 0 80 80" fill="none">
+            <rect width="80" height="80" fill="#1a1a1c"/>
+            <!-- Tablero visto desde el canto (corte transversal) -->
+            <!-- Cuerpo aglomerado -->
+            <rect x="14" y="12" width="44" height="56" rx="2" fill="#c4a882"/>
+            <!-- Cara superior melamina -->
+            <rect x="14" y="12" width="44" height="5" fill="#e8e3dd"/>
+            <!-- Cara inferior melamina -->
+            <rect x="14" y="63" width="44" height="5" fill="#e8e3dd"/>
+            <!-- Canto derecho sin enchape (borde aglomerado expuesto) -->
+            <line x1="58" y1="16" x2="58" y2="64" stroke="#3c3c3e" stroke-width="1" stroke-dasharray="3 3"/>
+            <!-- Tapa canto aplicada al canto izquierdo (blanco + accent azul) -->
+            <rect x="6" y="12" width="8" height="56" rx="1.5" fill="#f8f4f1"/>
+            <rect x="6" y="12" width="2.5" height="56" fill="#4586da" opacity=".35"/>
+          </svg>
+        </div>
         <div style="font-size:10px;color:var(--color-ideation-blue);text-transform:uppercase;letter-spacing:.1em;font-weight:600">Tapa canto</div>
         <div class="lib__name">Enchape PVC blanco</div>
         <div class="lib__dim">Se calcula en ml · $ 650 / ml</div>
