@@ -205,7 +205,7 @@ export function generateStructuredCuts(shapes, options = {}) {
           if (drawerType.hasRefuerzo) {
             addPiece(modulePieces, {
               description: 'Refuerzo cajon',
-              width: w,
+              width: roundToTenth(Math.max(0.3, w - 0.3)),
               height: roundToTenth(Math.max(0.3, drawerFrontHeight - 0.3)),
               quantity: 1,
             })
@@ -272,12 +272,14 @@ export function generateStructuredCuts(shapes, options = {}) {
 
         if (numPuertas > 0) {
           const puertaWidth = Math.round(w / numPuertas)
+          const puertaW = roundToTenth(Math.max(0.3, puertaWidth - 0.3))
+          const puertaH = roundToTenth(Math.max(0.3, h - 0.3))
           modulePieces.push({
             description: `Puertas`,
-            width: puertaWidth,
-            height: h,
+            width: puertaW,
+            height: puertaH,
             quantity: numPuertas,
-            area: puertaWidth * h,
+            area: puertaW * puertaH,
           })
           addTapaCanto(shape.tapaCantoId, (2 * puertaWidth + 2 * h) * numPuertas)
         }
@@ -305,16 +307,19 @@ export function generateStructuredCuts(shapes, options = {}) {
         })
         break
 
-      case 'puerta':
+      case 'puerta': {
+        const pw = roundToTenth(Math.max(0.3, w - 0.3))
+        const ph = roundToTenth(Math.max(0.3, h - 0.3))
         modulePieces.push({
           description: `Puerta`,
-          width: w,
-          height: h,
+          width: pw,
+          height: ph,
           quantity: 1,
-          area: w * h,
+          area: pw * ph,
         })
         addTapaCanto(shape.tapaCantoId, 2 * w + 2 * h)
         break
+      }
 
       case 'base': {
         const caras = shape.zocaloCaras || { frontal: true, lateral_izq: false, lateral_der: false, trasera: false }
