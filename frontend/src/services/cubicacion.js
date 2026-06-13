@@ -114,7 +114,10 @@ export function generateStructuredCuts(shapes, options = {}) {
       case 'cajonera': {
         const numCajones = shape.numCajones && shape.numCajones > 0 ? shape.numCajones : 3
         const drawerFrontHeight = Math.round(h / numCajones)
-        const internalWidth = Math.max(0, roundToTenth(w - 2.6))
+        const cajoneraMat       = materialMap.get(String(shape.materialId))
+        const grosorCajonera    = Number(cajoneraMat?.grosor) > 0 ? Number(cajoneraMat.grosor) : 1.8
+        const slideGapPerSide   = 1.3
+        const internalWidth     = Math.max(0, roundToTenth(w - 2 * grosorCajonera - 2 * slideGapPerSide))
         const drawerOverrides = Array.isArray(shape.drawers) ? shape.drawers : []
         const drawerOverrideMap = new Map(
           drawerOverrides
@@ -164,11 +167,14 @@ export function generateStructuredCuts(shapes, options = {}) {
           const lateralDiscount  = Number(drawerType.lateralDiscount)  >= 0 ? Number(drawerType.lateralDiscount)  : 5
           const separacionFondo  = Number(drawerType.separacionFondo)  >= 0 ? Number(drawerType.separacionFondo)  : 0
           const lateralMat       = materialMap.get(String(drawerType.laterales))
+          const frontalMat       = materialMap.get(String(drawerType.frenteInterno))
           const lateralThickness = Number(lateralMat?.grosor) > 0 ? Number(lateralMat.grosor) : 1.8
+          const frontalThickness = Number(frontalMat?.grosor) > 0 ? Number(frontalMat.grosor) : 1.8
           const drawerHeight     = Math.max(1, roundToTenth(drawerFrontHeight - heightDiscountCm))
           const lateralHeight    = Math.max(1, roundToTenth(drawerHeight - lateralDiscount))
           const drawerDepth      = Math.max(1, roundToTenth(d - separacionFondo))
           const innerFrontWidth  = Math.max(1, roundToTenth(internalWidth - 2 * lateralThickness))
+          const fondoDepth       = Math.max(1, roundToTenth(drawerDepth - 2 * frontalThickness))
 
           addPiece(modulePieces, {
             description: 'Laterales cajon',
@@ -190,8 +196,8 @@ export function generateStructuredCuts(shapes, options = {}) {
           })
           addPiece(modulePieces, {
             description: 'Fondo cajon',
-            width: internalWidth,
-            height: drawerDepth,
+            width: innerFrontWidth,
+            height: fondoDepth,
             quantity: 1,
           })
 
