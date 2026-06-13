@@ -247,7 +247,9 @@ export function generateStructuredCuts(shapes, options = {}) {
           })
         }
 
-        addTapaCanto(shape.tapaCantoId, w)
+        // Techo + Piso (×2) y 2 laterales
+        addTapaCanto(shape.tapaCantoId, w * 2)
+        addTapaCanto(shape.tapaCantoId, h * 2)
 
         if (numEstantes > 0) {
           modulePieces.push({
@@ -268,6 +270,7 @@ export function generateStructuredCuts(shapes, options = {}) {
             quantity: numDivisores,
             area: d * h,
           })
+          addTapaCanto(shape.tapaCantoId, h * numDivisores)
         }
 
         if (numPuertas > 0) {
@@ -401,14 +404,18 @@ export function optimizePiecesInBoards(pieces, boardConfig = BOARD_CONFIGS.melam
     }
   })
 
-  // Probar múltiples estrategias de orden y quedarse con la que use menos planchas
+  // Probar múltiples estrategias de orden (incluyendo ascendentes) y quedarse con la que use menos planchas
   const sortStrategies = [
-    (a, b) => b.width * b.height - a.width * a.height,                                           // área desc
-    (a, b) => Math.max(b.width, b.height) - Math.max(a.width, a.height),                         // lado mayor desc
-    (a, b) => (b.width + b.height) - (a.width + a.height),                                       // perímetro desc
-    (a, b) => Math.min(b.width, b.height) - Math.min(a.width, a.height),                         // lado menor desc
-    (a, b) => Math.max(b.width, b.height) - Math.max(a.width, a.height)
-              || b.width * b.height - a.width * a.height,                                         // lado mayor + área
+    (a, b) => b.width * b.height - a.width * a.height,
+    (a, b) => a.width * a.height - b.width * b.height,
+    (a, b) => Math.max(b.width, b.height) - Math.max(a.width, a.height),
+    (a, b) => Math.max(a.width, a.height) - Math.max(b.width, b.height),
+    (a, b) => (b.width + b.height) - (a.width + a.height),
+    (a, b) => (a.width + a.height) - (b.width + b.height),
+    (a, b) => Math.min(b.width, b.height) - Math.min(a.width, a.height),
+    (a, b) => Math.min(a.width, a.height) - Math.min(b.width, b.height),
+    (a, b) => Math.max(b.width, b.height) - Math.max(a.width, a.height) || b.width * b.height - a.width * a.height,
+    (a, b) => Math.max(a.width, a.height) - Math.max(b.width, b.height) || a.width * a.height - b.width * b.height,
   ]
 
   let bestBoards = null
@@ -420,8 +427,44 @@ export function optimizePiecesInBoards(pieces, boardConfig = BOARD_CONFIGS.melam
     }
   }
 
+  // Fase de compactación: intentar mover todas las piezas del último tablero
+  // a los tableros anteriores. Si caben, se elimina ese tablero.
+  bestBoards = tryCompact(bestBoards, boardConfig)
+
   const statistics = calculateStatistics(bestBoards, boardConfig)
   return { boards: bestBoards, statistics }
+}
+
+function deepCopyBoards(boards) {
+  return boards.map(b => ({
+    ...b,
+    pieces: [...b.pieces],
+    freeRectangles: b.freeRectangles.map(r => ({ ...r })),
+    usedArea: b.usedArea,
+  }))
+}
+
+function tryCompact(boards, boardConfig) {
+  if (boards.length < 2) return boards
+
+  // Intentar eliminar el último tablero moviendo sus piezas a los anteriores
+  const earlierBoards = deepCopyBoards(boards.slice(0, -1))
+  const lastPieces = [...boards[boards.length - 1].pieces]
+    .sort((a, b) => b.width * b.height - a.width * a.height) // intentar las más grandes primero
+
+  for (const piece of lastPieces) {
+    let placed = false
+    for (const board of earlierBoards) {
+      if (tryPlacePieceInBoard({ ...piece, rotated: false }, board, boardConfig, boardConfig.kerf)) {
+        placed = true
+        break
+      }
+    }
+    if (!placed) return boards // no se puede compactar
+  }
+
+  // Todas las piezas del último tablero cupieron en los anteriores
+  return tryCompact(earlierBoards, boardConfig) // intentar compactar de nuevo recursivamente
 }
 
 function runPacking(sortedPieces, boardConfig) {
