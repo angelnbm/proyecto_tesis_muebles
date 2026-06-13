@@ -114,7 +114,7 @@ export function generateStructuredCuts(shapes, options = {}) {
       case 'cajonera': {
         const numCajones = shape.numCajones && shape.numCajones > 0 ? shape.numCajones : 3
         const drawerFrontHeight = Math.round(h / numCajones)
-        const mmToCm            = (mm) => (Number(mm) > 0 ? Number(mm) / 10 : 1.8)
+        const mmToCm            = (mm) => (Number(mm) > 0 ? Number(mm) / 10 : 1.5)
         const cajoneraMat       = materialMap.get(String(shape.materialId))
         const grosorCajonera    = mmToCm(cajoneraMat?.grosor)
         const slideGapPerSide   = 1.3
@@ -384,41 +384,50 @@ export function generateStructuredCuts(shapes, options = {}) {
  * @returns {Object} { boards: Array, statistics: Object }
  */
 export function optimizePiecesInBoards(pieces, boardConfig = BOARD_CONFIGS.melamina) {
-  // 1. Expandir piezas por cantidad
+  // Expandir piezas por cantidad
   const expandedPieces = []
   pieces.forEach((piece) => {
     for (let i = 0; i < piece.quantity; i++) {
       expandedPieces.push({
         ...piece,
         sequenceId: `${piece.moduleId}-${piece.description}-${i + 1}`,
-        rotated: false, // Track si fue rotada
+        rotated: false,
       })
     }
   })
 
-  // 2. Ordenar por área descendente (piezas grandes primero)
-  expandedPieces.sort((a, b) => {
-    const areaA = a.width * a.height
-    const areaB = b.width * b.height
-    return areaB - areaA
-  })
+  // Probar múltiples estrategias de orden y quedarse con la que use menos planchas
+  const sortStrategies = [
+    (a, b) => b.width * b.height - a.width * a.height,                                           // área desc
+    (a, b) => Math.max(b.width, b.height) - Math.max(a.width, a.height),                         // lado mayor desc
+    (a, b) => (b.width + b.height) - (a.width + a.height),                                       // perímetro desc
+    (a, b) => Math.min(b.width, b.height) - Math.min(a.width, a.height),                         // lado menor desc
+    (a, b) => Math.max(b.width, b.height) - Math.max(a.width, a.height)
+              || b.width * b.height - a.width * a.height,                                         // lado mayor + área
+  ]
 
+  let bestBoards = null
+  for (const sortFn of sortStrategies) {
+    const sorted = [...expandedPieces].sort(sortFn)
+    const boards = runPacking(sorted, boardConfig)
+    if (!bestBoards || boards.length < bestBoards.length) {
+      bestBoards = boards
+    }
+  }
+
+  const statistics = calculateStatistics(bestBoards, boardConfig)
+  return { boards: bestBoards, statistics }
+}
+
+function runPacking(sortedPieces, boardConfig) {
   const boards = []
   const kerf = boardConfig.kerf
 
-  // 3. Intentar colocar cada pieza
-  for (const piece of expandedPieces) {
+  for (const piece of sortedPieces) {
     let placed = false
-
-    // Intentar en tableros existentes
     for (let boardIdx = 0; boardIdx < boards.length && !placed; boardIdx++) {
-      const result = tryPlacePieceInBoard(piece, boards[boardIdx], boardConfig, kerf)
-      if (result) {
-        placed = true
-      }
+      if (tryPlacePieceInBoard(piece, boards[boardIdx], boardConfig, kerf)) placed = true
     }
-
-    // Si no cabe en ninguno, crear tablero nuevo
     if (!placed) {
       const newBoard = {
         id: boards.length + 1,
@@ -426,24 +435,13 @@ export function optimizePiecesInBoards(pieces, boardConfig = BOARD_CONFIGS.melam
         height: boardConfig.height,
         pieces: [],
         usedArea: 0,
-        freeRectangles: [
-          {
-            x: 0,
-            y: 0,
-            width: boardConfig.width,
-            height: boardConfig.height,
-          },
-        ],
+        freeRectangles: [{ x: 0, y: 0, width: boardConfig.width, height: boardConfig.height }],
       }
       tryPlacePieceInBoard(piece, newBoard, boardConfig, kerf)
       boards.push(newBoard)
     }
   }
-
-  // Calcular estadísticas
-  const statistics = calculateStatistics(boards, boardConfig)
-
-  return { boards, statistics }
+  return boards
 }
 
 /**
@@ -459,57 +457,49 @@ function tryPlacePieceInBoard(piece, board, boardConfig, kerf) {
     { width: piece.height, height: piece.width, rotated: true },
   ]
 
+  // BSSF: evaluar todas las orientaciones y rectángulos de una sola pasada
+  let bestScore = Infinity
+  let bestRectIdx = -1
+  let bestOrientation = null
+
   for (const orientation of orientations) {
-    const requiredWidth = orientation.width + kerf
-    const requiredHeight = orientation.height + kerf
-
-    // Buscar el rectángulo libre con menor desperdicio que contenga la pieza
-    let bestRectIdx = -1
-    let bestWaste = Infinity
-
+    const rw = orientation.width + kerf
+    const rh = orientation.height + kerf
     for (let i = 0; i < board.freeRectangles.length; i++) {
       const rect = board.freeRectangles[i]
-      if (rect.width >= requiredWidth && rect.height >= requiredHeight) {
-        const waste = rect.width * rect.height - requiredWidth * requiredHeight
-        if (waste < bestWaste) {
-          bestWaste = waste
+      if (rect.width >= rw && rect.height >= rh) {
+        // BSSF: priorizar ajuste en el lado más corto; área como desempate
+        const shortFit = Math.min(rect.width - rw, rect.height - rh)
+        const score = shortFit * 1e6 + (rect.width * rect.height - rw * rh)
+        if (score < bestScore) {
+          bestScore = score
           bestRectIdx = i
+          bestOrientation = orientation
         }
       }
     }
-
-    if (bestRectIdx !== -1) {
-      const rect = board.freeRectangles[bestRectIdx]
-      const px = rect.x
-      const py = rect.y
-      const pw = requiredWidth
-      const ph = requiredHeight
-
-      board.pieces.push({
-        ...piece,
-        width: orientation.width,
-        height: orientation.height,
-        x: px,
-        y: py,
-        rotated: orientation.rotated,
-      })
-      board.usedArea += orientation.width * orientation.height
-
-      // MAXRECTS: recortar todos los rectángulos libres que se solapan con la pieza
-      const nextFreeRects = []
-      for (const freeRect of board.freeRectangles) {
-        const parts = splitRectByPlacedPiece(freeRect, px, py, pw, ph)
-        nextFreeRects.push(...parts)
-      }
-      board.freeRectangles = nextFreeRects
-
-      mergeAndCleanRectangles(board.freeRectangles)
-
-      return true
-    }
   }
 
-  return false
+  if (bestRectIdx === -1) return false
+
+  const { width: ow, height: oh, rotated } = bestOrientation
+  const rw = ow + kerf
+  const rh = oh + kerf
+  const rect = board.freeRectangles[bestRectIdx]
+  const px = rect.x
+  const py = rect.y
+
+  board.pieces.push({ ...piece, width: ow, height: oh, x: px, y: py, rotated })
+  board.usedArea += ow * oh
+
+  const nextFreeRects = []
+  for (const freeRect of board.freeRectangles) {
+    nextFreeRects.push(...splitRectByPlacedPiece(freeRect, px, py, rw, rh))
+  }
+  board.freeRectangles = nextFreeRects
+  mergeAndCleanRectangles(board.freeRectangles)
+
+  return true
 }
 
 /**
