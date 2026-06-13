@@ -114,8 +114,9 @@ export function generateStructuredCuts(shapes, options = {}) {
       case 'cajonera': {
         const numCajones = shape.numCajones && shape.numCajones > 0 ? shape.numCajones : 3
         const drawerFrontHeight = Math.round(h / numCajones)
+        const mmToCm            = (mm) => (Number(mm) > 0 ? Number(mm) / 10 : 1.8)
         const cajoneraMat       = materialMap.get(String(shape.materialId))
-        const grosorCajonera    = Number(cajoneraMat?.grosor) > 0 ? Number(cajoneraMat.grosor) : 1.8
+        const grosorCajonera    = mmToCm(cajoneraMat?.grosor)
         const slideGapPerSide   = 1.3
         const internalWidth     = Math.max(0, roundToTenth(w - 2 * grosorCajonera - 2 * slideGapPerSide))
         const drawerOverrides = Array.isArray(shape.drawers) ? shape.drawers : []
@@ -168,8 +169,8 @@ export function generateStructuredCuts(shapes, options = {}) {
           const separacionFondo  = Number(drawerType.separacionFondo)  >= 0 ? Number(drawerType.separacionFondo)  : 0
           const lateralMat       = materialMap.get(String(drawerType.laterales))
           const frontalMat       = materialMap.get(String(drawerType.frenteInterno))
-          const lateralThickness = Number(lateralMat?.grosor) > 0 ? Number(lateralMat.grosor) : 1.8
-          const frontalThickness = Number(frontalMat?.grosor) > 0 ? Number(frontalMat.grosor) : 1.8
+          const lateralThickness = mmToCm(lateralMat?.grosor)
+          const frontalThickness = mmToCm(frontalMat?.grosor)
           const drawerHeight     = Math.max(1, roundToTenth(drawerFrontHeight - heightDiscountCm))
           const lateralHeight    = Math.max(1, roundToTenth(drawerHeight - lateralDiscount))
           const drawerDepth      = Math.max(1, roundToTenth(d - separacionFondo))
