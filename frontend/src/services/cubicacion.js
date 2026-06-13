@@ -37,6 +37,8 @@ export function generateStructuredCuts(shapes, options = {}) {
   const allPieces = []
   const drawerTypes = Array.isArray(options.drawerTypes) ? options.drawerTypes : []
   const drawerTypeMap = new Map(drawerTypes.map((item) => [item._id, item]))
+  const materialsList = Array.isArray(options.materials) ? options.materials : []
+  const materialMap = new Map(materialsList.map((m) => [String(m._id), m]))
 
   const roundToTenth = (value) => Math.round(value * 10) / 10
 
@@ -161,9 +163,12 @@ export function generateStructuredCuts(shapes, options = {}) {
           const heightDiscountCm = Number(drawerType.heightDiscountPct) || 0
           const lateralDiscount  = Number(drawerType.lateralDiscount)  >= 0 ? Number(drawerType.lateralDiscount)  : 5
           const separacionFondo  = Number(drawerType.separacionFondo)  >= 0 ? Number(drawerType.separacionFondo)  : 0
-          const drawerHeight  = Math.max(1, roundToTenth(drawerFrontHeight - heightDiscountCm))
-          const lateralHeight = Math.max(1, roundToTenth(drawerHeight - lateralDiscount))
-          const drawerDepth   = Math.max(1, roundToTenth(d - separacionFondo))
+          const lateralMat       = materialMap.get(String(drawerType.laterales))
+          const lateralThickness = Number(lateralMat?.grosor) > 0 ? Number(lateralMat.grosor) : 1.8
+          const drawerHeight     = Math.max(1, roundToTenth(drawerFrontHeight - heightDiscountCm))
+          const lateralHeight    = Math.max(1, roundToTenth(drawerHeight - lateralDiscount))
+          const drawerDepth      = Math.max(1, roundToTenth(d - separacionFondo))
+          const innerFrontWidth  = Math.max(1, roundToTenth(internalWidth - 2 * lateralThickness))
 
           addPiece(modulePieces, {
             description: 'Laterales cajon',
@@ -173,13 +178,13 @@ export function generateStructuredCuts(shapes, options = {}) {
           })
           addPiece(modulePieces, {
             description: 'Frente interno cajon',
-            width: internalWidth,
+            width: innerFrontWidth,
             height: lateralHeight,
             quantity: 1,
           })
           addPiece(modulePieces, {
             description: 'Trasera cajon',
-            width: internalWidth,
+            width: innerFrontWidth,
             height: lateralHeight,
             quantity: 1,
           })

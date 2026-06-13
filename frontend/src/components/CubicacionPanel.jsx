@@ -30,7 +30,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     if (!shapes || shapes.length === 0) return empty
 
     try {
-      const { byModule, allPieces, tapaCantoList } = generateStructuredCuts(shapes, { drawerTypes, tapaCantos, selectedTapaCantoId, selectedDrawerTypeId })
+      const { byModule, allPieces, tapaCantoList } = generateStructuredCuts(shapes, { drawerTypes, tapaCantos, materials, selectedTapaCantoId, selectedDrawerTypeId })
 
       // Separar piezas por material: cada material usa su propia plancha con sus medidas.
       // Si una pieza tiene materialId === selectedMaterial._id va al pool por defecto
