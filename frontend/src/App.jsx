@@ -15,6 +15,33 @@ import { listMaterials } from './services/materials.js'
 import { getToken, removeToken, verifyToken } from './services/auth.js'
 import { parseBoardConfig, getDimensionWarnings } from './services/boardUtils.js'
 
+const SZ = { width: 15, height: 15 }
+const SVG_PROPS = { viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: '1.8', strokeLinecap: 'round', strokeLinejoin: 'round', ...SZ }
+
+const IconNew = () => (
+  <svg {...SVG_PROPS}>
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+    <polyline points="13 2 13 9 20 9" />
+  </svg>
+)
+
+const IconSave = () => (
+  <svg {...SVG_PROPS}>
+    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+    <polyline points="17 21 17 13 7 13 7 21" />
+    <polyline points="7 3 7 8 15 8" />
+  </svg>
+)
+
+const IconTrash = () => (
+  <svg {...SVG_PROPS}>
+    <polyline points="3 6 5 6 21 6" />
+    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+    <path d="M10 11v6M14 11v6" />
+    <path d="M9 6V4h6v2" />
+  </svg>
+)
+
 export default function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -349,10 +376,10 @@ export default function App() {
               Cotiz.
             </button>
           <button onClick={handleNewDesign} className="new-btn-mobile" title="Nuevo diseño">
-            📄
+            <IconNew />
           </button>
           <button onClick={handleSave} className="save-btn-mobile" title="Guardar">
-            💾
+            <IconSave />
           </button>
         </div>
 
@@ -576,7 +603,7 @@ export default function App() {
                           setSelectedId(null)
                         }}
                       >
-                        🗑️ Eliminar
+                        <IconTrash /> Eliminar
                       </button>
                     </div>
                   </div>
@@ -599,7 +626,7 @@ export default function App() {
                               {new Date(design.createdAt).toLocaleDateString('es-ES')}
                             </span>
                           </div>
-                          <button 
+                          <button
                             className="delete-btn"
                             onClick={(e) => {
                               e.stopPropagation()
@@ -607,7 +634,7 @@ export default function App() {
                             }}
                             title="Eliminar"
                           >
-                            🗑️
+                            <IconTrash />
                           </button>
                         </li>
                       ))}
@@ -727,10 +754,10 @@ export default function App() {
           {/* Botones a la derecha */}
           <div className="canvas-buttons-container">
             <button onClick={handleNewDesign} className="new-btn-desktop" title="Nuevo diseño">
-              📄 Nuevo
+              <IconNew /> Nuevo
             </button>
             <button onClick={handleSave} className="save-btn-desktop" title="Guardar">
-              💾 Guardar
+              <IconSave /> Guardar
             </button>
           </div>
         </div>
@@ -998,7 +1025,7 @@ export default function App() {
                 setSelectedId(null)
               }}
             >
-              🗑️ Eliminar
+              <IconTrash /> Eliminar
             </button>
 
 
@@ -1022,7 +1049,7 @@ export default function App() {
                       {new Date(design.createdAt).toLocaleDateString('es-ES')}
                     </span>
                   </div>
-                  <button 
+                  <button
                     className="delete-btn"
                     onClick={(e) => {
                       e.stopPropagation()
@@ -1030,7 +1057,7 @@ export default function App() {
                     }}
                     title="Eliminar"
                   >
-                    🗑️
+                    <IconTrash />
                   </button>
                 </li>
               ))}
