@@ -7,7 +7,9 @@ import MaterialLibrary from './components/MaterialLibrary.jsx'
 import AuthForm from './components/Login.jsx'
 import LandingPage from './components/LandingPage.jsx'
 import StatsPanel from './components/StatsPanel.jsx'
+import MisCotizacionesPanel from './components/MisCotizacionesPanel.jsx'
 import { saveFurniture, loadFurniture, deleteFurniture, updateFurniture } from './services/api.js'
+import { createCotizacion } from './services/cotizaciones.js'
 import { listDrawerTypes } from './services/drawerTypes.js'
 import { listMaterials } from './services/materials.js'
 import { getToken, removeToken, verifyToken } from './services/auth.js'
@@ -236,6 +238,10 @@ export default function App() {
     }
   }
 
+  const handleSaveCotizacion = async (data) => {
+    await createCotizacion(data)
+  }
+
   const handleNewDesign = () => {
     if (shapes.length > 0 && !confirm('¿Descartar el diseño actual?')) return
     setShapes([])
@@ -335,6 +341,12 @@ export default function App() {
               onClick={() => setActiveTab('estadisticas')}
             >
               Stats
+            </button>
+            <button
+              className={activeTab === 'cotizaciones' ? 'active' : ''}
+              onClick={() => setActiveTab('cotizaciones')}
+            >
+              Cotiz.
             </button>
           <button onClick={handleNewDesign} className="new-btn-mobile" title="Nuevo diseño">
             📄
@@ -619,6 +631,8 @@ export default function App() {
               currentDesignName={designs.find(d => d._id === currentDesignId)?.nombre || ''}
               selectedTapaCantoId={selectedTapaCantoId}
               selectedDrawerTypeId={selectedDrawerTypeId}
+              currentDesignId={currentDesignId}
+              onSaveCotizacion={handleSaveCotizacion}
             />
           )}
 
@@ -640,6 +654,10 @@ export default function App() {
 
           {activeTab === 'estadisticas' && (
             <StatsPanel designs={designs} materials={materials} />
+          )}
+
+          {activeTab === 'cotizaciones' && (
+            <MisCotizacionesPanel onIrACubicacion={() => setActiveTab('cubicacion')} />
           )}
         </main>
       </div>
@@ -699,6 +717,12 @@ export default function App() {
           >
             Estadísticas
           </button>
+          <button
+            className={`canvas-tab ${activeTab === 'cotizaciones' ? 'active' : ''}`}
+            onClick={() => setActiveTab('cotizaciones')}
+          >
+            Cotizaciones
+          </button>
 
           {/* Botones a la derecha */}
           <div className="canvas-buttons-container">
@@ -737,7 +761,13 @@ export default function App() {
             currentDesignName={designs.find(d => d._id === currentDesignId)?.nombre || ''}
             selectedTapaCantoId={selectedTapaCantoId}
             selectedDrawerTypeId={selectedDrawerTypeId}
+            currentDesignId={currentDesignId}
+            onSaveCotizacion={handleSaveCotizacion}
           />
+        )}
+
+        {activeTab === 'cotizaciones' && (
+          <MisCotizacionesPanel onIrACubicacion={() => setActiveTab('cubicacion')} />
         )}
 
         {activeTab === 'biblioteca' && (

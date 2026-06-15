@@ -7,6 +7,7 @@ const furnitureRoutes = require('./routes/furnitureRoutes.js')
 const authRoutes = require('./routes/authRoutes.js')
 const materialRoutes = require('./routes/materialRoutes.js')
 const drawerTypeRoutes = require('./routes/drawerTypeRoutes.js')
+const cotizacionRoutes = require('./routes/cotizacionRoutes.js')
 
 const app = express()
 
@@ -113,6 +114,7 @@ app.use('/api/auth', authLimiter, authRoutes)
 app.use('/api/furniture', furnitureLimiter, furnitureRoutes)
 app.use('/api/materials', materialRoutes)
 app.use('/api/drawer-types', drawerTypeRoutes)
+app.use('/api/cotizaciones', cotizacionRoutes)
 
 app.use((req, res) => {
   res.status(404).json({

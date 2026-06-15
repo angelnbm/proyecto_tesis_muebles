@@ -7,7 +7,7 @@ import { parseBoardConfig } from '../services/boardUtils'
 
 const clp = (n) => `$ ${Math.round(n).toLocaleString('es-CL')}`
 
-export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial, drawerTypes, tapaCantos, materials, accessories, selectedAccessories, currentDesignName, selectedTapaCantoId, selectedDrawerTypeId }) {
+export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial, drawerTypes, tapaCantos, materials, accessories, selectedAccessories, currentDesignName, selectedTapaCantoId, selectedDrawerTypeId, currentDesignId, onSaveCotizacion }) {
   const [selectedModule, setSelectedModule] = useState(null)
   const [emailForm, setEmailForm] = useState({
     nombre_cliente: '',
@@ -16,6 +16,8 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
   })
   const [isSending, setIsSending] = useState(false)
   const [emailStatus, setEmailStatus] = useState({ type: null, message: '' })
+  const [isSavingCot, setIsSavingCot] = useState(false)
+  const [cotStatus, setCotStatus] = useState({ type: null, message: '' })
   const [previewImage, setPreviewImage] = useState(null)
 
   const emailServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_1rqf0vo'
@@ -253,6 +255,43 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
 
     return parts.join('\n') || 'Sin accesorios seleccionados'
   }, [hardwareList, tapaCantoList])
+
+  const handleSaveCotizacion = async () => {
+    if (!currentDesignId) {
+      setCotStatus({ type: 'error', message: 'Primero guarda el diseño en la pestaña Diseño.' })
+      return
+    }
+    if (!boards || boards.length === 0) {
+      setCotStatus({ type: 'error', message: 'No hay planchas calculadas para guardar.' })
+      return
+    }
+
+    const lista_cortes = cubicacionData.allPieces.map(p => ({
+      material: p.materialId ? (materialMap[p.materialId]?.nombre || 'Sin material') : (selectedMaterial?.nombre || 'Sin material'),
+      dimension: `${p.width}×${p.height}cm`,
+      cantidad: p.quantity,
+    }))
+
+    const materiales_resumen = boardGroups
+      .filter(g => g.boards.length > 0 && g.material)
+      .map(g => ({
+        material_id: g.materialId || g.material?._id || undefined,
+        nombre: g.materialName || g.material?.nombre || 'Sin material',
+        cantidad_planchas: g.boards.length,
+        subtotal: (g.material?.precio || 0) * g.boards.length,
+      }))
+
+    setIsSavingCot(true)
+    setCotStatus({ type: null, message: '' })
+    try {
+      await onSaveCotizacion({ mueble_id: currentDesignId, precio_total: totalCost, lista_cortes, materiales_resumen })
+      setCotStatus({ type: 'success', message: 'Cotización guardada. Puedes verla en "Cotizaciones".' })
+    } catch (err) {
+      setCotStatus({ type: 'error', message: err.message })
+    } finally {
+      setIsSavingCot(false)
+    }
+  }
 
   const handleEmailFieldChange = (field) => (event) => {
     setEmailForm((prev) => ({ ...prev, [field]: event.target.value }))
@@ -617,7 +656,38 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         )}
       </section>
 
-      {/* SECTION 7: COTIZACION EMAILJS — último */}
+      {/* SECTION 7: GUARDAR COTIZACIÓN */}
+      <section className="cubicacion-section" style={{ paddingBottom: '4px' }}>
+        <h2>Guardar cotización</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+          <button
+            onClick={handleSaveCotizacion}
+            disabled={isSavingCot}
+            style={{
+              padding: '8px 18px',
+              background: isSavingCot ? 'rgba(78,140,255,0.3)' : 'var(--color-ideation-blue)',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              fontSize: '13px',
+              cursor: isSavingCot ? 'not-allowed' : 'pointer',
+              fontWeight: 600,
+            }}
+          >
+            {isSavingCot ? 'Guardando...' : 'Guardar cotización'}
+          </button>
+          {cotStatus.message && (
+            <span style={{
+              fontSize: '12px',
+              color: cotStatus.type === 'success' ? '#3cd278' : '#ff6b6b',
+            }}>
+              {cotStatus.message}
+            </span>
+          )}
+        </div>
+      </section>
+
+      {/* SECTION 8: COTIZACION EMAILJS — último */}
       <section className="cubicacion-section cubicacion-email">
         <h2>Enviar cotización por Email</h2>
 
