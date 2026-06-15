@@ -61,8 +61,8 @@ const sanitizeData = (data) => {
       if (typeof data[key] === 'object' && data[key] !== null) {
         sanitized[safeKey] = sanitizeData(data[key]);
       } else if (typeof data[key] === 'string') {
-        // Sanitizar strings
-        sanitized[safeKey] = data[key].replace(/\$/g, '_').replace(/\./g, '_');
+        // Solo pasar el valor; los ataques NoSQL injection vienen de claves con $/$., no de valores string
+        sanitized[safeKey] = data[key];
       } else {
         sanitized[safeKey] = data[key];
       }

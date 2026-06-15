@@ -132,7 +132,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 6px 12px;
+  padding: 6px 210px 6px 12px;
   background: var(--color-ink-black);
   border-radius: var(--radius-cards);
   margin-bottom: 8px;
