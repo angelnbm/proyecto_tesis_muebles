@@ -2092,6 +2092,11 @@ body {
   100% { transform: rotate(360deg); }
 }
 
+@keyframes dialog-progress {
+  from { width: 0% }
+  to   { width: 100% }
+}
+
 /* =============================================
    PDF EXPORT
    ============================================= */

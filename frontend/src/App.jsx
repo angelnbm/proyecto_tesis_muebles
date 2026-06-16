@@ -8,6 +8,7 @@ import AuthForm from './components/Login.jsx'
 import LandingPage from './components/LandingPage.jsx'
 import StatsPanel from './components/StatsPanel.jsx'
 import MisCotizacionesPanel from './components/MisCotizacionesPanel.jsx'
+import Dialog from './components/Dialog.jsx'
 import { saveFurniture, loadFurniture, deleteFurniture, updateFurniture } from './services/api.js'
 import { createCotizacion } from './services/cotizaciones.js'
 import { listDrawerTypes } from './services/drawerTypes.js'
@@ -42,6 +43,32 @@ const IconTrash = () => (
   </svg>
 )
 
+function useDialog() {
+  const [dialog, setDialog] = React.useState(null)
+
+  const showPrompt = (title, defaultValue = '') =>
+    new Promise(resolve => setDialog({
+      type: 'prompt', title, defaultValue,
+      onConfirm: v => { setDialog(null); resolve(v) },
+      onCancel:  () => { setDialog(null); resolve(null) },
+    }))
+
+  const showConfirm = (message, { title, variant = 'default', confirmLabel, cancelLabel } = {}) =>
+    new Promise(resolve => setDialog({
+      type: 'confirm', title, message, variant, confirmLabel, cancelLabel,
+      onConfirm: () => { setDialog(null); resolve(true) },
+      onCancel:  () => { setDialog(null); resolve(false) },
+    }))
+
+  const showAlert = (message, { type = 'error' } = {}) =>
+    new Promise(resolve => setDialog({
+      type: 'alert', message, alertType: type,
+      onClose: () => { setDialog(null); resolve() },
+    }))
+
+  return { dialog, showPrompt, showConfirm, showAlert }
+}
+
 export default function App() {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -62,6 +89,7 @@ export default function App() {
   const [selectedTapaCantoId, setSelectedTapaCantoId] = useState(null)
   const [selectedDrawerTypeId, setSelectedDrawerTypeId] = useState(null)
   const stageRef = useRef(null)
+  const { dialog, showPrompt, showConfirm, showAlert } = useDialog()
 
   const selected = shapes.find(s => s.id === selectedId) || null
 
@@ -146,65 +174,48 @@ export default function App() {
   const handleSave = async () => {
     const currentDesign = designs.find(d => d._id === currentDesignId)
     const defaultName = currentDesign ? currentDesign.nombre : ''
-    const name = prompt('Nombre del diseño:', defaultName)
-    
+    const name = await showPrompt('Nombre del diseño', defaultName)
     if (!name) return
-    if (!name.trim()) {
-      alert('El nombre no puede estar vacío')
-      return
-    }
 
-    const existingDesign = designs.find(d => d.nombre === name.trim())
+    const existingDesign = designs.find(d => d.nombre === name)
 
     // Actualizar diseño existente
-    if (currentDesignId && currentDesign && currentDesign.nombre === name.trim()) {
-      if (!confirm(`¿Sobrescribir el diseño "${name}"?`)) return
-      
+    if (currentDesignId && currentDesign && currentDesign.nombre === name) {
+      const ok = await showConfirm(`¿Sobrescribir el diseño "${name}"?`, { variant: 'danger', confirmLabel: 'Sobrescribir' })
+      if (!ok) return
       try {
-        const updated = await updateFurniture(currentDesignId, { 
-          nombre: name.trim(), 
-          shapes 
-        })
+        const updated = await updateFurniture(currentDesignId, { nombre: name, shapes })
         setDesigns(prev => prev.map(d => d._id === currentDesignId ? updated : d))
-        alert('Diseño actualizado correctamente')
+        await showAlert('Diseño actualizado correctamente', { type: 'success' })
       } catch (err) {
-        alert('Error al actualizar: ' + err.message)
+        await showAlert('Error al actualizar: ' + err.message)
       }
       return
     }
 
     // Sobrescribir diseño con mismo nombre
     if (existingDesign) {
-      const shouldOverwrite = confirm(
-        `Ya existe un diseño llamado "${name}".\n¿Deseas sobrescribirlo?`
-      )
-      
-      if (!shouldOverwrite) {
-        return
-      }
-
+      const ok = await showConfirm(`Ya existe un diseño llamado "${name}".\n¿Deseas sobrescribirlo?`, { variant: 'danger', confirmLabel: 'Sobrescribir' })
+      if (!ok) return
       try {
-        const updated = await updateFurniture(existingDesign._id, { 
-          nombre: name.trim(), 
-          shapes 
-        })
+        const updated = await updateFurniture(existingDesign._id, { nombre: name, shapes })
         setDesigns(prev => prev.map(d => d._id === existingDesign._id ? updated : d))
         setCurrentDesignId(existingDesign._id)
-        alert('Diseño sobrescrito correctamente')
+        await showAlert('Diseño sobrescrito correctamente', { type: 'success' })
       } catch (err) {
-        alert('Error al sobrescribir: ' + err.message)
+        await showAlert('Error al sobrescribir: ' + err.message)
       }
       return
     }
 
     // Crear nuevo diseño
     try {
-      const saved = await saveFurniture(name.trim(), shapes)
+      const saved = await saveFurniture(name, shapes)
       setDesigns(prev => [saved, ...prev])
       setCurrentDesignId(saved._id)
-      alert('Diseño guardado correctamente')
+      await showAlert('Diseño guardado correctamente', { type: 'success' })
     } catch (err) {
-      alert('Error al guardar: ' + err.message)
+      await showAlert('Error al guardar: ' + err.message)
     }
   }
 
@@ -249,19 +260,18 @@ export default function App() {
   }
 
   const handleDeleteDesign = async (id) => {
-    if (!confirm('¿Eliminar este diseño?')) return
+    const ok = await showConfirm('¿Eliminar este diseño?', { variant: 'danger', confirmLabel: 'Eliminar' })
+    if (!ok) return
     try {
       await deleteFurniture(id)
       setDesigns(prev => prev.filter(d => d._id !== id))
-      
-      // Si se eliminó el diseño actual, limpiar el canvas
       if (currentDesignId === id) {
         setShapes([])
         setCurrentDesignId(null)
         setSelectedId(null)
       }
     } catch (err) {
-      alert('Error al eliminar: ' + err.message)
+      await showAlert('Error al eliminar: ' + err.message)
     }
   }
 
@@ -269,8 +279,11 @@ export default function App() {
     await createCotizacion(data)
   }
 
-  const handleNewDesign = () => {
-    if (shapes.length > 0 && !confirm('¿Descartar el diseño actual?')) return
+  const handleNewDesign = async () => {
+    if (shapes.length > 0) {
+      const ok = await showConfirm('¿Descartar el diseño actual?', { confirmLabel: 'Descartar' })
+      if (!ok) return
+    }
     setShapes([])
     setSelectedId(null)
     setCurrentDesignId(null)
@@ -687,6 +700,7 @@ export default function App() {
             <MisCotizacionesPanel onIrACubicacion={() => setActiveTab('cubicacion')} />
           )}
         </main>
+      <Dialog state={dialog} />
       </div>
     )
   }
@@ -1065,6 +1079,7 @@ export default function App() {
           )}
         </div>
       </aside>
+      <Dialog state={dialog} />
     </div>
   )
 }
