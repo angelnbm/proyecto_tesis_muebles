@@ -192,9 +192,10 @@ export function generarPDFCotizacion(cotizacion, nombreMueblista) {
     doc.text(`Página ${p} de ${pageCount}`, W - margin, 289, { align: 'right' })
   }
 
-  // Nombre del archivo
-  const clienteSlug = (cotizacion.nombre_cliente || 'cliente').replace(/\s+/g, '_').toLowerCase()
-  const muebleSlug  = (cotizacion.mueble_id?.nombre || 'diseno').replace(/\s+/g, '_').toLowerCase()
+  // Nombre del archivo — sin tildes ni ñ para compatibilidad de sistemas de archivos
+  const slug = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '').toLowerCase()
+  const clienteSlug = slug(cotizacion.nombre_cliente || 'cliente')
+  const muebleSlug  = slug(cotizacion.mueble_id?.nombre || 'diseno')
   doc.save(`cotizacion_${muebleSlug}_${clienteSlug}.pdf`)
 }
 
