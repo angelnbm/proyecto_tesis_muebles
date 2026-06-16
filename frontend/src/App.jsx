@@ -697,7 +697,7 @@ export default function App() {
           )}
 
           {activeTab === 'cotizaciones' && (
-            <MisCotizacionesPanel onIrACubicacion={() => setActiveTab('cubicacion')} userName={user?.nombre} />
+            <MisCotizacionesPanel onIrACubicacion={() => setActiveTab('cubicacion')} userName={user?.nombre} showConfirm={showConfirm} showAlert={showAlert} />
           )}
         </main>
       <Dialog state={dialog} />

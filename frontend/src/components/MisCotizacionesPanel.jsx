@@ -12,7 +12,7 @@ const BADGE_STYLE = {
   Completado:  { background: 'rgba(60,210,120,0.15)', color: '#3cd278', border: '1px solid rgba(60,210,120,0.4)' },
 }
 
-export default function MisCotizacionesPanel({ onIrACubicacion, userName }) {
+export default function MisCotizacionesPanel({ onIrACubicacion, userName, showConfirm, showAlert }) {
   const [cotizaciones, setCotizaciones] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -35,18 +35,23 @@ export default function MisCotizacionesPanel({ onIrACubicacion, userName }) {
       const updated = await updateEstado(id, nuevoEstado)
       setCotizaciones(prev => prev.map(c => c._id === id ? { ...c, ...updated } : c))
     } catch (err) {
-      alert('Error al actualizar estado: ' + err.message)
+      await showAlert('Error al actualizar estado: ' + err.message)
     }
   }
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Eliminar esta cotización?')) return
+    const ok = await showConfirm('¿Eliminar esta cotización? Esta acción no se puede deshacer.', {
+      title: 'Eliminar cotización',
+      variant: 'danger',
+      confirmLabel: 'Eliminar',
+    })
+    if (!ok) return
     try {
       await deleteCotizacion(id)
       setCotizaciones(prev => prev.filter(c => c._id !== id))
       if (expandedId === id) setExpandedId(null)
     } catch (err) {
-      alert('Error al eliminar: ' + err.message)
+      await showAlert('Error al eliminar: ' + err.message)
     }
   }
 
