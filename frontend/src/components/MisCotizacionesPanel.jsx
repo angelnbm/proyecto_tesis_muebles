@@ -18,6 +18,7 @@ export default function MisCotizacionesPanel({ onIrACubicacion, userName, showCo
   const [error, setError] = useState(null)
   const [expandedId, setExpandedId] = useState(null)
   const [filtroEstado, setFiltroEstado] = useState('Todos')
+  const [updatingId, setUpdatingId] = useState(null)
 
   useEffect(() => {
     setLoading(true)
@@ -31,11 +32,14 @@ export default function MisCotizacionesPanel({ onIrACubicacion, userName, showCo
   }, [])
 
   const handleEstado = async (id, nuevoEstado) => {
+    setUpdatingId(id)
     try {
       const updated = await updateEstado(id, nuevoEstado)
       setCotizaciones(prev => prev.map(c => c._id === id ? { ...c, ...updated } : c))
     } catch (err) {
       await showAlert('Error al actualizar estado: ' + err.message)
+    } finally {
+      setUpdatingId(null)
     }
   }
 
@@ -231,20 +235,26 @@ export default function MisCotizacionesPanel({ onIrACubicacion, userName, showCo
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
                       <select
                         value={cot.estado}
+                        disabled={updatingId === cot._id}
                         onChange={e => handleEstado(cot._id, e.target.value)}
                         style={{
                           flex: 1,
                           minWidth: '120px',
                           background: 'var(--color-ink-black)',
-                          color: 'var(--color-paper-grey)',
+                          color: updatingId === cot._id ? 'var(--color-faded-grey)' : 'var(--color-paper-grey)',
                           border: '1px solid var(--color-slate-border)',
                           borderRadius: '6px',
                           padding: '5px 8px',
                           fontSize: '12px',
-                          cursor: 'pointer',
+                          cursor: updatingId === cot._id ? 'not-allowed' : 'pointer',
+                          opacity: updatingId === cot._id ? 0.6 : 1,
+                          transition: 'opacity 0.15s',
                         }}
                       >
-                        {ESTADOS.map(e => <option key={e} value={e}>{e}</option>)}
+                        {updatingId === cot._id
+                          ? <option>Guardando…</option>
+                          : ESTADOS.map(e => <option key={e} value={e}>{e}</option>)
+                        }
                       </select>
                       <button
                         onClick={() => generarPDFCotizacion(cot, userName)}
