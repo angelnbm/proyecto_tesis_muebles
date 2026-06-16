@@ -119,12 +119,25 @@ function ConfirmDialog({ title, message, variant, confirmLabel, cancelLabel, onC
   )
 }
 
+const ICON_SUCCESS = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+)
+const ICON_ERROR = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
+    <circle cx="12" cy="12" r="10" />
+  </svg>
+)
+
 function AlertDialog({ message, alertType, onClose }) {
-  const iconColor = alertType === 'success' ? '#3cd278' : '#ff6b6b'
-  const icon = alertType === 'success' ? '✓' : '!'
+  const isSuccess = alertType === 'success'
+  const accentColor  = isSuccess ? '#3cd278' : '#ff6b6b'
+  const accentBg     = isSuccess ? 'rgba(60,210,120,0.12)' : 'rgba(255,80,80,0.12)'
 
   useEffect(() => {
-    if (alertType === 'success') {
+    if (isSuccess) {
       const t = setTimeout(onClose, 2200)
       return () => clearTimeout(t)
     }
@@ -133,27 +146,36 @@ function AlertDialog({ message, alertType, onClose }) {
     return () => document.removeEventListener('keydown', handleKey)
   }, [])
 
+  const boxStyle = {
+    ...BOX,
+    borderLeft: `3px solid ${accentColor}`,
+    padding: '20px 22px',
+  }
+
   return (
     <div style={OVERLAY} onClick={onClose}>
-      <div style={BOX} onClick={e => e.stopPropagation()}>
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', marginBottom: '20px' }}>
+      <div style={boxStyle} onClick={e => e.stopPropagation()}>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', marginBottom: isSuccess ? '14px' : '20px' }}>
           <span style={{
-            width: 28, height: 28, borderRadius: '50%', flexShrink: 0,
-            background: alertType === 'success' ? 'rgba(60,210,120,0.15)' : 'rgba(255,80,80,0.15)',
-            border: `1px solid ${iconColor}`,
+            width: 32, height: 32, borderRadius: '8px', flexShrink: 0,
+            background: accentBg,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '14px', fontWeight: 700, color: iconColor,
-          }}>{icon}</span>
-          <p style={{ ...MSG_STYLE, marginBottom: 0 }}>{message}</p>
+            color: accentColor,
+          }}>
+            {isSuccess ? ICON_SUCCESS : ICON_ERROR}
+          </span>
+          <p style={{ ...MSG_STYLE, marginBottom: 0, color: 'var(--color-canvas-white)', paddingTop: '6px' }}>
+            {message}
+          </p>
         </div>
-        {alertType !== 'success' && (
+        {!isSuccess && (
           <div style={ROW}>
             <button style={BTN_OK} onClick={onClose}>Aceptar</button>
           </div>
         )}
-        {alertType === 'success' && (
-          <div style={{ height: '3px', borderRadius: '2px', background: 'rgba(60,210,120,0.2)', overflow: 'hidden' }}>
-            <div style={{ height: '100%', background: '#3cd278', animation: 'dialog-progress 2.2s linear forwards' }} />
+        {isSuccess && (
+          <div style={{ height: '3px', borderRadius: '2px', background: 'rgba(60,210,120,0.15)', overflow: 'hidden' }}>
+            <div style={{ height: '100%', background: accentColor, animation: 'dialog-progress 2.2s linear forwards' }} />
           </div>
         )}
       </div>

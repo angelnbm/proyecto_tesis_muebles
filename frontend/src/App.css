@@ -5,6 +5,15 @@
   box-sizing: border-box;
 }
 
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: var(--color-ideation-blue);
+}
+
+select {
+  color-scheme: dark;
+}
+
 body {
   font-family: var(--font-matter);
   background: var(--color-ink-black);

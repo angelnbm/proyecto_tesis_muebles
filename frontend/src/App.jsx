@@ -558,7 +558,7 @@ export default function App() {
                               <select
                                 value={selected.fondoMaterialId || ''}
                                 onChange={e => updateShape(selected.id, { fondoMaterialId: e.target.value || null })}
-                                style={{ width: '100%', background: 'var(--color-dark-surface)', color: 'var(--color-paper-grey)', border: '1px solid var(--color-slate-border)', borderRadius: '4px', padding: '4px 6px', fontSize: '12px' }}
+                                style={{ width: '100%', background: 'var(--color-dark-card)', color: 'var(--color-canvas-white)', border: '1px solid var(--color-slate-border)', borderRadius: '4px', padding: '4px 6px', fontSize: '12px' }}
                               >
                                 <option value="">— mismo material —</option>
                                 {materials.filter(m => m.categoria === 'material').map(m => (
@@ -981,7 +981,7 @@ export default function App() {
                       <select
                         value={selected.fondoMaterialId || ''}
                         onChange={e => updateShape(selected.id, { fondoMaterialId: e.target.value || null })}
-                        style={{ width: '100%', background: 'var(--color-dark-surface)', color: 'var(--color-paper-grey)', border: '1px solid var(--color-slate-border)', borderRadius: '4px', padding: '4px 6px', fontSize: '11px' }}
+                        style={{ width: '100%', background: 'var(--color-dark-card)', color: 'var(--color-canvas-white)', border: '1px solid var(--color-slate-border)', borderRadius: '4px', padding: '4px 6px', fontSize: '11px' }}
                       >
                         <option value="">— mismo material —</option>
                         {materials.filter(m => m.categoria === 'material').map(m => (
