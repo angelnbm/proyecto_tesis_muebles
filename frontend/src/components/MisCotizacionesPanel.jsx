@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { listCotizaciones, updateEstado, deleteCotizacion } from '../services/cotizaciones.js'
+import { generarPDFCotizacion } from '../services/pdfCotizacion.js'
 
 const clp = (n) => `$ ${Math.round(n).toLocaleString('es-CL')}`
 
@@ -11,7 +12,7 @@ const BADGE_STYLE = {
   Completado:  { background: 'rgba(60,210,120,0.15)', color: '#3cd278', border: '1px solid rgba(60,210,120,0.4)' },
 }
 
-export default function MisCotizacionesPanel({ onIrACubicacion }) {
+export default function MisCotizacionesPanel({ onIrACubicacion, userName }) {
   const [cotizaciones, setCotizaciones] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -240,6 +241,28 @@ export default function MisCotizacionesPanel({ onIrACubicacion }) {
                       >
                         {ESTADOS.map(e => <option key={e} value={e}>{e}</option>)}
                       </select>
+                      <button
+                        onClick={() => generarPDFCotizacion(cot, userName)}
+                        style={{
+                          padding: '5px 12px',
+                          background: 'transparent',
+                          color: '#6faaff',
+                          border: '1px solid rgba(78,140,255,0.4)',
+                          borderRadius: '6px',
+                          fontSize: '12px',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '5px',
+                        }}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                          <polyline points="7 10 12 15 17 10"/>
+                          <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        PDF
+                      </button>
                       <button
                         onClick={() => handleDelete(cot._id)}
                         style={{
