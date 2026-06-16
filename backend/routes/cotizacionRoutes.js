@@ -76,7 +76,7 @@ router.post('/', authMiddleware, async (req, res) => {
       return sendError(res, 400, validationError, 'INVALID_COTIZACION_PAYLOAD')
     }
 
-    const { mueble_id, precio_total, lista_cortes, materiales_resumen } = req.body
+    const { mueble_id, precio_total, lista_cortes, materiales_resumen, nombre_cliente, email_cliente } = req.body
 
     // Verificar que el mueble pertenece al usuario
     const furniture = await Furniture.findOne({ _id: mueble_id, userId: req.userId })
@@ -87,6 +87,8 @@ router.post('/', authMiddleware, async (req, res) => {
     const cotizacion = new Cotizacion({
       mueblista_id: req.userId,
       mueble_id,
+      nombre_cliente: typeof nombre_cliente === 'string' ? nombre_cliente.trim() : '',
+      email_cliente: typeof email_cliente === 'string' ? email_cliente.trim() : '',
       precio_total: Number(precio_total),
       lista_cortes: lista_cortes.map(c => ({
         material: String(c.material || ''),

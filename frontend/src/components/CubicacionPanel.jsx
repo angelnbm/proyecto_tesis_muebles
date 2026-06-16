@@ -18,6 +18,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
   const [emailStatus, setEmailStatus] = useState({ type: null, message: '' })
   const [isSavingCot, setIsSavingCot] = useState(false)
   const [cotStatus, setCotStatus] = useState({ type: null, message: '' })
+  const [cotCliente, setCotCliente] = useState('')
   const [previewImage, setPreviewImage] = useState(null)
 
   const emailServiceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_1rqf0vo'
@@ -284,8 +285,9 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     setIsSavingCot(true)
     setCotStatus({ type: null, message: '' })
     try {
-      await onSaveCotizacion({ mueble_id: currentDesignId, precio_total: totalCost, lista_cortes, materiales_resumen })
+      await onSaveCotizacion({ mueble_id: currentDesignId, precio_total: totalCost, lista_cortes, materiales_resumen, nombre_cliente: cotCliente, email_cliente: emailForm.to_email })
       setCotStatus({ type: 'success', message: 'Cotización guardada. Puedes verla en "Cotizaciones".' })
+      setCotCliente('')
     } catch (err) {
       setCotStatus({ type: 'error', message: err.message })
     } finally {
@@ -659,6 +661,24 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
       {/* SECTION 7: GUARDAR COTIZACIÓN */}
       <section className="cubicacion-section" style={{ paddingBottom: '4px' }}>
         <h2>Guardar cotización</h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', marginBottom: '10px' }}>
+          <input
+            type="text"
+            value={cotCliente}
+            onChange={e => setCotCliente(e.target.value)}
+            placeholder="Nombre del cliente (opcional)"
+            style={{
+              flex: 1,
+              minWidth: '200px',
+              background: 'var(--color-ink-black)',
+              color: 'var(--color-paper-grey)',
+              border: '1px solid var(--color-slate-border)',
+              borderRadius: '6px',
+              padding: '7px 10px',
+              fontSize: '13px',
+            }}
+          />
+        </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
           <button
             onClick={handleSaveCotizacion}

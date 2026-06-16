@@ -16,6 +16,8 @@ const materialResumenSchema = new mongoose.Schema({
 const cotizacionSchema = new mongoose.Schema({
   mueblista_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Mueblista', required: true },
   mueble_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Furniture', required: true },
+  nombre_cliente: { type: String, default: '' },
+  email_cliente: { type: String, default: '' },
   estado: { type: String, default: 'Pendiente' }, // Pendiente, En Proceso, Completado
   fecha_inicio: { type: Date, default: Date.now },
   fecha_termino: Date,

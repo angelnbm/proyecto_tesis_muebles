@@ -111,6 +111,7 @@ export default function MisCotizacionesPanel({ onIrACubicacion }) {
             const isExpanded = expandedId === cot._id
             const badge = BADGE_STYLE[cot.estado] || BADGE_STYLE['Pendiente']
             const nombreMueble = cot.mueble_id?.nombre || 'Diseño eliminado'
+            const nombreCliente = cot.nombre_cliente || ''
             const fecha = new Date(cot.createdAt).toLocaleDateString('es-CL', { day: '2-digit', month: 'short', year: 'numeric' })
 
             return (
@@ -133,12 +134,18 @@ export default function MisCotizacionesPanel({ onIrACubicacion }) {
                       <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--color-canvas-white)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {nombreMueble}
                       </span>
+                      {nombreCliente && (
+                        <span style={{ fontSize: '12px', color: 'var(--color-paper-grey)' }}>— {nombreCliente}</span>
+                      )}
                       <span style={{ fontSize: '10px', padding: '2px 7px', borderRadius: '10px', ...badge }}>
                         {cot.estado}
                       </span>
                     </div>
                     <div style={{ display: 'flex', gap: '12px', marginTop: '3px' }}>
                       <span style={{ fontSize: '11px', color: 'var(--color-faded-grey)' }}>{fecha}</span>
+                      {cot.email_cliente && (
+                        <span style={{ fontSize: '11px', color: 'var(--color-faded-grey)' }}>{cot.email_cliente}</span>
+                      )}
                       {cot.precio_total > 0 && (
                         <span style={{ fontSize: '11px', color: 'var(--color-paper-grey)' }}>{clp(cot.precio_total)}</span>
                       )}
