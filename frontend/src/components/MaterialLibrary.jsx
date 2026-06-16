@@ -50,6 +50,8 @@ export default function MaterialLibrary({
   onShapeUpdate,
   onAccessoriesChange,
   selectedAccessories,
+  showConfirm,
+  showAlert,
 }) {
   const [activeTab, setActiveTab] = useState('material')
   const [materials, setMaterials] = useState([])
@@ -154,24 +156,32 @@ export default function MaterialLibrary({
   }
 
   const handleDelete = async (id) => {
-    if (!confirm('¿Eliminar este item?')) return
-
+    const ok = await showConfirm('¿Eliminar este item? Esta acción no se puede deshacer.', {
+      title: 'Eliminar material',
+      variant: 'danger',
+      confirmLabel: 'Eliminar',
+    })
+    if (!ok) return
     try {
       await deleteMaterial(id)
       await refreshList()
     } catch (err) {
-      setError(err.message || 'No se pudo eliminar')
+      await showAlert(err.message || 'No se pudo eliminar')
     }
   }
 
   const handleDrawerDelete = async (id) => {
-    if (!confirm('¿Eliminar este tipo de cajon?')) return
-
+    const ok = await showConfirm('¿Eliminar este tipo de cajón? Esta acción no se puede deshacer.', {
+      title: 'Eliminar tipo de cajón',
+      variant: 'danger',
+      confirmLabel: 'Eliminar',
+    })
+    if (!ok) return
     try {
       await deleteDrawerType(id)
       await refreshDrawerTypes()
     } catch (err) {
-      setDrawerError(err.message || 'No se pudo eliminar')
+      await showAlert(err.message || 'No se pudo eliminar')
     }
   }
 

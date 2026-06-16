@@ -689,6 +689,8 @@ export default function App() {
               onShapeUpdate={updateShape}
               onAccessoriesChange={setSelectedAccessories}
               selectedAccessories={selectedAccessories}
+              showConfirm={showConfirm}
+              showAlert={showAlert}
             />
           )}
 
@@ -824,6 +826,8 @@ export default function App() {
             onShapeUpdate={updateShape}
             onAccessoriesChange={setSelectedAccessories}
             selectedAccessories={selectedAccessories}
+            showConfirm={showConfirm}
+            showAlert={showAlert}
           />
         )}
 
