@@ -18,6 +18,16 @@ const landingMarkup = `
       <a href="#" class="btn" data-login="true" style="font-size:14px;color:var(--color-paper-grey);padding:8px 12px">Ingresar</a>
       <a href="#" class="btn btn--primary" data-login="true" style="padding:8px 14px">Empezar</a>
     </div>
+    <button class="nav__burger" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <div class="nav__mobile-menu">
+    <a href="#producto">Producto</a>
+    <a href="#cubicacion">Cubicación</a>
+    <a href="#biblioteca">Biblioteca</a>
+    <a href="#docs">Docs</a>
+    <a href="#" class="btn btn--primary nav__mobile-cta" data-login="true">Empezar →</a>
   </div>
 </header>
 
@@ -606,6 +616,16 @@ export default function LandingPage({ onLoginClick }) {
       }
     }
     root.addEventListener('click', handleClick)
+
+    // Hamburger menu toggle
+    const burger = root.querySelector('.nav__burger')
+    const navEl  = root.querySelector('.nav')
+    if (burger && navEl) {
+      burger.addEventListener('click', () => navEl.classList.toggle('nav--open'))
+      root.querySelectorAll('.nav__mobile-menu a').forEach(link => {
+        link.addEventListener('click', () => navEl.classList.remove('nav--open'))
+      })
+    }
 
     // Tab switching for product preview
     const tabs = root.querySelectorAll('.app-tab')

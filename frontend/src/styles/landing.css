@@ -49,8 +49,25 @@
 .landing-page .section--sm{padding:64px 0}
 
 /* ---- nav ---- */
-.landing-page .nav{position:sticky;top:0;z-index:50;background:rgba(19,19,19,.82);backdrop-filter:blur(12px);border-bottom:1px solid var(--color-slate-border)}
+.landing-page .nav{position:sticky;top:0;z-index:50;background:rgba(19,19,19,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--color-slate-border)}
 .landing-page .nav__inner{display:flex;align-items:center;justify-content:space-between;height:64px}
+
+/* ── Hamburger button (hidden on desktop) ── */
+.landing-page .nav__burger{display:none;flex-direction:column;justify-content:center;gap:5px;width:36px;height:36px;background:none;border:none;cursor:pointer;padding:4px;flex-shrink:0}
+.landing-page .nav__burger span{display:block;width:22px;height:2px;background:var(--color-canvas-white);border-radius:2px;transition:transform .25s,opacity .2s}
+
+/* ── Mobile menu panel (hidden by default) ── */
+.landing-page .nav__mobile-menu{display:none;flex-direction:column;background:rgba(15,15,18,.98);border-top:1px solid var(--color-slate-border);padding:8px 20px 20px}
+.landing-page .nav__mobile-menu a{display:block;padding:15px 0;font-size:16px;color:var(--color-paper-grey);border-bottom:1px solid var(--color-slate-border);transition:color .15s}
+.landing-page .nav__mobile-menu a:hover{color:var(--color-canvas-white)}
+.landing-page .nav__mobile-cta{border-bottom:none !important;margin-top:12px;text-align:center;padding:12px 0 !important;background:var(--color-ideation-blue);border-radius:8px;font-weight:600;color:#fff !important}
+
+/* ── Open state ── */
+.landing-page .nav--open .nav__mobile-menu{display:flex}
+.landing-page .nav--open .nav__burger span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.landing-page .nav--open .nav__burger span:nth-child(2){opacity:0}
+.landing-page .nav--open .nav__burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
 .landing-page .brand{display:flex;align-items:center;gap:10px;font-family:var(--font-tomboy);font-weight:900;letter-spacing:-0.02em;font-size:22px}
 .landing-page .brand__mark{width:24px;height:24px;flex-shrink:0}
 .landing-page .nav__links{display:flex;gap:28px;font-size:14px;color:var(--color-paper-grey)}
@@ -352,9 +369,8 @@
   /* ---- nav ---- */
   .landing-page .nav__inner{height:54px}
   .landing-page .brand{font-size:18px}
-  /* Ocultar el link "Ingresar" en mobile, mantener solo el botón primario */
-  .landing-page .nav__cta a:first-child{display:none}
-  .landing-page .nav__cta .btn--primary{padding:8px 14px;font-size:13px}
+  .landing-page .nav__cta{display:none}
+  .landing-page .nav__burger{display:flex}
 
   /* ---- shell / secciones ---- */
   .landing-page .shell{padding:0 16px}
