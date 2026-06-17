@@ -812,7 +812,7 @@ export default function App() {
         )}
 
         {activeTab === 'cotizaciones' && (
-          <MisCotizacionesPanel onIrACubicacion={() => setActiveTab('cubicacion')} />
+          <MisCotizacionesPanel onIrACubicacion={() => setActiveTab('cubicacion')} userName={user?.nombre} showConfirm={showConfirm} showAlert={showAlert} />
         )}
 
         {activeTab === 'biblioteca' && (
