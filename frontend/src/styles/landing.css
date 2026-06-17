@@ -256,6 +256,8 @@
   .landing-page .window__body{grid-template-columns:80px 1fr;}
   .landing-page .app-recent{display:none}
   .landing-page .nav__links{display:none}
+  .landing-page .nav__cta{display:none}
+  .landing-page .nav__burger{display:flex}
 }
 @media (max-width:640px){
   .landing-page .feat,.landing-page .lib,.landing-page .flow,.landing-page .price,.landing-page .footer__row{grid-template-columns:1fr}
@@ -354,6 +356,8 @@
   .landing-page .footer__row{grid-template-columns:1fr 1fr}
   .landing-page .window__body{grid-template-columns:80px 1fr;}
   .landing-page .nav__links{display:none}
+  .landing-page .nav__cta{display:none}
+  .landing-page .nav__burger{display:flex}
 }
 @media (max-width:640px){
   .landing-page .feat,.landing-page .lib,.landing-page .footer__row{grid-template-columns:1fr}
@@ -369,8 +373,6 @@
   /* ---- nav ---- */
   .landing-page .nav__inner{height:54px}
   .landing-page .brand{font-size:18px}
-  .landing-page .nav__cta{display:none}
-  .landing-page .nav__burger{display:flex}
 
   /* ---- shell / secciones ---- */
   .landing-page .shell{padding:0 16px}
