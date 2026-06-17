@@ -673,6 +673,7 @@ export default function App() {
               selectedDrawerTypeId={selectedDrawerTypeId}
               currentDesignId={currentDesignId}
               onSaveCotizacion={handleSaveCotizacion}
+              user={user}
             />
           )}
 
@@ -806,6 +807,7 @@ export default function App() {
             selectedDrawerTypeId={selectedDrawerTypeId}
             currentDesignId={currentDesignId}
             onSaveCotizacion={handleSaveCotizacion}
+            user={user}
           />
         )}
 

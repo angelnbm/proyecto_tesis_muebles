@@ -7,7 +7,7 @@ import { parseBoardConfig } from '../services/boardUtils'
 
 const clp = (n) => `$ ${Math.round(n).toLocaleString('es-CL')}`
 
-export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial, drawerTypes, tapaCantos, materials, accessories, selectedAccessories, currentDesignName, selectedTapaCantoId, selectedDrawerTypeId, currentDesignId, onSaveCotizacion }) {
+export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial, drawerTypes, tapaCantos, materials, accessories, selectedAccessories, currentDesignName, selectedTapaCantoId, selectedDrawerTypeId, currentDesignId, onSaveCotizacion, user }) {
   const [selectedModule, setSelectedModule] = useState(null)
   const [emailForm, setEmailForm] = useState({
     nombre_cliente: '',
@@ -305,8 +305,6 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     setTimeout(() => window.print(), 250)
   }
 
-  // Comprime un dataUrl hasta que su base64 quepa en maxChars.
-  // Reduce la escala primero, luego la calidad JPEG, iterando hasta encajar.
   const compressImageToFit = (dataUrl, maxChars = 40000) => new Promise((resolve) => {
     if (!dataUrl) { resolve(''); return }
     const raw = dataUrl.split(',')[1] || ''
@@ -314,15 +312,13 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
 
     const img = new Image()
     img.onload = () => {
-      // Factor de escala inicial basado en cuánto hay que reducir (más conservador)
       const ratio = Math.min(1, Math.sqrt(maxChars / raw.length) * 0.85)
       const canvas = document.createElement('canvas')
-      canvas.width = Math.max(1, Math.floor(img.width * ratio))
+      canvas.width  = Math.max(1, Math.floor(img.width  * ratio))
       canvas.height = Math.max(1, Math.floor(img.height * ratio))
       const ctx = canvas.getContext('2d')
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
 
-      // Reducir calidad hasta encajar
       let quality = 0.7
       let b64 = canvas.toDataURL('image/jpeg', quality).split(',')[1]
       while (b64.length > maxChars && quality > 0.15) {
@@ -343,49 +339,39 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     setPreviewImage(imageDataUrl)
 
     if (!boards || boards.length === 0) {
-      setEmailStatus({
-        type: 'error',
-        message: 'No hay planchas calculadas para enviar la cotización.',
-      })
+      setEmailStatus({ type: 'error', message: 'No hay planchas calculadas para enviar la cotización.' })
       return
     }
-
     if (!emailForm.to_email.trim()) {
-      setEmailStatus({
-        type: 'error',
-        message: 'Ingresá el correo de destino.',
-      })
+      setEmailStatus({ type: 'error', message: 'Ingresá el correo de destino.' })
       return
     }
-
     if (!emailForm.nombre_cliente.trim()) {
-      setEmailStatus({
-        type: 'error',
-        message: 'Completá el nombre del cliente.',
-      })
+      setEmailStatus({ type: 'error', message: 'Completá el nombre del cliente.' })
       return
     }
 
     setIsSending(true)
 
     try {
-      // Comprimir imagen adaptativamente para no superar el límite de 50KB de EmailJS
       const imageBase64 = await compressImageToFit(imageDataUrl, 40000)
 
       const templateParams = {
-        nombre_cliente: emailForm.nombre_cliente.trim(),
-        to_email: emailForm.to_email.trim(),
-        reply_to: emailForm.to_email.trim(),
-        from_name: emailForm.nombre_cliente.trim(),
+        nombre_cliente:  emailForm.nombre_cliente.trim(),
+        to_email:        emailForm.to_email.trim(),
+        reply_to:        emailForm.to_email.trim(),
+        from_name:       emailForm.nombre_cliente.trim(),
         nombre_proyecto: emailForm.nombre_proyecto.trim(),
-        precio_total: totalCost > 0 ? clp(totalCost) : 'Sin calcular',
+        precio_total:    totalCost > 0 ? clp(totalCost) : 'Sin calcular',
         planchas_resumen: boardsSummary,
-        extras_resumen: extrasSummary,
-        imagen_base64: imageBase64 || '',
-        material_nombre: selectedMaterial?.nombre || 'Sin material seleccionado',
-        material_precio: selectedMaterial?.precio != null ? clp(selectedMaterial.precio) : 'Sin definir',
-        planchas_total: boards?.length || 0,
-        nombre_empresa: 'Amedida',
+        extras_resumen:   extrasSummary,
+        imagen_base64:    imageBase64 || '',
+        material_nombre:  selectedMaterial?.nombre || 'Sin material seleccionado',
+        material_precio:  selectedMaterial?.precio != null ? clp(selectedMaterial.precio) : 'Sin definir',
+        planchas_total:   boards?.length || 0,
+        nombre_mueblista: user?.nombre || '',
+        email_mueblista:  user?.email  || '',
+        nombre_empresa:  'Amedida',
       }
 
       if (!window.emailjs) {
@@ -399,16 +385,10 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
       window.emailjs.init(emailPublicKey)
       await window.emailjs.send(emailServiceId, emailTemplateId, templateParams)
 
-      setEmailStatus({
-        type: 'success',
-        message: 'Cotización enviada correctamente.',
-      })
+      setEmailStatus({ type: 'success', message: 'Cotización enviada correctamente.' })
     } catch (error) {
       const errorMessage = error?.text || error?.message || 'No se pudo enviar la cotización.'
-      setEmailStatus({
-        type: 'error',
-        message: `${errorMessage} Revisá el template y los campos requeridos en EmailJS.`,
-      })
+      setEmailStatus({ type: 'error', message: `${errorMessage} Revisá el template y los campos requeridos en EmailJS.` })
     } finally {
       setIsSending(false)
     }
@@ -793,7 +773,11 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         <div className="print-header">
           <div className="print-brand">
             <svg className="print-brand-mark" width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="11" height="11" rx="2" fill="#4586da"/><rect x="15" width="11" height="11" rx="2" stroke="#111" strokeWidth="1.5"/><rect y="15" width="11" height="11" rx="2" stroke="#111" strokeWidth="1.5"/><rect x="15" y="15" width="11" height="11" rx="2" stroke="#ccc" strokeWidth="1.5"/></svg>
-            <span className="print-brand-name">Amedida</span>
+            <div className="print-brand-info">
+              <span className="print-brand-name">Amedida</span>
+              {user?.nombre && <span className="print-mueblista-nombre">{user.nombre}</span>}
+              {user?.email  && <span className="print-mueblista-email">{user.email}</span>}
+            </div>
           </div>
           <div className="print-meta">
             <h1>Cotización de proyecto</h1>

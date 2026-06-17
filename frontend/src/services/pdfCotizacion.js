@@ -2,32 +2,38 @@ import { jsPDF } from 'jspdf'
 
 const clp = (n) => `$ ${Math.round(n).toLocaleString('es-CL')}`
 const fmt = (d) => new Date(d).toLocaleDateString('es-CL', { day: '2-digit', month: 'long', year: 'numeric' })
+const slug = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '').toLowerCase()
 
-// Colores en RGB
 const C = {
-  black:      [15,  15,  20],
-  white:      [255, 255, 255],
-  blue:       [59,  130, 246],
-  blueDark:   [37,  99,  235],
-  grey:       [100, 110, 120],
-  greyLight:  [220, 225, 230],
-  greyBg:     [245, 247, 249],
-  red:        [192, 57,  43],
-  green:      [39,  174, 96],
-  orange:     [230, 126, 34],
+  black:     [15,  15,  20],
+  white:     [255, 255, 255],
+  blue:      [59,  130, 246],
+  grey:      [100, 110, 120],
+  greyLight: [220, 225, 230],
+  greyBg:    [245, 247, 249],
+  green:     [39,  174, 96],
+  orange:    [230, 126, 34],
 }
 
 const ESTADO_COLOR = {
-  'Pendiente':   C.orange,
-  'En Proceso':  C.blue,
-  'Completado':  C.green,
+  'Pendiente':  C.orange,
+  'En Proceso': C.blue,
+  'Completado': C.green,
 }
 
 function setFill(doc, rgb)   { doc.setFillColor(...rgb) }
 function setStroke(doc, rgb) { doc.setDrawColor(...rgb) }
 function setFont(doc, rgb)   { doc.setTextColor(...rgb) }
 
-export function generarPDFCotizacion(cotizacion, nombreMueblista) {
+// mueblista: string (sólo nombre) u objeto { nombre, email }
+function resolverMueblista(mueblista) {
+  if (!mueblista) return { nombre: 'Mueblista', email: null }
+  if (typeof mueblista === 'string') return { nombre: mueblista, email: null }
+  return { nombre: mueblista.nombre || 'Mueblista', email: mueblista.email || null }
+}
+
+function buildDoc(cotizacion, mueblista) {
+  const { nombre: nombreMueblista, email: emailMueblista } = resolverMueblista(mueblista)
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
   const W = 210
   const margin = 18
@@ -38,7 +44,6 @@ export function generarPDFCotizacion(cotizacion, nombreMueblista) {
   setFill(doc, C.black)
   doc.rect(0, 0, W, 38, 'F')
 
-  // Logotipo / nombre app
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(20)
   setFont(doc, C.white)
@@ -49,7 +54,6 @@ export function generarPDFCotizacion(cotizacion, nombreMueblista) {
   setFont(doc, [160, 170, 180])
   doc.text('Presupuesto de muebles artesanales', margin, 23)
 
-  // Número y fecha (derecha)
   const fechaDoc = fmt(cotizacion.createdAt || new Date())
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(10)
@@ -60,7 +64,6 @@ export function generarPDFCotizacion(cotizacion, nombreMueblista) {
   setFont(doc, [160, 170, 180])
   doc.text(fechaDoc, W - margin, 20, { align: 'right' })
 
-  // Estado badge
   const estadoColor = ESTADO_COLOR[cotizacion.estado] || C.grey
   setFill(doc, estadoColor)
   doc.roundedRect(W - margin - 32, 25, 32, 8, 2, 2, 'F')
@@ -84,45 +87,40 @@ export function generarPDFCotizacion(cotizacion, nombreMueblista) {
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(10)
   setFont(doc, C.black)
-  const clienteNombre = cotizacion.nombre_cliente || 'Sin especificar'
-  doc.text(clienteNombre, margin, y)
-  doc.text(nombreMueblista || 'Mueblista', col2x, y)
+  doc.text(cotizacion.nombre_cliente || 'Sin especificar', margin, y)
+  doc.text(nombreMueblista, col2x, y)
 
-  if (cotizacion.email_cliente) {
+  // Emails en la misma fila (si alguno existe)
+  const hasAnyEmail = cotizacion.email_cliente || emailMueblista
+  if (hasAnyEmail) {
     y += 5
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(8.5)
     setFont(doc, C.grey)
-    doc.text(cotizacion.email_cliente, margin, y)
+    if (cotizacion.email_cliente) doc.text(cotizacion.email_cliente, margin, y)
+    if (emailMueblista)           doc.text(emailMueblista, col2x, y)
   }
 
   y += 5
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8.5)
   setFont(doc, C.grey)
-  const nombreMueble = cotizacion.mueble_id?.nombre || 'Sin nombre'
-  doc.text(`Proyecto: ${nombreMueble}`, margin, y)
+  doc.text(`Proyecto: ${cotizacion.mueble_id?.nombre || 'Sin nombre'}`, margin, y)
 
   y += 10
 
   // ── MATERIALES ───────────────────────────────────────────
   if (cotizacion.materiales_resumen?.length > 0) {
     y = sectionTitle(doc, 'MATERIALES', y, margin, contentW)
-
     const cols = [
-      { label: 'Material',   x: margin,              w: contentW * 0.55, align: 'left' },
-      { label: 'Planchas',   x: margin + contentW * 0.55, w: contentW * 0.2, align: 'right' },
-      { label: 'Subtotal',   x: margin + contentW * 0.75, w: contentW * 0.25, align: 'right' },
+      { label: 'Material',  x: margin,                   w: contentW * 0.55, align: 'left'  },
+      { label: 'Planchas',  x: margin + contentW * 0.55, w: contentW * 0.2,  align: 'right' },
+      { label: 'Subtotal',  x: margin + contentW * 0.75, w: contentW * 0.25, align: 'right' },
     ]
-
     y = tableHeader(doc, cols, y, margin, contentW)
-
     cotizacion.materiales_resumen.forEach((m, i) => {
       if (y > 260) { doc.addPage(); y = 20 }
-      if (i % 2 === 0) {
-        setFill(doc, C.greyBg)
-        doc.rect(margin, y - 4, contentW, 7, 'F')
-      }
+      if (i % 2 === 0) { setFill(doc, C.greyBg); doc.rect(margin, y - 4, contentW, 7, 'F') }
       doc.setFont('helvetica', 'normal')
       doc.setFontSize(9)
       setFont(doc, C.black)
@@ -137,21 +135,15 @@ export function generarPDFCotizacion(cotizacion, nombreMueblista) {
   // ── LISTA DE CORTES ─────────────────────────────────────
   if (cotizacion.lista_cortes?.length > 0) {
     y = sectionTitle(doc, 'LISTA DE CORTES', y, margin, contentW)
-
     const cols = [
-      { label: 'Material',   x: margin,              w: contentW * 0.5,  align: 'left' },
-      { label: 'Dimensión',  x: margin + contentW * 0.5,  w: contentW * 0.35, align: 'left' },
-      { label: 'Cant.',      x: margin + contentW * 0.85, w: contentW * 0.15, align: 'right' },
+      { label: 'Material',  x: margin,                   w: contentW * 0.5,  align: 'left'  },
+      { label: 'Dimensión', x: margin + contentW * 0.5,  w: contentW * 0.35, align: 'left'  },
+      { label: 'Cant.',     x: margin + contentW * 0.85, w: contentW * 0.15, align: 'right' },
     ]
-
     y = tableHeader(doc, cols, y, margin, contentW)
-
     cotizacion.lista_cortes.forEach((c, i) => {
       if (y > 260) { doc.addPage(); y = 20 }
-      if (i % 2 === 0) {
-        setFill(doc, C.greyBg)
-        doc.rect(margin, y - 4, contentW, 7, 'F')
-      }
+      if (i % 2 === 0) { setFill(doc, C.greyBg); doc.rect(margin, y - 4, contentW, 7, 'F') }
       doc.setFont('helvetica', 'normal')
       doc.setFontSize(9)
       setFont(doc, C.black)
@@ -192,11 +184,24 @@ export function generarPDFCotizacion(cotizacion, nombreMueblista) {
     doc.text(`Página ${p} de ${pageCount}`, W - margin, 289, { align: 'right' })
   }
 
-  // Nombre del archivo — sin tildes ni ñ para compatibilidad de sistemas de archivos
-  const slug = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '').toLowerCase()
   const clienteSlug = slug(cotizacion.nombre_cliente || 'cliente')
   const muebleSlug  = slug(cotizacion.mueble_id?.nombre || 'diseno')
-  doc.save(`cotizacion_${muebleSlug}_${clienteSlug}.pdf`)
+  return { doc, filename: `cotizacion_${muebleSlug}_${clienteSlug}.pdf` }
+}
+
+// ── exports ──────────────────────────────────────────────
+
+/** Descarga el PDF en el navegador */
+export function generarPDFCotizacion(cotizacion, mueblista) {
+  const { doc, filename } = buildDoc(cotizacion, mueblista)
+  doc.save(filename)
+}
+
+/** Devuelve el PDF como data URI base64 (para enviar por email) */
+export function generarPDFBase64(cotizacion, mueblista) {
+  const { doc, filename } = buildDoc(cotizacion, mueblista)
+  // datauristring: "data:application/pdf;base64,..."
+  return { dataUri: doc.output('datauristring'), filename }
 }
 
 // ── helpers ──────────────────────────────────────────────

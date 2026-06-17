@@ -2156,6 +2156,7 @@ body {
   .mobile-recent-designs,
   .bottom-panel,
   .canvas-buttons-container,
+  .cubicacion-section,
   .cubicacion-pieces,
   .cubicacion-boards,
   .cubicacion-pieces-list,
@@ -2198,12 +2199,18 @@ body {
 
   .print-brand {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 10px;
   }
 
   .print-brand-mark {
     flex-shrink: 0;
+    margin-top: 4px;
+  }
+
+  .print-brand-info {
+    display: flex;
+    flex-direction: column;
   }
 
   .print-brand-name {
@@ -2211,6 +2218,20 @@ body {
     font-weight: 900;
     letter-spacing: -0.02em;
     color: #111;
+    line-height: 1;
+  }
+
+  .print-mueblista-nombre {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    margin-top: 4px;
+  }
+
+  .print-mueblista-email {
+    font-size: 11px;
+    color: #666;
+    margin-top: 1px;
   }
 
   .print-meta h1 {
