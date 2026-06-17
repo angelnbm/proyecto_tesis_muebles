@@ -157,7 +157,7 @@ export function generateStructuredCuts(shapes, options = {}) {
         addTapaCanto(shape.tapaCantoId, w)
 
         for (let index = 1; index <= numCajones; index++) {
-          const drawerTypeId = drawerOverrideMap.get(index) || selectedDrawerTypeId || shape.drawerTypeId || defaultDrawerTypeId
+          const drawerTypeId = drawerOverrideMap.get(index) || shape.drawerTypeId || selectedDrawerTypeId || defaultDrawerTypeId
           const drawerType = drawerTypeMap.get(drawerTypeId)
 
           if (!drawerType) {
