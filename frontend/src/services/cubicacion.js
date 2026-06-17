@@ -178,11 +178,28 @@ export function generateStructuredCuts(shapes, options = {}) {
           const fondoDepth       = Math.max(1, roundToTenth(drawerDepth - 2 * frontalThickness))
 
           addPiece(modulePieces, {
+            description: 'Laterales cajon',
+            width: drawerDepth,
+            height: lateralHeight,
+            quantity: 2,
+          })
+          addPiece(modulePieces, {
+            description: 'Frente interno cajon',
+            width: innerFrontWidth,
+            height: lateralHeight,
+            quantity: 1,
+          })
+          addPiece(modulePieces, {
+            description: 'Trasera cajon',
+            width: innerFrontWidth,
+            height: lateralHeight,
+            quantity: 1,
+          })
+          addPiece(modulePieces, {
             description: 'Fondo cajon',
             width: innerFrontWidth,
             height: fondoDepth,
             quantity: 1,
-            materialId: drawerType.fondo || undefined,
           })
 
           if (drawerType.hasRefuerzo) {
@@ -193,6 +210,9 @@ export function generateStructuredCuts(shapes, options = {}) {
               quantity: 1,
             })
           }
+
+          addTapaCanto(shape.tapaCantoId, 2 * internalWidth + 2 * drawerHeight)
+          addTapaCanto(shape.tapaCantoId, d * 2)
         }
         break
       }
