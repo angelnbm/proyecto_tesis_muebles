@@ -1432,9 +1432,10 @@ body {
 
 .mobile-action-btn {
   display: flex;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  width: 32px;
+  gap: 5px;
+  padding: 5px 10px;
   height: 32px;
   background: var(--color-dark-card);
   color: var(--color-canvas-white);
@@ -1442,6 +1443,16 @@ body {
   border-radius: var(--radius-buttons);
   cursor: pointer;
   transition: background 0.2s;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.mobile-action-btn svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  stroke: currentColor;
 }
 
 .mobile-action-btn:hover {

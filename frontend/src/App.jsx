@@ -393,9 +393,11 @@ export default function App() {
           <div className="mobile-header-actions">
             <button onClick={handleNewDesign} className="mobile-action-btn" title="Nuevo diseño">
               <IconNew />
+              <span>Nuevo</span>
             </button>
             <button onClick={handleSave} className="mobile-action-btn mobile-action-btn--save" title="Guardar">
               <IconSave />
+              <span>Guardar</span>
             </button>
             <button onClick={handleLogout} className="mobile-logout-btn">
               Salir
