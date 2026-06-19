@@ -1256,6 +1256,4059 @@ Después de la implementación, se continua con las pruebas de la iteración en 
 \subsubsection{Retrospectiva}
 Al final esta iteración, se revisa el peso asignado a las historias de usuario, en esta iteración fue subestimado y no se ha terminado completamente la iteración.
 
+\chapter{Pruebas}
+\begingroup
+\small
+En este capítulo se presentan las pruebas realizadas al sistema Tablón. Se dividen en pruebas unitarias automatizadas, ejecutadas con el framework Jest sobre los módulos del backend, y pruebas de caja negra que verifican el comportamiento funcional del sistema desde la perspectiva del mueblista. Cada prueba se enlaza a su historia de usuario correspondiente.
+
+\section{Pruebas Unitarias}
+Las pruebas unitarias se implementaron con el framework Jest y se organizan en dos archivos: \texttt{cubicacion.test.js}, que verifica la lógica del algoritmo de generación de piezas y cálculo de planchas, y \texttt{validaciones.test.js}, que verifica las funciones de validación de los endpoints del backend. Se ejecutaron en total 71 casos de prueba, todos con resultado aprobado.
+
+\subsection{Algoritmo de Cubicación}
+A continuación se presentan los casos de prueba que verifican la función encargada de generar las piezas de cada módulo de mueble y el cálculo de las planchas necesarias. Las dimensiones se expresan en centímetros y la plancha de referencia es de 250$\times$183 cm. Estas pruebas corresponden a HU07.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-01}
+\label{tab:pu01}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-01 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cajonera 60$\times$80$\times$50 cm con 3 cajones genera exactamente 4 tipos de piezas. \\
+\hline
+\textbf{Salida obtenida} & La función retornó un arreglo de 4 elementos: Techo/Piso, Frente, Laterales y Fondo. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-02}
+\label{tab:pu02}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-02 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & La cajonera genera la pieza Techo/Piso con cantidad 2. \\
+\hline
+\textbf{Salida obtenida} & La pieza Techo/Piso fue encontrada en el resultado con \texttt{quantity: 2}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-03}
+\label{tab:pu03}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-03 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & La cajonera genera la pieza Laterales con cantidad 2. \\
+\hline
+\textbf{Salida obtenida} & La pieza Laterales fue encontrada con \texttt{quantity: 2}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-04}
+\label{tab:pu04}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-04 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & La cajonera genera la pieza Frente con cantidad igual al número de cajones configurado. \\
+\hline
+\textbf{Salida obtenida} & Con 5 cajones la pieza Frente retornó \texttt{quantity: 5}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-05}
+\label{tab:pu05}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-05 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Frente de cajonera con 3 cajones tiene alto $= \text{round}(80/3) = 27$ cm. \\
+\hline
+\textbf{Salida obtenida} & El alto del Frente retornó 27 cm, correspondiente al redondeo de $80/3$. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-06}
+\label{tab:pu06}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-06 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Laterales de cajonera usan la profundidad como ancho (50 cm) y el alto del mueble como alto (80 cm). \\
+\hline
+\textbf{Salida obtenida} & La pieza Laterales retornó \texttt{width: 50} y \texttt{height: 80}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-07}
+\label{tab:pu07}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-07 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Techo/Piso de cajonera usa el ancho del mueble (60 cm) y la profundidad como alto (50 cm). \\
+\hline
+\textbf{Salida obtenida} & La pieza Techo/Piso retornó \texttt{width: 60} y \texttt{height: 50}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-08}
+\label{tab:pu08}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-08 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cajonera con 1 cajón genera Frente con cantidad 1 y alto igual al alto total del mueble. \\
+\hline
+\textbf{Salida obtenida} & El Frente retornó \texttt{quantity: 1} y \texttt{height: 80}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-09}
+\label{tab:pu09}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-09 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & La cajonera genera la pieza Fondo con cantidad 1. \\
+\hline
+\textbf{Salida obtenida} & La pieza Fondo fue encontrada en el resultado con \texttt{quantity: 1}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-10}
+\label{tab:pu10}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-10 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Módulo 90$\times$200$\times$40 cm sin estantes ni puertas genera 3 tipos de piezas: Techo/Piso, Laterales y Fondo. \\
+\hline
+\textbf{Salida obtenida} & La función retornó un arreglo de 3 elementos correctamente. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-11}
+\label{tab:pu11}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-11 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Módulo con 3 estantes genera la pieza Estantes con cantidad 3. \\
+\hline
+\textbf{Salida obtenida} & La pieza Estantes fue encontrada con \texttt{quantity: 3}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-12}
+\label{tab:pu12}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-12 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Módulo 80$\times$180$\times$40 cm con 2 puertas genera puertas con ancho $\approx 39{,}7$ cm cada una (80/2 = 40, menos 3 mm). \\
+\hline
+\textbf{Salida obtenida} & La pieza Puertas retornó \texttt{quantity: 2} y \texttt{width: 39.7}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-13}
+\label{tab:pu13}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-13 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Módulo con 1 divisor genera la pieza Divisores con cantidad 1. \\
+\hline
+\textbf{Salida obtenida} & La pieza Divisores fue encontrada con \texttt{quantity: 1}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-14}
+\label{tab:pu14}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-14 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Puerta de 40$\times$70 cm descuenta 3 mm del ancho, resultado esperado: 39,7 cm. \\
+\hline
+\textbf{Salida obtenida} & La función \texttt{piezaPuerta} retornó \texttt{width: 39.7}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-15}
+\label{tab:pu15}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-15 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Puerta de 40$\times$70 cm descuenta 3 mm del alto, resultado esperado: 69,7 cm. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{height: 69.7}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-16}
+\label{tab:pu16}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-16 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Puerta con dimensión menor a 3 mm utiliza un valor mínimo de 0,3 cm. \\
+\hline
+\textbf{Salida obtenida} & Con entrada 0,1$\times$0,1 cm, tanto \texttt{width} como \texttt{height} retornaron 0,3 cm. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-17}
+\label{tab:pu17}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-17 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El área total de las piezas de una cajonera 60$\times$80$\times$50 cm con 3 cajones es mayor a 0. \\
+\hline
+\textbf{Salida obtenida} & La función \texttt{totalArea} retornó un valor mayor a 0. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-18}
+\label{tab:pu18}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-18 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Una pieza de 10$\times$10 cm requiere exactamente 1 plancha de melamina. \\
+\hline
+\textbf{Salida obtenida} & La función \texttt{boardsNeeded} retornó 1 plancha. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-19}
+\label{tab:pu19}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-19 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & 50 piezas de 50$\times$50 cm requieren 3 o más planchas (125.000 cm² $>$ 45.750 cm² por plancha). \\
+\hline
+\textbf{Salida obtenida} & La función retornó $\geq 3$ planchas. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-20}
+\label{tab:pu20}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-20 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El área total de las piezas nunca supera el área teórica de las planchas calculadas. \\
+\hline
+\textbf{Salida obtenida} & Se verificó que \texttt{totalArea} $\leq$ $n \times$ área de plancha, donde $n$ es el número de planchas calculadas. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-21}
+\label{tab:pu21}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-21 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & La función \texttt{roundToTenth} redondea correctamente a una decimal: 3,14159 $\to$ 3,1; 3,15 $\to$ 3,2; 3,05 $\to$ 3,1. \\
+\hline
+\textbf{Salida obtenida} & Los tres casos de redondeo retornaron los valores esperados. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-22}
+\label{tab:pu22}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-22 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Los valores enteros (5 y 100) no se ven alterados por la función \texttt{roundToTenth}. \\
+\hline
+\textbf{Salida obtenida} & La función retornó 5 para la entrada 5, y 100 para la entrada 100. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Funciones de Validación}
+A continuación se presentan los casos de prueba que verifican las funciones de validación de los endpoints del backend, agrupadas por historia de usuario.
+
+\subsubsection{HU01 — Registro y Login}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-23}
+\label{tab:pu23}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-23 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Datos completos y válidos (nombre, email, contraseña) pasan la validación de registro. \\
+\hline
+\textbf{Salida obtenida} & La función \texttt{validateRegister} retornó \texttt{\{ok: true\}}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-24}
+\label{tab:pu24}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-24 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Nombre vacío en el registro retorna error \texttt{MISSING\_FIELDS}. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{\{ok: false, error: 'MISSING\_FIELDS'\}}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-25}
+\label{tab:pu25}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-25 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Email compuesto solo de espacios retorna error \texttt{MISSING\_FIELDS}. \\
+\hline
+\textbf{Salida obtenida} & La función detectó el campo vacío y retornó \texttt{MISSING\_FIELDS}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-26}
+\label{tab:pu26}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-26 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Contraseña vacía en el registro retorna error \texttt{MISSING\_FIELDS}. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{\{ok: false, error: 'MISSING\_FIELDS'\}}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-27}
+\label{tab:pu27}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-27 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Email sin símbolo @ retorna error \texttt{INVALID\_EMAIL}. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{\{ok: false, error: 'INVALID\_EMAIL'\}}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-28}
+\label{tab:pu28}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-28 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Email con formato incompleto (ejemplo: \texttt{a@b}) retorna error \texttt{INVALID\_EMAIL}. \\
+\hline
+\textbf{Salida obtenida} & La función rechazó el formato y retornó \texttt{INVALID\_EMAIL}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-29}
+\label{tab:pu29}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-29 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Email mínimo válido (ejemplo: \texttt{a@b.c}) pasa la validación. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{\{ok: true\}}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-30}
+\label{tab:pu30}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-30 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Contraseña de 5 caracteres retorna error \texttt{PASSWORD\_TOO\_SHORT}. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{\{ok: false, error: 'PASSWORD\_TOO\_SHORT'\}}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-31}
+\label{tab:pu31}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-31 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Contraseña de exactamente 6 caracteres pasa la validación. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{\{ok: true\}}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-32}
+\label{tab:pu32}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-32 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Email y contraseña presentes pasan la validación de inicio de sesión. \\
+\hline
+\textbf{Salida obtenida} & La función \texttt{validateLogin} retornó \texttt{\{ok: true\}}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-33}
+\label{tab:pu33}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-33 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Email vacío en el inicio de sesión retorna error \texttt{MISSING\_FIELDS}. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{\{ok: false, error: 'MISSING\_FIELDS'\}}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-34}
+\label{tab:pu34}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-34 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Contraseña vacía en el inicio de sesión retorna error \texttt{MISSING\_FIELDS}. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{\{ok: false, error: 'MISSING\_FIELDS'\}}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{HU03 — Diseño de Mueble}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-35}
+\label{tab:pu35}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-35 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Nombre y arreglo de formas (shapes) válidos pasan la validación del diseño de mueble. \\
+\hline
+\textbf{Salida obtenida} & La función \texttt{validateFurniturePayload} retornó \texttt{null} (sin errores). \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-36}
+\label{tab:pu36}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-36 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Nombre vacío en el diseño retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función retornó un mensaje de error indicando que el nombre es obligatorio. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-37}
+\label{tab:pu37}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-37 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Nombre compuesto solo de espacios en el diseño retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función detectó el campo vacío tras aplicar \texttt{trim()} y retornó un error. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-38}
+\label{tab:pu38}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-38 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Arreglo de formas vacío en el diseño retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función rechazó el arreglo vacío y retornó un mensaje de error. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-39}
+\label{tab:pu39}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-39 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Campo \texttt{shapes} que no es un arreglo retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función detectó que el campo no era un arreglo y retornó un error. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-40}
+\label{tab:pu40}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-40 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Sin payload (llamada sin argumentos) retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función manejó el caso sin argumentos y retornó un error correctamente. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{HU15 — Gestión de Materiales}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-41}
+\label{tab:pu41}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-41 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Material con todos los campos obligatorios completos pasa la validación. \\
+\hline
+\textbf{Salida obtenida} & La función \texttt{validateMaterialPayload} retornó \texttt{null} (sin errores). \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-42}
+\label{tab:pu42}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-42 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Material sin nombre retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función retornó un mensaje indicando que el nombre es obligatorio. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-43}
+\label{tab:pu43}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-43 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Categoría inválida ("otro") retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función rechazó la categoría y retornó un error indicando los valores permitidos. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-44}
+\label{tab:pu44}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-44 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Categoría "tapa-canto" sin campos adicionales es válida. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{null}, ya que tapa-canto no requiere campos extra. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-45}
+\label{tab:pu45}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-45 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Categoría "accesorio" sin el campo \texttt{accesorio\_tipo} retorna un error. \\
+\hline
+\textbf{Salida obtenida} & La función retornó un error indicando que el tipo de accesorio es obligatorio. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-46}
+\label{tab:pu46}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-46 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Categoría "accesorio" con \texttt{accesorio\_tipo} presente pasa la validación. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{null} (sin errores). \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-47}
+\label{tab:pu47}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-47 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Precio negativo en el material retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función retornó un error indicando que el precio debe ser mayor o igual a 0. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-48}
+\label{tab:pu48}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-48 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Precio igual a 0 es un valor válido para el material. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{null} aceptando el precio 0. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-49}
+\label{tab:pu49}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-49 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Precio ingresado como string numérico (por ejemplo "15000") pasa la validación. \\
+\hline
+\textbf{Salida obtenida} & La función convirtió el string a número y retornó \texttt{null}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-50}
+\label{tab:pu50}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-50 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Material de categoría "material" sin el campo \texttt{tipo} retorna un error. \\
+\hline
+\textbf{Salida obtenida} & La función retornó un error indicando que el tipo de material es obligatorio. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-51}
+\label{tab:pu51}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-51 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Material de categoría "material" sin el campo \texttt{dimensiones} retorna un error. \\
+\hline
+\textbf{Salida obtenida} & La función retornó un error indicando que las dimensiones son obligatorias. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{HU09 — Cotizaciones y Estado}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-52}
+\label{tab:pu52}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-52 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Payload completo con \texttt{mueble\_id}, \texttt{precio\_total}, \texttt{lista\_cortes} y \texttt{materiales\_resumen} pasa la validación. \\
+\hline
+\textbf{Salida obtenida} & La función \texttt{validateCotizacionPayload} retornó \texttt{null}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-53}
+\label{tab:pu53}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-53 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Sin \texttt{mueble\_id} en el payload retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función retornó un mensaje de error indicando que \texttt{mueble\_id} es obligatorio. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-54}
+\label{tab:pu54}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-54 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & \texttt{mueble\_id} compuesto solo de espacios retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función detectó el campo vacío tras \texttt{trim()} y retornó un error. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-55}
+\label{tab:pu55}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-55 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & \texttt{precio\_total} como string numérico pasa la validación. \\
+\hline
+\textbf{Salida obtenida} & La función aceptó el string numérico y retornó \texttt{null}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-56}
+\label{tab:pu56}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-56 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & \texttt{precio\_total} con valor \texttt{undefined} retorna un error. \\
+\hline
+\textbf{Salida obtenida} & La función detectó el campo ausente y retornó un mensaje de error. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-57}
+\label{tab:pu57}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-57 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & \texttt{lista\_cortes} que no es un arreglo retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función rechazó el valor y retornó un mensaje de error. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-58}
+\label{tab:pu58}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-58 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & \texttt{materiales\_resumen} que no es un arreglo retorna un error de validación. \\
+\hline
+\textbf{Salida obtenida} & La función rechazó el valor y retornó un mensaje de error. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-59}
+\label{tab:pu59}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-59 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El estado "Pendiente" es reconocido como válido. \\
+\hline
+\textbf{Salida obtenida} & La función \texttt{validateCotizacionEstado} retornó \texttt{true}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-60}
+\label{tab:pu60}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-60 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El estado "En Proceso" es reconocido como válido. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{true}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-61}
+\label{tab:pu61}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-61 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El estado "Completado" es reconocido como válido. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{true}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-62}
+\label{tab:pu62}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-62 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El estado "Cancelado" no es un estado válido (no está entre los permitidos). \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{false}, rechazando el estado. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-63}
+\label{tab:pu63}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-63 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Estado vacío no es un estado válido. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{false}. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-64}
+\label{tab:pu64}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-64 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Estado "pendiente" en minúsculas no es válido, ya que la validación es sensible a mayúsculas. \\
+\hline
+\textbf{Salida obtenida} & La función retornó \texttt{false} para la entrada "pendiente". \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsubsection{HU12 — Generación de PDF}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-65}
+\label{tab:pu65}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-65 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El texto "Cocina Test" se convierte en "cocina\_test" al generar el slug del nombre de archivo PDF. \\
+\hline
+\textbf{Salida obtenida} & La función \texttt{slug} retornó "cocina\_test". \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-66}
+\label{tab:pu66}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-66 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Las tildes son eliminadas: "Diseño" se convierte en "diseno" y "Habitación" en "habitacion". \\
+\hline
+\textbf{Salida obtenida} & La función retornó los valores sin tildes en ambos casos. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-67}
+\label{tab:pu67}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-67 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & La letra ñ es reemplazada por n: "Ñoño" se convierte en "nono" y "González" en "gonzalez". \\
+\hline
+\textbf{Salida obtenida} & La función retornó "nono" y "gonzalez" respectivamente. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-68}
+\label{tab:pu68}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-68 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Múltiples espacios consecutivos se convierten en un único guion bajo en el slug. \\
+\hline
+\textbf{Salida obtenida} & "Cocina  test   final" retornó "cocina\_test\_final". \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-69}
+\label{tab:pu69}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-69 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El slug generado no comienza ni termina con guion bajo. \\
+\hline
+\textbf{Salida obtenida} & El resultado no presentó guion bajo al inicio ni al final del string. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-70}
+\label{tab:pu70}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-70 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Texto vacío produce un string vacío como slug. \\
+\hline
+\textbf{Salida obtenida} & La función retornó un string vacío "" para la entrada "". \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PU-71}
+\label{tab:pu71}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PU-71 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Los caracteres especiales son eliminados: "Pedro \& María (2024)" se convierte en "pedro\_maria\_2024". \\
+\hline
+\textbf{Salida obtenida} & La función retornó "pedro\_maria\_2024" eliminando \& y paréntesis. \\
+\hline
+\textbf{Tipo de prueba} & Unitaria \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Pruebas de Caja Negra}
+Las pruebas de caja negra evalúan el comportamiento funcional del sistema desde la perspectiva del mueblista, verificando que las entradas produzcan las salidas esperadas sin considerar la estructura interna del código. Los casos se organizan por historia de usuario.
+
+\subsection{HU01 — Autenticación}
+Los siguientes casos verifican el módulo de login y registro, el cual corresponde al requisito general de acceso al sistema.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-01}
+\label{tab:pcn01}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-01 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Login con email y contraseña válidos. \\
+\hline
+\textbf{Salida obtenida} & El sistema inició sesión, generó el token JWT y redirigió al dashboard. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-02}
+\label{tab:pcn02}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-02 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Login con contraseña incorrecta para un email registrado. \\
+\hline
+\textbf{Salida obtenida} & El sistema retornó error 401 con mensaje "Credenciales incorrectas". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-03}
+\label{tab:pcn03}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-03 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Login con email no registrado en el sistema. \\
+\hline
+\textbf{Salida obtenida} & El sistema retornó error 401 con mensaje "Credenciales incorrectas". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-04}
+\label{tab:pcn04}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-04 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Login con email de formato inválido (sin dominio completo). \\
+\hline
+\textbf{Salida obtenida} & El sistema mostró un error de validación indicando email inválido. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-05}
+\label{tab:pcn05}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-05 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Login con todos los campos vacíos. \\
+\hline
+\textbf{Salida obtenida} & El sistema mostró un error de validación indicando que los campos son requeridos. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-06}
+\label{tab:pcn06}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-06 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Registro de usuario con nombre, email y contraseña válidos. \\
+\hline
+\textbf{Salida obtenida} & El registro fue exitoso, se generó el token JWT y redirigió al dashboard. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-07}
+\label{tab:pcn07}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-07 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Registro con un email que ya existe en el sistema. \\
+\hline
+\textbf{Salida obtenida} & El sistema retornó error 400 con mensaje "El email ya está registrado". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-08}
+\label{tab:pcn08}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-08 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Registro con contraseña de menos de 6 caracteres. \\
+\hline
+\textbf{Salida obtenida} & El sistema retornó error 400 indicando el mínimo de caracteres requerido. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-09}
+\label{tab:pcn09}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-09 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Registro sin nombre de usuario. \\
+\hline
+\textbf{Salida obtenida} & El sistema retornó error 400 indicando que los campos son requeridos. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-10}
+\label{tab:pcn10}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-10 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & La sesión persiste al recargar la página (F5) con usuario autenticado. \\
+\hline
+\textbf{Salida obtenida} & El usuario siguió autenticado y el dashboard continuó visible tras la recarga. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-11}
+\label{tab:pcn11}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-11 \\
+\hline
+\textbf{Historia de usuario} & HU01 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cierre de sesión desde el menú de la aplicación. \\
+\hline
+\textbf{Salida obtenida} & El token fue eliminado y el sistema redirigió al formulario de login. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU02 — Canvas 2D}
+Los siguientes casos verifican la disponibilidad e interactividad del canvas de diseño 2D.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-12}
+\label{tab:pcn12}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-12 \\
+\hline
+\textbf{Historia de usuario} & HU02 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El canvas de diseño es visible al ingresar al dashboard con sesión iniciada. \\
+\hline
+\textbf{Salida obtenida} & El área de diseño en blanco se mostró correctamente en pantalla. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-13}
+\label{tab:pcn13}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-13 \\
+\hline
+\textbf{Historia de usuario} & HU02 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El canvas es interactivo y acepta módulos desde los controles disponibles. \\
+\hline
+\textbf{Salida obtenida} & Los botones de módulos estuvieron disponibles y habilitados para su uso. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-14}
+\label{tab:pcn14}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-14 \\
+\hline
+\textbf{Historia de usuario} & HU02 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intento de acceder al canvas sin tener sesión iniciada. \\
+\hline
+\textbf{Salida obtenida} & El sistema redirigió al formulario de login. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU04 — Módulos en el Canvas}
+Los siguientes casos verifican la incorporación de los distintos tipos de módulos de mueble al canvas de diseño.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-15}
+\label{tab:pcn15}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-15 \\
+\hline
+\textbf{Historia de usuario} & HU04 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Agregar módulo de tipo cajonera con dimensiones ancho: 60, alto: 80, profundidad: 50 cm. \\
+\hline
+\textbf{Salida obtenida} & El módulo cajonera apareció en el canvas con las dimensiones indicadas. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-16}
+\label{tab:pcn16}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-16 \\
+\hline
+\textbf{Historia de usuario} & HU04 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Agregar módulo de tipo modular con dimensiones por defecto. \\
+\hline
+\textbf{Salida obtenida} & El módulo modular apareció correctamente en el canvas. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-17}
+\label{tab:pcn17}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-17 \\
+\hline
+\textbf{Historia de usuario} & HU04 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Agregar módulo de tipo estante al canvas. \\
+\hline
+\textbf{Salida obtenida} & El módulo estante apareció correctamente en el canvas. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-18}
+\label{tab:pcn18}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-18 \\
+\hline
+\textbf{Historia de usuario} & HU04 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Agregar módulo de tipo puerta al canvas. \\
+\hline
+\textbf{Salida obtenida} & El módulo puerta apareció correctamente en el canvas. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-19}
+\label{tab:pcn19}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-19 \\
+\hline
+\textbf{Historia de usuario} & HU04 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Agregar módulo de tipo cubierta al canvas. \\
+\hline
+\textbf{Salida obtenida} & El módulo cubierta apareció correctamente en el canvas. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-20}
+\label{tab:pcn20}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-20 \\
+\hline
+\textbf{Historia de usuario} & HU04 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Agregar múltiples módulos de distintos tipos al canvas (cajonera, modular y estante). \\
+\hline
+\textbf{Salida obtenida} & Los 3 módulos aparecieron en el canvas sin superponerse. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU05 y HU06 — Edición de Medidas y Módulos Móviles}
+Los siguientes casos verifican la edición de medidas de los módulos y su desplazamiento en el canvas.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-21}
+\label{tab:pcn21}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-21 \\
+\hline
+\textbf{Historia de usuario} & HU05 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Editar el ancho de un módulo seleccionado, cambiando de 60 a 80 cm. \\
+\hline
+\textbf{Salida obtenida} & El módulo actualizó visualmente su ancho a 80 cm. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-22}
+\label{tab:pcn22}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-22 \\
+\hline
+\textbf{Historia de usuario} & HU05 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Editar el alto de un módulo seleccionado, cambiando de 80 a 100 cm. \\
+\hline
+\textbf{Salida obtenida} & El módulo actualizó visualmente su alto a 100 cm. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-23}
+\label{tab:pcn23}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-23 \\
+\hline
+\textbf{Historia de usuario} & HU05 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Editar la profundidad de un módulo, cambiando de 50 a 60 cm. \\
+\hline
+\textbf{Salida obtenida} & El campo de profundidad se actualizó correctamente. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-24}
+\label{tab:pcn24}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-24 \\
+\hline
+\textbf{Historia de usuario} & HU05 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Ingresar valor cero en el campo de ancho de un módulo. \\
+\hline
+\textbf{Salida obtenida} & El sistema no aceptó el valor y mostró una advertencia. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-25}
+\label{tab:pcn25}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-25 \\
+\hline
+\textbf{Historia de usuario} & HU05 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Editar el número de cajones de una cajonera, cambiando de 3 a 5. \\
+\hline
+\textbf{Salida obtenida} & La cajonera mostró 5 divisiones en el canvas. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-26}
+\label{tab:pcn26}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-26 \\
+\hline
+\textbf{Historia de usuario} & HU06 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Arrastrar un módulo a una nueva posición en el canvas. \\
+\hline
+\textbf{Salida obtenida} & El módulo se desplazó y quedó en la nueva posición. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-27}
+\label{tab:pcn27}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-27 \\
+\hline
+\textbf{Historia de usuario} & HU06 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Seleccionar un módulo del canvas haciendo clic sobre él. \\
+\hline
+\textbf{Salida obtenida} & El módulo quedó seleccionado y el panel de edición se activó. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU03 — Guardar, Cargar y Eliminar Diseños}
+Los siguientes casos verifican la gestión del repositorio de diseños de muebles.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-28}
+\label{tab:pcn28}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-28 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Guardar un diseño nuevo con nombre "Cocina test" desde un canvas con módulos. \\
+\hline
+\textbf{Salida obtenida} & El sistema mostró un mensaje de éxito y el diseño apareció en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-29}
+\label{tab:pcn29}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-29 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Guardar un diseño con un nombre que ya existe en la lista. \\
+\hline
+\textbf{Salida obtenida} & El sistema sobrescribió el diseño anterior sin crear un duplicado. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-30}
+\label{tab:pcn30}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-30 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intentar guardar con el canvas sin módulos. \\
+\hline
+\textbf{Salida obtenida} & El sistema mostró un error indicando que no se puede guardar un canvas vacío. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-31}
+\label{tab:pcn31}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-31 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intentar guardar un diseño sin ingresar nombre. \\
+\hline
+\textbf{Salida obtenida} & El sistema mostró un error de validación indicando que el nombre es obligatorio. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-32}
+\label{tab:pcn32}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-32 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cargar un diseño previamente guardado desde la lista. \\
+\hline
+\textbf{Salida obtenida} & El canvas se llenó con los módulos del diseño seleccionado. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-33}
+\label{tab:pcn33}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-33 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Eliminar un diseño guardado confirmando la acción en el diálogo. \\
+\hline
+\textbf{Salida obtenida} & El diseño fue eliminado y dejó de aparecer en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-34}
+\label{tab:pcn34}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-34 \\
+\hline
+\textbf{Historia de usuario} & HU03 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cancelar la eliminación de un diseño en el diálogo de confirmación. \\
+\hline
+\textbf{Salida obtenida} & El diseño no se eliminó y continuó apareciendo en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU07 — Cálculo de Material}
+Los siguientes casos verifican que el módulo de cubicación calcule correctamente las piezas y planchas necesarias según el diseño.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-35}
+\label{tab:pcn35}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-35 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cubicación de una cajonera de 60×80×50 cm con 3 cajones. \\
+\hline
+\textbf{Salida obtenida} & Se obtuvo Techo/Piso ×2, Laterales ×2, Frente ×3, Fondo ×1 y al menos 1 plancha requerida. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-36}
+\label{tab:pcn36}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-36 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cubicación de un módulo modular de 90×200×40 cm sin estantes ni puertas. \\
+\hline
+\textbf{Salida obtenida} & Se obtuvo Techo/Piso ×2, Laterales ×2 y Fondo ×1. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-37}
+\label{tab:pcn37}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-37 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cubicación de un módulo modular de 90×200×40 cm con 3 estantes. \\
+\hline
+\textbf{Salida obtenida} & Se obtuvieron las piezas básicas más Estantes ×3. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-38}
+\label{tab:pcn38}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-38 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cubicación de un módulo modular de 80×180×40 cm con 2 puertas. \\
+\hline
+\textbf{Salida obtenida} & Se obtuvieron las piezas básicas más Puertas ×2 con ancho aproximado de 40 cm cada una. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-39}
+\label{tab:pcn39}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-39 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cubicación de un estante simple de 100×3×30 cm. \\
+\hline
+\textbf{Salida obtenida} & Se obtuvo la pieza Estante ×1 con las dimensiones correctas. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-40}
+\label{tab:pcn40}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-40 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cubicación de una puerta individual de 40×70 cm. \\
+\hline
+\textbf{Salida obtenida} & Se obtuvo la pieza Puerta ×1 con dimensiones descontadas en 3 mm. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-41}
+\label{tab:pcn41}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-41 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cubicación de una cubierta de 120×60 cm. \\
+\hline
+\textbf{Salida obtenida} & Se obtuvo la pieza Cubierta ×1 correctamente. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-42}
+\label{tab:pcn42}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-42 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cubicación con múltiples módulos en el canvas: 1 cajonera, 1 modular y 1 estante. \\
+\hline
+\textbf{Salida obtenida} & Se mostró el listado de piezas de todos los módulos agrupadas correctamente. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-43}
+\label{tab:pcn43}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-43 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Verificar que el número de planchas se calcule correctamente cuando las piezas superan el área de una plancha. \\
+\hline
+\textbf{Salida obtenida} & El sistema indicó correctamente que se necesitan 2 o más planchas. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-44}
+\label{tab:pcn44}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-44 \\
+\hline
+\textbf{Historia de usuario} & HU07 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cubicación con material asignado "Melamina blanca" a \$15.000 por plancha. \\
+\hline
+\textbf{Salida obtenida} & La cubicación mostró el subtotal calculado correctamente en base al número de planchas. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU08 — Listado de Piezas}
+Los siguientes casos verifican la correcta presentación del listado de piezas resultante de la cubicación.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-45}
+\label{tab:pcn45}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-45 \\
+\hline
+\textbf{Historia de usuario} & HU08 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El listado muestra la descripción de cada pieza con sus dimensiones para una cajonera de 60×80×50 cm. \\
+\hline
+\textbf{Salida obtenida} & Se mostraron Techo/Piso, Laterales, Frente y Fondo con sus dimensiones en cm. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-46}
+\label{tab:pcn46}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-46 \\
+\hline
+\textbf{Historia de usuario} & HU08 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El listado muestra la cantidad correcta de cada pieza para una cajonera con 3 cajones. \\
+\hline
+\textbf{Salida obtenida} & Se mostró Frente ×3, Laterales ×2, Techo/Piso ×2 y Fondo ×1. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-47}
+\label{tab:pcn47}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-47 \\
+\hline
+\textbf{Historia de usuario} & HU08 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Acceder a la pestaña de cubicación con el canvas vacío. \\
+\hline
+\textbf{Salida obtenida} & El sistema mostró un mensaje de estado vacío indicando que no hay piezas. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-48}
+\label{tab:pcn48}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-48 \\
+\hline
+\textbf{Historia de usuario} & HU08 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Las dimensiones de las piezas en el listado corresponden al diseño de una cajonera 60×80×50 cm. \\
+\hline
+\textbf{Salida obtenida} & Los Laterales mostraron ancho=50, alto=80 y el Techo/Piso mostró ancho=60, alto=50. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU09 — Generación de Cotizaciones}
+Los siguientes casos verifican la creación y visualización de cotizaciones a partir de un diseño con materiales asignados.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-49}
+\label{tab:pcn49}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-49 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Generar una cotización desde un diseño con materiales y precio asignados. \\
+\hline
+\textbf{Salida obtenida} & La cotización se guardó con el precio total calculado correctamente. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-50}
+\label{tab:pcn50}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-50 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Generar cotización incluyendo nombre "María López" y email "maria@test.com" del cliente. \\
+\hline
+\textbf{Salida obtenida} & La cotización guardada mostró el nombre y email del cliente correctamente. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-51}
+\label{tab:pcn51}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-51 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Generar cotización sin ingresar nombre de cliente (campo opcional). \\
+\hline
+\textbf{Salida obtenida} & La cotización se guardó correctamente sin nombre de cliente. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-52}
+\label{tab:pcn52}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-52 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & La cotización generada aparece en la lista "Mis Cotizaciones". \\
+\hline
+\textbf{Salida obtenida} & La cotización apareció en la lista con nombre del mueble, cliente y precio total. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-53}
+\label{tab:pcn53}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-53 \\
+\hline
+\textbf{Historia de usuario} & HU09 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Generar dos cotizaciones del mismo diseño. \\
+\hline
+\textbf{Salida obtenida} & Ambas cotizaciones aparecieron como entradas separadas en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU10 y HU11 — Previsualización y Personalización de Estado}
+Los siguientes casos verifican la visualización del detalle de la cotización y el cambio de estado.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-54}
+\label{tab:pcn54}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-54 \\
+\hline
+\textbf{Historia de usuario} & HU10 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Expandir la tarjeta de una cotización haciendo clic en "Ver detalles". \\
+\hline
+\textbf{Salida obtenida} & Se mostró el panel con materiales, cortes, precio total y estado. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-55}
+\label{tab:pcn55}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-55 \\
+\hline
+\textbf{Historia de usuario} & HU10 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El precio total es visible en la previsualización de una cotización de \$125.000. \\
+\hline
+\textbf{Salida obtenida} & El precio se mostró formateado en CLP como "\$ 125.000". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-56}
+\label{tab:pcn56}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-56 \\
+\hline
+\textbf{Historia de usuario} & HU10 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & La lista de materiales es visible en el detalle de una cotización con 2 materiales distintos. \\
+\hline
+\textbf{Salida obtenida} & Se mostraron ambos materiales con nombre, cantidad de planchas y subtotal. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-57}
+\label{tab:pcn57}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-57 \\
+\hline
+\textbf{Historia de usuario} & HU10 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & La lista de cortes es visible en el detalle de una cotización con 5 tipos de cortes. \\
+\hline
+\textbf{Salida obtenida} & Se mostraron todos los cortes con material, dimensiones y cantidad. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-58}
+\label{tab:pcn58}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-58 \\
+\hline
+\textbf{Historia de usuario} & HU11 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cambiar el estado de una cotización de "Pendiente" a "En Proceso". \\
+\hline
+\textbf{Salida obtenida} & El estado se actualizó correctamente y el badge de color cambió. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-59}
+\label{tab:pcn59}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-59 \\
+\hline
+\textbf{Historia de usuario} & HU11 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cambiar el estado de una cotización a "Completado". \\
+\hline
+\textbf{Salida obtenida} & El estado se actualizó y la fecha de término quedó registrada. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-60}
+\label{tab:pcn60}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-60 \\
+\hline
+\textbf{Historia de usuario} & HU11 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intentar cambiar el estado a "Cancelado" mediante la API directamente. \\
+\hline
+\textbf{Salida obtenida} & El sistema respondió con error 400 y el mensaje "Estado inválido". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-61}
+\label{tab:pcn61}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-61 \\
+\hline
+\textbf{Historia de usuario} & HU11 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cambio de estado con latencia de red, verificando indicador de carga. \\
+\hline
+\textbf{Salida obtenida} & El selector mostró el texto "Guardando..." mientras se procesaba la solicitud. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU12 — Exportar PDF y Eliminación de Cotizaciones}
+Los siguientes casos verifican la exportación a PDF y la eliminación de cotizaciones.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-62}
+\label{tab:pcn62}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-62 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Exportar una cotización guardada como archivo PDF. \\
+\hline
+\textbf{Salida obtenida} & El archivo PDF fue descargado con el nombre en formato cotizacion\_[mueble]\_[cliente].pdf. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-63}
+\label{tab:pcn63}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-63 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Verificar que el PDF generado contiene el contenido correcto para una cotización de "María López" con mueble "Cocina". \\
+\hline
+\textbf{Salida obtenida} & El PDF contenía nombre del cliente, nombre del mueblista, precio total y fecha. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-64}
+\label{tab:pcn64}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-64 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Exportar PDF con cliente "Ñoño González" y mueble "Diseño Especial", verificando el nombre del archivo. \\
+\hline
+\textbf{Salida obtenida} & El nombre generado fue cotizacion\_diseno\_especial\_nono\_gonzalez.pdf, sin tildes ni ñ. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-65}
+\label{tab:pcn65}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-65 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Exportar PDF de una cotización con más de 30 cortes. \\
+\hline
+\textbf{Salida obtenida} & El PDF se generó con 2 o más páginas correctamente paginadas. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-66}
+\label{tab:pcn66}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-66 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Eliminar una cotización confirmando la acción en el diálogo. \\
+\hline
+\textbf{Salida obtenida} & La cotización fue eliminada y dejó de aparecer en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-67}
+\label{tab:pcn67}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-67 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cancelar la eliminación de una cotización en el diálogo de confirmación. \\
+\hline
+\textbf{Salida obtenida} & La cotización no se eliminó y continuó apareciendo en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-68}
+\label{tab:pcn68}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-68 \\
+\hline
+\textbf{Historia de usuario} & HU12 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intentar acceder a una cotización de otro usuario mediante su ID. \\
+\hline
+\textbf{Salida obtenida} & El sistema respondió con error 404 y el mensaje "Cotización no encontrada". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU14 — Visualización de Materiales}
+Los siguientes casos verifican la presentación de los materiales en la biblioteca y el filtrado por categoría.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-69}
+\label{tab:pcn69}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-69 \\
+\hline
+\textbf{Historia de usuario} & HU14 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & La biblioteca muestra los materiales guardados al abrir la pestaña correspondiente. \\
+\hline
+\textbf{Salida obtenida} & Se mostró la lista de materiales con nombre, tipo y precio. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-70}
+\label{tab:pcn70}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-70 \\
+\hline
+\textbf{Historia de usuario} & HU14 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Acceder a la biblioteca sin tener materiales registrados. \\
+\hline
+\textbf{Salida obtenida} & Se mostró un mensaje con instrucciones para agregar materiales. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-71}
+\label{tab:pcn71}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-71 \\
+\hline
+\textbf{Historia de usuario} & HU14 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Filtrar los materiales seleccionando la pestaña de categoría "Materiales". \\
+\hline
+\textbf{Salida obtenida} & Solo se mostraron los elementos de esa categoría. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-72}
+\label{tab:pcn72}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-72 \\
+\hline
+\textbf{Historia de usuario} & HU14 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Filtrar los materiales seleccionando la pestaña de categoría "Accesorios". \\
+\hline
+\textbf{Salida obtenida} & Solo se mostraron los accesorios registrados. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-73}
+\label{tab:pcn73}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-73 \\
+\hline
+\textbf{Historia de usuario} & HU14 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Filtrar los materiales seleccionando la pestaña de categoría "Tapa Canto". \\
+\hline
+\textbf{Salida obtenida} & Solo se mostraron los tapa-cantos registrados. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU15 — CRUD de Materiales}
+Los siguientes casos verifican la creación, edición y eliminación de materiales en la biblioteca.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-74}
+\label{tab:pcn74}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-74 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Agregar un material de categoría "material" con nombre "Melamina Blanca", precio \$15.000 y dimensiones 250×183 cm. \\
+\hline
+\textbf{Salida obtenida} & El material fue creado y apareció correctamente en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-75}
+\label{tab:pcn75}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-75 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Agregar un accesorio con nombre "Riel telescópico", tipo "riel" y precio \$5.000. \\
+\hline
+\textbf{Salida obtenida} & El accesorio fue creado y apareció correctamente en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-76}
+\label{tab:pcn76}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-76 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Agregar un tapa-canto con nombre "Tapa canto blanco" y precio \$800. \\
+\hline
+\textbf{Salida obtenida} & El tapa-canto fue creado y apareció correctamente en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-77}
+\label{tab:pcn77}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-77 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intentar agregar un material sin ingresar nombre. \\
+\hline
+\textbf{Salida obtenida} & El sistema mostró el error "El nombre es obligatorio". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-78}
+\label{tab:pcn78}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-78 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intentar agregar un material con precio negativo (-500). \\
+\hline
+\textbf{Salida obtenida} & El sistema mostró un error indicando que el precio debe ser mayor o igual a 0. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-79}
+\label{tab:pcn79}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-79 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intentar agregar un material con categoría "otro", que no es válida. \\
+\hline
+\textbf{Salida obtenida} & El sistema indicó que la categoría debe ser material, accesorio o tapa-canto. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-80}
+\label{tab:pcn80}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-80 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intentar agregar un material de categoría "material" sin ingresar el campo tipo. \\
+\hline
+\textbf{Salida obtenida} & El sistema mostró un error indicando que el tipo de material es obligatorio. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-81}
+\label{tab:pcn81}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-81 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intentar agregar un material de categoría "material" sin ingresar dimensiones. \\
+\hline
+\textbf{Salida obtenida} & El sistema mostró un error indicando que las dimensiones son obligatorias. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-82}
+\label{tab:pcn82}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-82 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Editar el nombre de un material existente a "Melamina Negra". \\
+\hline
+\textbf{Salida obtenida} & El nombre se actualizó correctamente en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-83}
+\label{tab:pcn83}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-83 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Editar el precio de un material existente, cambiando de \$15.000 a \$18.000. \\
+\hline
+\textbf{Salida obtenida} & El precio se actualizó correctamente en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-84}
+\label{tab:pcn84}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-84 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intentar editar un material que pertenece a otro usuario mediante la API. \\
+\hline
+\textbf{Salida obtenida} & El sistema respondió con error 404 y el mensaje "Material no encontrado". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-85}
+\label{tab:pcn85}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-85 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Eliminar un material confirmando la acción en el diálogo. \\
+\hline
+\textbf{Salida obtenida} & El material fue eliminado y dejó de aparecer en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-86}
+\label{tab:pcn86}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-86 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Cancelar la eliminación de un material en el diálogo de confirmación. \\
+\hline
+\textbf{Salida obtenida} & El material no se eliminó y continuó apareciendo en la lista. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-87}
+\label{tab:pcn87}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-87 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Intentar eliminar un material que pertenece a otro usuario mediante la API. \\
+\hline
+\textbf{Salida obtenida} & El sistema respondió con error 404 y el mensaje "Material no encontrado". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-88}
+\label{tab:pcn88}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-88 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Agregar un tipo de cajón personalizado con nombre "Cajón económico" y descuento de alto de 2 cm. \\
+\hline
+\textbf{Salida obtenida} & El tipo de cajón quedó disponible en el selector del módulo cajonera. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-89}
+\label{tab:pcn89}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-89 \\
+\hline
+\textbf{Historia de usuario} & HU15 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Eliminar un tipo de cajón personalizado confirmando la acción. \\
+\hline
+\textbf{Salida obtenida} & El tipo de cajón fue eliminado de la lista correctamente. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU16 — Estadísticas Básicas}
+Los siguientes casos verifican la correcta presentación de indicadores clave y gráficos en el panel de estadísticas.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-90}
+\label{tab:pcn90}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-90 \\
+\hline
+\textbf{Historia de usuario} & HU16 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El panel de estadísticas es accesible para un usuario con sesión iniciada. \\
+\hline
+\textbf{Salida obtenida} & El panel con KPIs y gráficos se mostró correctamente. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-91}
+\label{tab:pcn91}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-91 \\
+\hline
+\textbf{Historia de usuario} & HU16 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El KPI "Diseños totales" muestra el conteo correcto para un usuario con 5 diseños guardados. \\
+\hline
+\textbf{Salida obtenida} & El KPI mostró el valor "5". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-92}
+\label{tab:pcn92}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-92 \\
+\hline
+\textbf{Historia de usuario} & HU16 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El KPI "Cotizaciones totales" muestra el conteo correcto para un usuario con 3 cotizaciones. \\
+\hline
+\textbf{Salida obtenida} & El KPI mostró el valor "3". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-93}
+\label{tab:pcn93}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-93 \\
+\hline
+\textbf{Historia de usuario} & HU16 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El KPI "Monto acumulado" suma correctamente cotizaciones de \$50.000, \$80.000 y \$120.000. \\
+\hline
+\textbf{Salida obtenida} & El KPI mostró "\$ 250.000". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-94}
+\label{tab:pcn94}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-94 \\
+\hline
+\textbf{Historia de usuario} & HU16 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El KPI "Precio promedio" calcula correctamente el promedio de 3 cotizaciones: \$50.000, \$80.000 y \$120.000. \\
+\hline
+\textbf{Salida obtenida} & El KPI mostró "\$ 83.333". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-95}
+\label{tab:pcn95}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-95 \\
+\hline
+\textbf{Historia de usuario} & HU16 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El KPI "Módulos totales" cuenta todos los módulos de los diseños guardados (2 diseños con 3 y 2 módulos respectivamente). \\
+\hline
+\textbf{Salida obtenida} & El KPI mostró el valor "5". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-96}
+\label{tab:pcn96}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-96 \\
+\hline
+\textbf{Historia de usuario} & HU16 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El gráfico "Diseños por mes" muestra barras para un usuario con diseños en distintos meses. \\
+\hline
+\textbf{Salida obtenida} & El gráfico de barras mostró el conteo de diseños por mes correctamente. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-97}
+\label{tab:pcn97}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-97 \\
+\hline
+\textbf{Historia de usuario} & HU16 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El gráfico "Cotizaciones por estado" refleja la distribución correcta con 2 Pendiente, 1 En Proceso y 1 Completado. \\
+\hline
+\textbf{Salida obtenida} & El gráfico mostró los 3 estados con sus conteos correspondientes. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-98}
+\label{tab:pcn98}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-98 \\
+\hline
+\textbf{Historia de usuario} & HU16 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Acceder al panel de estadísticas sin tener diseños ni cotizaciones registrados. \\
+\hline
+\textbf{Salida obtenida} & Los KPIs mostraron valor 0 y los gráficos mostraron un mensaje de "sin datos". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-99}
+\label{tab:pcn99}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-99 \\
+\hline
+\textbf{Historia de usuario} & HU16 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & El gráfico "Tipos de módulos" refleja los módulos usados en diseños con cajoneras, modulares y estantes. \\
+\hline
+\textbf{Salida obtenida} & El gráfico mostró las categorías de módulos correctamente. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{HU17 — Filtros por Periodo}
+Los siguientes casos verifican el filtrado de estadísticas por año.
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-100}
+\label{tab:pcn100}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-100 \\
+\hline
+\textbf{Historia de usuario} & HU17 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Filtrar las estadísticas seleccionando el año actual en el selector de periodo. \\
+\hline
+\textbf{Salida obtenida} & Los gráficos y KPIs mostraron únicamente los datos del año actual. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-101}
+\label{tab:pcn101}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-101 \\
+\hline
+\textbf{Historia de usuario} & HU17 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Filtrar las estadísticas seleccionando el año anterior en el selector de periodo. \\
+\hline
+\textbf{Salida obtenida} & Los gráficos se actualizaron mostrando únicamente los datos del año anterior. \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba PCN-102}
+\label{tab:pcn102}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Id prueba} & PCN-102 \\
+\hline
+\textbf{Historia de usuario} & HU17 \\
+\hline
+\textbf{Rol} & Mueblista \\
+\hline
+\textbf{Descripción} & Seleccionar un periodo en el que no existen diseños ni cotizaciones registradas. \\
+\hline
+\textbf{Salida obtenida} & Los KPIs mostraron valor 0 y los gráficos mostraron un mensaje de "sin datos". \\
+\hline
+\textbf{Tipo de prueba} & Caja negra \\
+\hline
+\textbf{Estado} & Aprobado \\
+\hline
+\end{tabular}
+\end{table}
+
+\section{Resumen del capítulo}
+En este capítulo se presentaron las pruebas realizadas al sistema Tablón. En primer lugar se tienen 71 pruebas unitarias automatizadas con Jest, distribuidas en dos grupos: el algoritmo de cubicación (PU-01 a PU-22, asociadas a HU07) y las funciones de validación del backend (PU-23 a PU-71, asociadas a HU01, HU03, HU09, HU12 y HU15), en donde todas obtuvieron el estado Aprobado. En segundo lugar se tienen 102 pruebas de caja negra (PCN-01 a PCN-102) que cubren los flujos principales del sistema: autenticación (HU01), canvas de diseño (HU02-HU06), cubicación (HU07-HU08), cotizaciones (HU09-HU12), biblioteca de materiales (HU14-HU15) y estadísticas (HU16-HU17), con resultado Aprobado en todos los casos. En el siguiente capítulo se presentan las conclusiones del proyecto y el trabajo futuro.
+
+\endgroup
+
 \chapter{Conclusiones y trabajo futuro}
 En este capítulo se abarcan las conclusiones obtenidas del trabajo realizado y de lo que queda por realizar en el proyecto.
 \section{Cumplimiento de Objetivos}
