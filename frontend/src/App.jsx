@@ -326,10 +326,13 @@ export default function App() {
   // Si no hay usuario (después de verificar), mostrar login
   if (!user) {
     return showLogin ? (
-      <AuthForm onLogin={(userData) => {
-        setUser(userData)
-        setLoading(false)
-      }} />
+      <AuthForm
+        onLogin={(userData) => {
+          setUser(userData)
+          setLoading(false)
+        }}
+        onBack={() => setShowLogin(false)}
+      />
     ) : (
       <LandingPage onLoginClick={() => setShowLogin(true)} />
     )
@@ -343,8 +346,14 @@ export default function App() {
       <div className="app-root-mobile">
         {/* Header móvil */}
         <header className="mobile-header">
-          <div className="mobile-user-info">
-            <span>{user.nombre}</span>
+          <span className="mobile-username">{user.nombre}</span>
+          <div className="mobile-header-actions">
+            <button onClick={handleNewDesign} className="mobile-action-btn" title="Nuevo diseño">
+              <IconNew />
+            </button>
+            <button onClick={handleSave} className="mobile-action-btn mobile-action-btn--save" title="Guardar">
+              <IconSave />
+            </button>
             <button onClick={handleLogout} className="mobile-logout-btn">
               Salir
             </button>
@@ -358,41 +367,35 @@ export default function App() {
 
         {/* Tabs */}
         <div className="mobile-tabs">
-            <button 
-              className={activeTab === 'diseno' ? 'active' : ''}
-              onClick={() => setActiveTab('diseno')}
-            >
-              Diseño
-            </button>
-           <button 
-              className={activeTab === 'cubicacion' ? 'active' : ''}
-              onClick={() => setActiveTab('cubicacion')}
-            >
-              Cubicación
-            </button>
-            <button
-              className={activeTab === 'biblioteca' ? 'active' : ''}
-              onClick={() => setActiveTab('biblioteca')}
-            >
-              Biblioteca
-            </button>
-            <button
-              className={activeTab === 'estadisticas' ? 'active' : ''}
-              onClick={() => setActiveTab('estadisticas')}
-            >
-              Stats
-            </button>
-            <button
-              className={activeTab === 'cotizaciones' ? 'active' : ''}
-              onClick={() => setActiveTab('cotizaciones')}
-            >
-              Cotiz.
-            </button>
-          <button onClick={handleNewDesign} className="new-btn-mobile" title="Nuevo diseño">
-            <IconNew />
+          <button
+            className={activeTab === 'diseno' ? 'active' : ''}
+            onClick={() => setActiveTab('diseno')}
+          >
+            Diseño
           </button>
-          <button onClick={handleSave} className="save-btn-mobile" title="Guardar">
-            <IconSave />
+          <button
+            className={activeTab === 'cubicacion' ? 'active' : ''}
+            onClick={() => setActiveTab('cubicacion')}
+          >
+            Cubicac.
+          </button>
+          <button
+            className={activeTab === 'biblioteca' ? 'active' : ''}
+            onClick={() => setActiveTab('biblioteca')}
+          >
+            Biblioteca
+          </button>
+          <button
+            className={activeTab === 'estadisticas' ? 'active' : ''}
+            onClick={() => setActiveTab('estadisticas')}
+          >
+            Stats
+          </button>
+          <button
+            className={activeTab === 'cotizaciones' ? 'active' : ''}
+            onClick={() => setActiveTab('cotizaciones')}
+          >
+            Cotiz.
           </button>
         </div>
 

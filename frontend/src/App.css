@@ -1404,21 +1404,57 @@ body {
 
 .mobile-header {
   background: var(--color-ink-black);
-  padding: 8px 16px;
+  padding: 6px 12px;
   border-bottom: 1px solid var(--color-slate-border);
   flex-shrink: 0;
-}
-
-.mobile-user-info {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
-.mobile-user-info span {
+.mobile-username {
   color: var(--color-canvas-white);
   font-size: 13px;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.mobile-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.mobile-action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--color-dark-card);
+  color: var(--color-canvas-white);
+  border: 1px solid var(--color-slate-border);
+  border-radius: var(--radius-buttons);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mobile-action-btn:hover {
+  background: var(--color-slate-border);
+}
+
+.mobile-action-btn--save {
+  background: var(--color-ideation-blue);
+  border-color: var(--color-ideation-blue);
+}
+
+.mobile-action-btn--save:hover {
+  background: #1a6ec7;
 }
 
 .mobile-logout-btn {
@@ -1522,26 +1558,6 @@ body {
   border-color: var(--color-ideation-blue);
 }
 
-.save-btn-mobile {
-  flex: 0 0 auto !important;
-  min-width: 44px !important;
-  background: var(--color-ideation-blue) !important;
-  color: var(--color-canvas-white) !important;
-  font-size: 14px !important;
-  border: none !important;
-  border-radius: var(--radius-buttons) !important;
-}
-
-.new-btn-mobile {
-  flex: 0 0 auto !important;
-  min-width: 44px !important;
-  background: var(--color-dots-black) !important;
-  color: var(--color-canvas-white) !important;
-  font-size: 14px !important;
-  border: 1px solid var(--color-slate-border) !important;
-  border-radius: var(--radius-buttons);
-  padding: 8px 12px;
-}
 
 .mobile-content {
   flex: 1;
