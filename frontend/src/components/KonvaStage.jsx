@@ -168,13 +168,12 @@ function fitInternalToCompartment(shape, compartment, dropPoint) {
   }
 
   if (shape.type === 'puerta') {
-    // Puerta fills the full compartment front.
+    const w = shape.width
+    const h = shape.height
     return {
       ...shape,
-      width: compartment.width,
-      height: compartment.height,
-      x: compartment.x,
-      y: compartment.y
+      x: clamp(dropPoint.x - w / 2, compartment.x, compartment.x + Math.max(0, compartment.width - w)),
+      y: clamp(dropPoint.y - h / 2, compartment.y, compartment.y + Math.max(0, compartment.height - h)),
     }
   }
 
@@ -676,8 +675,10 @@ const KonvaStage = forwardRef(function KonvaStage({
         if (!resolved.isValid) return
         candidateShape.x = resolved.shape.x
         candidateShape.y = resolved.shape.y
-        candidateShape.width = resolved.shape.width
-        candidateShape.height = resolved.shape.height
+        if (selectedModule !== 'puerta') {
+          candidateShape.width = resolved.shape.width
+          candidateShape.height = resolved.shape.height
+        }
       } else {
         const hasCollision = shapes.some(s => checkCollision(candidateShape, s))
         
@@ -759,8 +760,10 @@ const KonvaStage = forwardRef(function KonvaStage({
       }
       updatedShape.x = resolved.shape.x
       updatedShape.y = resolved.shape.y
-      updatedShape.width = resolved.shape.width
-      updatedShape.height = resolved.shape.height
+      if (updatedShape.type !== 'puerta') {
+        updatedShape.width = resolved.shape.width
+        updatedShape.height = resolved.shape.height
+      }
       node.x(updatedShape.x)
       node.y(updatedShape.y)
 
