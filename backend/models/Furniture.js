@@ -23,6 +23,7 @@ const ShapeSchema = new mongoose.Schema({
   tapaCantoId: { type: mongoose.Schema.Types.ObjectId, ref: 'Material' },
   fondoMaterialId: { type: mongoose.Schema.Types.ObjectId, ref: 'Material', default: null },
   noFondo: { type: Boolean, default: false },
+  cubertaMaterialId: { type: mongoose.Schema.Types.ObjectId, ref: 'Material', default: null },
   zocaloCaras: {
     type: {
       frontal:     { type: Boolean, default: true },

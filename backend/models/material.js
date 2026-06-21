@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const materialSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'Mueblista', required: true },
   nombre: { type: String, required: true },
-  categoria: { type: String, required: true, enum: ['material', 'accesorio', 'tapa-canto'] },
+  categoria: { type: String, required: true, enum: ['material', 'accesorio', 'tapa-canto', 'cubierta'] },
   precio: { type: Number, required: true, min: 0 },
   unidad: { type: String, default: 'unidad' },
   // Campos para materiales

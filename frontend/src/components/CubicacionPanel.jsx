@@ -7,7 +7,7 @@ import { parseBoardConfig } from '../services/boardUtils'
 
 const clp = (n) => `$ ${Math.round(n).toLocaleString('es-CL')}`
 
-export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial, drawerTypes, tapaCantos, materials, accessories, selectedAccessories, currentDesignName, selectedTapaCantoId, selectedDrawerTypeId, currentDesignId, onSaveCotizacion, user }) {
+export default function CubicacionPanel({ shapes, exportStageImage, selectedMaterial, drawerTypes, tapaCantos, materials, accessories, selectedAccessories, currentDesignName, selectedTapaCantoId, selectedDrawerTypeId, selectedCubertaMaterial, currentDesignId, onSaveCotizacion, user }) {
   const [selectedModule, setSelectedModule] = useState(null)
   const [emailForm, setEmailForm] = useState({
     nombre_cliente: '',
@@ -33,7 +33,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     if (!shapes || shapes.length === 0) return empty
 
     try {
-      const { byModule, allPieces, tapaCantoList } = generateStructuredCuts(shapes, { drawerTypes, tapaCantos, materials, selectedTapaCantoId, selectedDrawerTypeId })
+      const { byModule, allPieces, tapaCantoList, cubiertas } = generateStructuredCuts(shapes, { drawerTypes, tapaCantos, materials, selectedTapaCantoId, selectedDrawerTypeId, selectedCubertaMaterial })
 
       // Separar piezas por material: cada material usa su propia plancha con sus medidas.
       // Si una pieza tiene materialId === selectedMaterial._id va al pool por defecto
@@ -78,14 +78,14 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         wastePercentage: Math.round((1 - totalUsedArea / totalBoardArea) * 1000) / 10,
       } : null
 
-      return { byModule, allPieces, boards: allBoards, boardGroups, statistics, tapaCantoList }
+      return { byModule, allPieces, boards: allBoards, boardGroups, statistics, tapaCantoList, cubiertas }
     } catch (error) {
       console.error('❌ Error in cubicacionData:', error)
       return empty
     }
-  }, [shapes, drawerTypes, tapaCantos, selectedTapaCantoId, selectedDrawerTypeId, selectedMaterial, materials])
+  }, [shapes, drawerTypes, tapaCantos, selectedTapaCantoId, selectedDrawerTypeId, selectedCubertaMaterial, selectedMaterial, materials])
 
-  const { byModule, boards, boardGroups, statistics, tapaCantoList = [] } = cubicacionData
+  const { byModule, boards, boardGroups, statistics, tapaCantoList = [], cubiertas = [] } = cubicacionData
 
 
   if (!shapes || shapes.length === 0) {
@@ -208,14 +208,15 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     return hasPrice ? total : null
   }, [boardGroups])
 
-  // Costo total: planchas + accesorios + tapa-canto
+  // Costo total: planchas + accesorios + tapa-canto + cubiertas
   const totalCost = useMemo(() => {
     let total = 0
     if (boardsCost) total += boardsCost
     Object.values(hardwareList).forEach(item => { total += item.total })
     tapaCantoList.forEach(item => { total += item.totalCost })
+    cubiertas.forEach(item => { total += item.totalCost })
     return total
-  }, [boardsCost, hardwareList, tapaCantoList])
+  }, [boardsCost, hardwareList, tapaCantoList, cubiertas])
 
   // Auto-poblar nombre del proyecto cuando cambia el diseño activo
   useEffect(() => {
@@ -254,8 +255,16 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
       })
     }
 
+    if (cubiertas.length > 0) {
+      parts.push('Cubiertas:')
+      cubiertas.forEach((item) => {
+        const mat = item.materialName ? ` — ${item.materialName}` : ' (sin tipo asignado)'
+        parts.push(`  ${item.name}${mat}: ${item.metros.toFixed(2)}m x ${clp(item.precio)}/m = ${clp(item.totalCost)}`)
+      })
+    }
+
     return parts.join('\n') || 'Sin accesorios seleccionados'
-  }, [hardwareList, tapaCantoList])
+  }, [hardwareList, tapaCantoList, cubiertas])
 
   const handleSaveCotizacion = async () => {
     if (!currentDesignId) {
@@ -552,6 +561,28 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
                 <div className="hardware-label">{item.materialName}{item.color ? ` (${item.color})` : ''}</div>
                 <div className="hardware-value">{item.linealMeters.toFixed(2)} m</div>
                 <div className="hardware-desc">{clp(item.precio)}/m · Total: {clp(item.totalCost)}</div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* SECTION 5b: CUBIERTAS */}
+      {cubiertas.length > 0 && (
+        <section className="cubicacion-section cubicacion-hardware">
+          <h2>Cubiertas</h2>
+          <div className="hardware-grid">
+            {cubiertas.map((item, idx) => (
+              <div key={idx} className="hardware-item">
+                <div className="hardware-label">
+                  {item.name}{item.materialName ? ` — ${item.materialName}` : ''}
+                </div>
+                <div className="hardware-value">{item.metros.toFixed(2)} m</div>
+                <div className="hardware-desc">
+                  {item.materialName
+                    ? `${clp(item.precio)}/m · Total: ${clp(item.totalCost)}`
+                    : 'Sin tipo asignado — asigna desde Biblioteca'}
+                </div>
               </div>
             ))}
           </div>

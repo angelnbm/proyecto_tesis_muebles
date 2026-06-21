@@ -39,6 +39,7 @@ export function generateStructuredCuts(shapes, options = {}) {
   const drawerTypeMap = new Map(drawerTypes.map((item) => [item._id, item]))
   const materialsList = Array.isArray(options.materials) ? options.materials : []
   const materialMap = new Map(materialsList.map((m) => [String(m._id), m]))
+  const cubiertas = []
 
   const roundToTenth = (value) => Math.round(value * 10) / 10
 
@@ -47,7 +48,7 @@ export function generateStructuredCuts(shapes, options = {}) {
   const tapaCantoAccum = new Map()
   const defaultTapaCantoId = tapaCantos.length > 0 ? tapaCantos[0]._id : null
   const defaultDrawerTypeId = drawerTypes.length > 0 ? drawerTypes[0]._id : null
-  const { selectedTapaCantoId, selectedDrawerTypeId } = options
+  const { selectedTapaCantoId, selectedDrawerTypeId, selectedCubertaMaterial } = options
 
   const addPiece = (target, piece) => {
     target.push({
@@ -300,15 +301,21 @@ export function generateStructuredCuts(shapes, options = {}) {
         addTapaCanto(shape.tapaCantoId, w)
         break
 
-      case 'cubierta':
-        modulePieces.push({
-          description: `Cubierta`,
-          width: w,
-          height: d,
-          quantity: 1,
-          area: w * d,
+      case 'cubierta': {
+        const metros = roundToTenth(w / 100)
+        const precioCubierta = selectedCubertaMaterial ? Number(selectedCubertaMaterial.precio) : 0
+        cubiertas.push({
+          shapeId: moduleId,
+          name: moduleName,
+          widthCm: w,
+          metros,
+          materialId: selectedCubertaMaterial?._id || null,
+          materialName: selectedCubertaMaterial?.nombre || null,
+          precio: precioCubierta,
+          totalCost: selectedCubertaMaterial ? Math.round(metros * precioCubierta * 100) / 100 : 0,
         })
         break
+      }
 
       case 'puerta': {
         const pw = roundToTenth(Math.max(0.3, w - 0.3))
@@ -381,7 +388,7 @@ export function generateStructuredCuts(shapes, options = {}) {
     totalCost: Math.round(item.linealMeters * item.precio * 100) / 100,
   }))
 
-  return { byModule, allPieces, tapaCantoList }
+  return { byModule, allPieces, tapaCantoList, cubiertas }
 }
 
 /**

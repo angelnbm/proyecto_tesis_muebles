@@ -89,6 +89,7 @@ export default function App() {
   const [currentDesignId, setCurrentDesignId] = useState(null)
   const [selectedTapaCantoId, setSelectedTapaCantoId] = useState(null)
   const [selectedDrawerTypeId, setSelectedDrawerTypeId] = useState(null)
+  const [selectedCubertaMaterial, setSelectedCubertaMaterial] = useState(null)
   const stageRef = useRef(null)
   const { dialog, showPrompt, showConfirm, showAlert } = useDialog()
 
@@ -226,6 +227,12 @@ export default function App() {
     setShapes([])
     setDesigns([])
     setCurrentDesignId(null)
+  }
+
+  const refreshMaterials = () => {
+    listMaterials({})
+      .then(data => setMaterials(Array.isArray(data) ? data : []))
+      .catch(() => {})
   }
 
   const updateShape = (id, updates) => {
@@ -677,6 +684,7 @@ export default function App() {
               currentDesignName={designs.find(d => d._id === currentDesignId)?.nombre || ''}
               selectedTapaCantoId={selectedTapaCantoId}
               selectedDrawerTypeId={selectedDrawerTypeId}
+              selectedCubertaMaterial={selectedCubertaMaterial}
               currentDesignId={currentDesignId}
               onSaveCotizacion={handleSaveCotizacion}
               user={user}
@@ -692,10 +700,13 @@ export default function App() {
               onTapaCantoSelect={setSelectedTapaCantoId}
               selectedDrawerTypeId={selectedDrawerTypeId}
               onDrawerTypeSelect={setSelectedDrawerTypeId}
+              selectedCubertaMaterial={selectedCubertaMaterial}
+              onCubertaSelect={setSelectedCubertaMaterial}
               selected={selected}
               onShapeUpdate={updateShape}
               onAccessoriesChange={setSelectedAccessories}
               selectedAccessories={selectedAccessories}
+              onMaterialsChange={refreshMaterials}
               showConfirm={showConfirm}
               showAlert={showAlert}
             />
@@ -811,6 +822,7 @@ export default function App() {
             currentDesignName={designs.find(d => d._id === currentDesignId)?.nombre || ''}
             selectedTapaCantoId={selectedTapaCantoId}
             selectedDrawerTypeId={selectedDrawerTypeId}
+            selectedCubertaMaterial={selectedCubertaMaterial}
             currentDesignId={currentDesignId}
             onSaveCotizacion={handleSaveCotizacion}
             user={user}
@@ -830,10 +842,13 @@ export default function App() {
             onTapaCantoSelect={setSelectedTapaCantoId}
             selectedDrawerTypeId={selectedDrawerTypeId}
             onDrawerTypeSelect={setSelectedDrawerTypeId}
+            selectedCubertaMaterial={selectedCubertaMaterial}
+            onCubertaSelect={setSelectedCubertaMaterial}
             selected={selected}
             onShapeUpdate={updateShape}
             onAccessoriesChange={setSelectedAccessories}
             selectedAccessories={selectedAccessories}
+            onMaterialsChange={refreshMaterials}
             showConfirm={showConfirm}
             showAlert={showAlert}
           />

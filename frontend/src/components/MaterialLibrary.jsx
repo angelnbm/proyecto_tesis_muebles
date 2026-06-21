@@ -46,10 +46,13 @@ export default function MaterialLibrary({
   onTapaCantoSelect,
   selectedDrawerTypeId,
   onDrawerTypeSelect,
+  selectedCubertaMaterial,
+  onCubertaSelect,
   selected,
   onShapeUpdate,
   onAccessoriesChange,
   selectedAccessories,
+  onMaterialsChange,
   showConfirm,
   showAlert,
 }) {
@@ -165,6 +168,7 @@ export default function MaterialLibrary({
     try {
       await deleteMaterial(id)
       await refreshList()
+      onMaterialsChange?.()
     } catch (err) {
       await showAlert(err.message || 'No se pudo eliminar')
     }
@@ -194,6 +198,7 @@ export default function MaterialLibrary({
       categoria: activeTab,
       precio: Number(form.precio),
       grosor: form.grosor === '' ? undefined : Number(form.grosor),
+      ...(activeTab === 'cubierta' && { unidad: 'metro lineal' }),
     }
 
     try {
@@ -205,6 +210,7 @@ export default function MaterialLibrary({
 
       resetForm()
       await refreshList()
+      onMaterialsChange?.()
     } catch (err) {
       setError(err.message || 'No se pudo guardar')
     }
@@ -336,6 +342,15 @@ export default function MaterialLibrary({
           }}
         >
           Tapa canto
+        </button>
+        <button
+          className={activeTab === 'cubierta' ? 'active' : ''}
+          onClick={() => {
+            setActiveTab('cubierta')
+            resetForm()
+          }}
+        >
+          Cubiertas
         </button>
       </div>
 
@@ -554,7 +569,12 @@ export default function MaterialLibrary({
         <div className="material-grid">
           <div className="material-list">
             <div className="material-list-header">
-              <h3>{activeTab === 'material' ? 'Materiales' : 'Accesorios'}</h3>
+              <h3>
+                {activeTab === 'material' ? 'Materiales'
+                  : activeTab === 'accesorio' ? 'Accesorios'
+                  : activeTab === 'tapa-canto' ? 'Tapa canto'
+                  : 'Cubiertas'}
+              </h3>
               <button onClick={resetForm}>Nuevo</button>
             </div>
 
@@ -579,12 +599,14 @@ export default function MaterialLibrary({
                     <strong>{item.nombre}</strong>
                     {item.categoria === 'tapa-canto' ? (
                       <p>Tapa canto</p>
+                    ) : item.categoria === 'cubierta' ? (
+                      item.tipo && <p>{item.tipo}</p>
                     ) : (
                       <p>{item.categoria === 'material' ? item.tipo : item.accesorio_tipo}</p>
                     )}
                     {item.color && <p>Color: {item.color}</p>}
                     {item.dimensiones && <p>Dimensiones: {item.dimensiones}</p>}
-                    <p>Precio: $ {Math.round(item.precio).toLocaleString('es-CL')}</p>
+                    <p>Precio: $ {Math.round(item.precio).toLocaleString('es-CL')}{item.categoria === 'cubierta' ? '/m' : ''}</p>
                   </div>
                   <div className="actions">
                     <button onClick={() => handleEdit(item)}>Editar</button>
@@ -609,6 +631,11 @@ export default function MaterialLibrary({
                         {selectedTapaCantoId === item._id ? 'Quitar' : 'Usar'}
                       </button>
                     )}
+                    {activeTab === 'cubierta' && onCubertaSelect && (
+                      <button onClick={() => onCubertaSelect(selectedCubertaMaterial?._id === item._id ? null : item)}>
+                        {selectedCubertaMaterial?._id === item._id ? 'Quitar' : 'Usar'}
+                      </button>
+                    )}
                   </div>
                 </li>
               ))}
@@ -616,7 +643,13 @@ export default function MaterialLibrary({
           </div>
 
           <div className="material-form">
-            <h3>{editing ? 'Editar' : 'Nuevo'} {activeTab === 'material' ? 'material' : 'accesorio'}</h3>
+            <h3>
+              {editing ? 'Editar' : 'Nuevo'}{' '}
+              {activeTab === 'material' ? 'material'
+                : activeTab === 'accesorio' ? 'accesorio'
+                : activeTab === 'tapa-canto' ? 'tapa canto'
+                : 'cubierta'}
+            </h3>
             <form onSubmit={handleSubmit}>
               <label>
                 Nombre
@@ -664,8 +697,14 @@ export default function MaterialLibrary({
               {activeTab === 'accesorio' && (
                 <>
                   <label>
-                    Tipo (visagra/corredera/tirador)
-                    <input value={form.accesorio_tipo} onChange={handleInputChange('accesorio_tipo')} required />
+                    Tipo
+                    <select value={form.accesorio_tipo} onChange={handleInputChange('accesorio_tipo')} required>
+                      <option value="">Seleccionar...</option>
+                      <option value="visagra">Visagra</option>
+                      <option value="corredera">Corredera</option>
+                      <option value="tirador">Tirador</option>
+                      <option value="otro">Otro</option>
+                    </select>
                   </label>
                   <label>
                     Descripción
@@ -679,6 +718,23 @@ export default function MaterialLibrary({
                   Color
                   <input value={form.color} onChange={handleInputChange('color')} />
                 </label>
+              )}
+
+              {activeTab === 'cubierta' && (
+                <>
+                  <label>
+                    Tipo (ej: Postformada, Mármol)
+                    <input value={form.tipo} onChange={handleInputChange('tipo')} />
+                  </label>
+                  <label>
+                    Color
+                    <input value={form.color} onChange={handleInputChange('color')} />
+                  </label>
+                  <label>
+                    Descripción
+                    <input value={form.descripcion} onChange={handleInputChange('descripcion')} />
+                  </label>
+                </>
               )}
 
               <div className="form-actions">

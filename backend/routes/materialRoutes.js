@@ -22,8 +22,8 @@ function validateMaterialPayload(body) {
     return 'El nombre es obligatorio'
   }
 
-  if (!categoria || !['material', 'accesorio', 'tapa-canto'].includes(categoria)) {
-    return 'La categoria debe ser material, accesorio o tapa-canto'
+  if (!categoria || !['material', 'accesorio', 'tapa-canto', 'cubierta'].includes(categoria)) {
+    return 'La categoria debe ser material, accesorio, tapa-canto o cubierta'
   }
 
   if (payload.precio === undefined || payload.precio === null || Number.isNaN(Number(payload.precio))) {
@@ -69,7 +69,7 @@ function normalizePayload(body) {
   }
 }
 
-const VALID_CATEGORIAS = ['material', 'accesorio', 'tapa-canto']
+const VALID_CATEGORIAS = ['material', 'accesorio', 'tapa-canto', 'cubierta']
 
 // Listado con filtros
 router.get('/', authMiddleware, async (req, res) => {
