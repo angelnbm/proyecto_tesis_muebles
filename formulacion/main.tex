@@ -458,7 +458,7 @@ En cuanto al estado del arte del proyecto, existen distintos tipos de herramient
 
 \noindent 6. \textbf{SketchUp} ~\cite{SketchUp}. Es un software que se utiliza para modelado 2D y 3D de estructuras, ya sea cons\-trucción, muebles o diseño de interiores, siendo de paga para profesionales, con posibilidad de vista en realidad virtual (VR).\\
 
-\noindent 7. \textbf{Opticutter} ~\cite{Opticutter}. Es un software web que se usa de calculadora de hoja de corte en línea la cual obtiene una solución utilizando el algoritmo de optimización adecuado. 
+\noindent 7. \textbf{Opticutter} ~\cite{OptiCutter}. Es un software web que se usa de calculadora de hoja de corte en línea la cual obtiene una solución utilizando el algoritmo de optimización adecuado. 
 \endgroup
 
 \begin{table}[H]
@@ -547,7 +547,7 @@ Aplicabilidad & Alta. Se enfoca en la ejecución de un proyecto con requisitos d
 \begin{figure}[H]
     \centering
     \includegraphics[width=0.5\textwidth]{imagenes/PXP-process-phases.png}
-    \caption{Diagrama de las fases de metodología Personal Extreme Programming (PXP) }
+    \caption{Diagrama de las fases de metodología Personal Extreme Programming (PXP)~\cite{img_pxp}}
     \label{fig: diagrama}
 \end{figure}
 \subsection{Metodología de evaluación}
@@ -631,7 +631,7 @@ HU17 & Mueblista & Como usuario quiero que se puedan filtrar las estadísticas p
     \end{tabular}
 \end{table}
 \vspace{2em}
-Para la clasificación de prioridad se utilizará la clasificación MuSCoW la cual es un una técnica utilizada en la priorización de requerimientos en el desarrollo de software. MuSCoW es eln acrónimo derivado de Must have (Debe tener), Should have (Debería tener), Could have (Podría tener) y Won't have (No tendrá, por ahora).A continuación se describen las categorías:
+Para la clasificación de prioridad se utilizará la clasificación MuSCoW la cual es un una técnica utilizada en la priorización de requerimientos en el desarrollo de software~\cite{priorizacion}. MuSCoW es eln acrónimo derivado de Must have (Debe tener), Should have (Debería tener), Could have (Podría tener) y Won't have (No tendrá, por ahora).A continuación se describen las categorías:
 \begin{itemize}
     \item Must Have: Representa los objetivos esenciales o imprescindibles para que el sistema funcione correctamente. sin estos elementos, el producto final sería inviable y no cumpliría con su propósito.
 
@@ -908,7 +908,7 @@ A continuación, se presentan los objetivos específicos con sus resultados espe
 \item OE8: Evaluar la satisfacción y usabilidad de la aplicación a través de una encuesta de funcionalidad y usabilidad.
 \end{enumerate}
 \begin{itemize}
-    \item Resultado esperado: Obtener una calificación de usabilidad superior a 68 puntos que es un nivel "Aceptable"  en la escala SUS, validando que la interfaz es intuitiva para el perfil del mueblista artesanal.
+    \item Resultado esperado: Obtener una calificación de usabilidad superior a 68 puntos que es un nivel 'Aceptable'  en la escala SUS, validando que la interfaz es intuitiva para el perfil del mueblista artesanal.
     \item Pruebas para lograr resultado esperado: Resultados de la encuesta SUS aplicada al usuario final tras las pruebas.
 \end{itemize}
 
@@ -2254,7 +2254,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Categoría inválida ("otro") retorna un error de validación. \\
+\textbf{Descripción} & Categoría inválida ('otro') retorna un error de validación. \\
 \hline
 \textbf{Salida obtenida} & La función rechazó la categoría y retornó un error indicando los valores permitidos. \\
 \hline
@@ -2277,7 +2277,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Categoría "tapa-canto" sin campos adicionales es válida. \\
+\textbf{Descripción} & Categoría 'tapa-canto' sin campos adicionales es válida. \\
 \hline
 \textbf{Salida obtenida} & La función retornó \texttt{null}, ya que tapa-canto no requiere campos extra. \\
 \hline
@@ -2300,7 +2300,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Categoría "accesorio" sin el campo \texttt{accesorio\_tipo} retorna un error. \\
+\textbf{Descripción} & Categoría 'accesorio' sin el campo \texttt{accesorio\_tipo} retorna un error. \\
 \hline
 \textbf{Salida obtenida} & La función retornó un error indicando que el tipo de accesorio es obligatorio. \\
 \hline
@@ -2323,7 +2323,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Categoría "accesorio" con \texttt{accesorio\_tipo} presente pasa la validación. \\
+\textbf{Descripción} & Categoría 'accesorio' con \texttt{accesorio\_tipo} presente pasa la validación. \\
 \hline
 \textbf{Salida obtenida} & La función retornó \texttt{null} (sin errores). \\
 \hline
@@ -2392,7 +2392,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Precio ingresado como string numérico (por ejemplo "15000") pasa la validación. \\
+\textbf{Descripción} & Precio ingresado como string numérico (por ejemplo '15000') pasa la validación. \\
 \hline
 \textbf{Salida obtenida} & La función convirtió el string a número y retornó \texttt{null}. \\
 \hline
@@ -2415,7 +2415,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Material de categoría "material" sin el campo \texttt{tipo} retorna un error. \\
+\textbf{Descripción} & Material de categoría 'material' sin el campo \texttt{tipo} retorna un error. \\
 \hline
 \textbf{Salida obtenida} & La función retornó un error indicando que el tipo de material es obligatorio. \\
 \hline
@@ -2438,7 +2438,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Material de categoría "material" sin el campo \texttt{dimensiones} retorna un error. \\
+\textbf{Descripción} & Material de categoría 'material' sin el campo \texttt{dimensiones} retorna un error. \\
 \hline
 \textbf{Salida obtenida} & La función retornó un error indicando que las dimensiones son obligatorias. \\
 \hline
@@ -2624,7 +2624,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El estado "Pendiente" es reconocido como válido. \\
+\textbf{Descripción} & El estado 'Pendiente' es reconocido como válido. \\
 \hline
 \textbf{Salida obtenida} & La función \texttt{validateCotizacionEstado} retornó \texttt{true}. \\
 \hline
@@ -2647,7 +2647,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El estado "En Proceso" es reconocido como válido. \\
+\textbf{Descripción} & El estado 'En Proceso' es reconocido como válido. \\
 \hline
 \textbf{Salida obtenida} & La función retornó \texttt{true}. \\
 \hline
@@ -2670,7 +2670,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El estado "Completado" es reconocido como válido. \\
+\textbf{Descripción} & El estado 'Completado' es reconocido como válido. \\
 \hline
 \textbf{Salida obtenida} & La función retornó \texttt{true}. \\
 \hline
@@ -2693,7 +2693,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El estado "Cancelado" no es un estado válido (no está entre los permitidos). \\
+\textbf{Descripción} & El estado 'Cancelado' no es un estado válido (no está entre los permitidos). \\
 \hline
 \textbf{Salida obtenida} & La función retornó \texttt{false}, rechazando el estado. \\
 \hline
@@ -2739,9 +2739,9 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Estado "pendiente" en minúsculas no es válido, ya que la validación es sensible a mayúsculas. \\
+\textbf{Descripción} & Estado 'pendiente' en minúsculas no es válido, ya que la validación es sensible a mayúsculas. \\
 \hline
-\textbf{Salida obtenida} & La función retornó \texttt{false} para la entrada "pendiente". \\
+\textbf{Salida obtenida} & La función retornó \texttt{false} para la entrada 'pendiente'. \\
 \hline
 \textbf{Tipo de prueba} & Unitaria \\
 \hline
@@ -2764,9 +2764,9 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El texto "Cocina Test" se convierte en "cocina\_test" al generar el slug del nombre de archivo PDF. \\
+\textbf{Descripción} & El texto 'Cocina Test' se convierte en 'cocina\_test' al generar el slug del nombre de archivo PDF. \\
 \hline
-\textbf{Salida obtenida} & La función \texttt{slug} retornó "cocina\_test". \\
+\textbf{Salida obtenida} & La función \texttt{slug} retornó 'cocina\_test'. \\
 \hline
 \textbf{Tipo de prueba} & Unitaria \\
 \hline
@@ -2787,7 +2787,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Las tildes son eliminadas: "Diseño" se convierte en "diseno" y "Habitación" en "habitacion". \\
+\textbf{Descripción} & Las tildes son eliminadas: 'Diseño' se convierte en 'diseno' y 'Habitación' en 'habitacion'. \\
 \hline
 \textbf{Salida obtenida} & La función retornó los valores sin tildes en ambos casos. \\
 \hline
@@ -2810,9 +2810,9 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & La letra ñ es reemplazada por n: "Ñoño" se convierte en "nono" y "González" en "gonzalez". \\
+\textbf{Descripción} & La letra ñ es reemplazada por n: 'Ñoño' se convierte en 'nono' y 'González' en 'gonzalez'. \\
 \hline
-\textbf{Salida obtenida} & La función retornó "nono" y "gonzalez" respectivamente. \\
+\textbf{Salida obtenida} & La función retornó 'nono' y 'gonzalez' respectivamente. \\
 \hline
 \textbf{Tipo de prueba} & Unitaria \\
 \hline
@@ -2835,7 +2835,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Descripción} & Múltiples espacios consecutivos se convierten en un único guion bajo en el slug. \\
 \hline
-\textbf{Salida obtenida} & "Cocina  test   final" retornó "cocina\_test\_final". \\
+\textbf{Salida obtenida} & 'Cocina  test   final' retornó 'cocina\_test\_final'. \\
 \hline
 \textbf{Tipo de prueba} & Unitaria \\
 \hline
@@ -2881,7 +2881,7 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Descripción} & Texto vacío produce un string vacío como slug. \\
 \hline
-\textbf{Salida obtenida} & La función retornó un string vacío "" para la entrada "". \\
+\textbf{Salida obtenida} & La función retornó un string vacío '' para la entrada ''. \\
 \hline
 \textbf{Tipo de prueba} & Unitaria \\
 \hline
@@ -2902,9 +2902,9 @@ A continuación se presentan los casos de prueba que verifican las funciones de 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Los caracteres especiales son eliminados: "Pedro \& María (2024)" se convierte en "pedro\_maria\_2024". \\
+\textbf{Descripción} & Los caracteres especiales son eliminados: 'Pedro \& María (2024)' se convierte en 'pedro\_maria\_2024'. \\
 \hline
-\textbf{Salida obtenida} & La función retornó "pedro\_maria\_2024" eliminando \& y paréntesis. \\
+\textbf{Salida obtenida} & La función retornó 'pedro\_maria\_2024' eliminando \& y paréntesis. \\
 \hline
 \textbf{Tipo de prueba} & Unitaria \\
 \hline
@@ -2956,7 +2956,7 @@ Los siguientes casos verifican el módulo de login y registro, el cual correspon
 \hline
 \textbf{Descripción} & Login con contraseña incorrecta para un email registrado. \\
 \hline
-\textbf{Salida obtenida} & El sistema retornó error 401 con mensaje "Credenciales incorrectas". \\
+\textbf{Salida obtenida} & El sistema retornó error 401 con mensaje 'Credenciales incorrectas'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -2979,7 +2979,7 @@ Los siguientes casos verifican el módulo de login y registro, el cual correspon
 \hline
 \textbf{Descripción} & Login con email no registrado en el sistema. \\
 \hline
-\textbf{Salida obtenida} & El sistema retornó error 401 con mensaje "Credenciales incorrectas". \\
+\textbf{Salida obtenida} & El sistema retornó error 401 con mensaje 'Credenciales incorrectas'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -3071,7 +3071,7 @@ Los siguientes casos verifican el módulo de login y registro, el cual correspon
 \hline
 \textbf{Descripción} & Registro con un email que ya existe en el sistema. \\
 \hline
-\textbf{Salida obtenida} & El sistema retornó error 400 con mensaje "El email ya está registrado". \\
+\textbf{Salida obtenida} & El sistema retornó error 400 con mensaje 'El email ya está registrado'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -3564,7 +3564,7 @@ Los siguientes casos verifican la gestión del repositorio de diseños de mueble
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Guardar un diseño nuevo con nombre "Cocina test" desde un canvas con módulos. \\
+\textbf{Descripción} & Guardar un diseño nuevo con nombre 'Cocina test' desde un canvas con módulos. \\
 \hline
 \textbf{Salida obtenida} & El sistema mostró un mensaje de éxito y el diseño apareció en la lista. \\
 \hline
@@ -3935,7 +3935,7 @@ Los siguientes casos verifican que el módulo de cubicación calcule correctamen
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Cubicación con material asignado "Melamina blanca" a \$15.000 por plancha. \\
+\textbf{Descripción} & Cubicación con material asignado 'Melamina blanca' a \$15.000 por plancha. \\
 \hline
 \textbf{Salida obtenida} & La cubicación mostró el subtotal calculado correctamente en base al número de planchas. \\
 \hline
@@ -4079,7 +4079,7 @@ Los siguientes casos verifican la creación y visualización de cotizaciones a p
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Generar cotización incluyendo nombre "María López" y email "maria@test.com" del cliente. \\
+\textbf{Descripción} & Generar cotización incluyendo nombre 'María López' y email 'maria@test.com' del cliente. \\
 \hline
 \textbf{Salida obtenida} & La cotización guardada mostró el nombre y email del cliente correctamente. \\
 \hline
@@ -4125,7 +4125,7 @@ Los siguientes casos verifican la creación y visualización de cotizaciones a p
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & La cotización generada aparece en la lista "Mis Cotizaciones". \\
+\textbf{Descripción} & La cotización generada aparece en la lista 'Mis Cotizaciones'. \\
 \hline
 \textbf{Salida obtenida} & La cotización apareció en la lista con nombre del mueble, cliente y precio total. \\
 \hline
@@ -4174,7 +4174,7 @@ Los siguientes casos verifican la visualización del detalle de la cotización y
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Expandir la tarjeta de una cotización haciendo clic en "Ver detalles". \\
+\textbf{Descripción} & Expandir la tarjeta de una cotización haciendo clic en 'Ver detalles'. \\
 \hline
 \textbf{Salida obtenida} & Se mostró el panel con materiales, cortes, precio total y estado. \\
 \hline
@@ -4199,7 +4199,7 @@ Los siguientes casos verifican la visualización del detalle de la cotización y
 \hline
 \textbf{Descripción} & El precio total es visible en la previsualización de una cotización de \$125.000. \\
 \hline
-\textbf{Salida obtenida} & El precio se mostró formateado en CLP como "\$ 125.000". \\
+\textbf{Salida obtenida} & El precio se mostró formateado en CLP como '\$ 125.000'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -4266,7 +4266,7 @@ Los siguientes casos verifican la visualización del detalle de la cotización y
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Cambiar el estado de una cotización de "Pendiente" a "En Proceso". \\
+\textbf{Descripción} & Cambiar el estado de una cotización de 'Pendiente' a 'En Proceso'. \\
 \hline
 \textbf{Salida obtenida} & El estado se actualizó correctamente y el badge de color cambió. \\
 \hline
@@ -4289,7 +4289,7 @@ Los siguientes casos verifican la visualización del detalle de la cotización y
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Cambiar el estado de una cotización a "Completado". \\
+\textbf{Descripción} & Cambiar el estado de una cotización a 'Completado'. \\
 \hline
 \textbf{Salida obtenida} & El estado se actualizó y la fecha de término quedó registrada. \\
 \hline
@@ -4312,9 +4312,9 @@ Los siguientes casos verifican la visualización del detalle de la cotización y
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Intentar cambiar el estado a "Cancelado" mediante la API directamente. \\
+\textbf{Descripción} & Intentar cambiar el estado a 'Cancelado' mediante la API directamente. \\
 \hline
-\textbf{Salida obtenida} & El sistema respondió con error 400 y el mensaje "Estado inválido". \\
+\textbf{Salida obtenida} & El sistema respondió con error 400 y el mensaje 'Estado inválido'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -4337,7 +4337,7 @@ Los siguientes casos verifican la visualización del detalle de la cotización y
 \hline
 \textbf{Descripción} & Cambio de estado con latencia de red, verificando indicador de carga. \\
 \hline
-\textbf{Salida obtenida} & El selector mostró el texto "Guardando..." mientras se procesaba la solicitud. \\
+\textbf{Salida obtenida} & El selector mostró el texto 'Guardando...' mientras se procesaba la solicitud. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -4384,7 +4384,7 @@ Los siguientes casos verifican la exportación a PDF y la eliminación de cotiza
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Verificar que el PDF generado contiene el contenido correcto para una cotización de "María López" con mueble "Cocina". \\
+\textbf{Descripción} & Verificar que el PDF generado contiene el contenido correcto para una cotización de 'María López' con mueble 'Cocina'. \\
 \hline
 \textbf{Salida obtenida} & El PDF contenía nombre del cliente, nombre del mueblista, precio total y fecha. \\
 \hline
@@ -4407,7 +4407,7 @@ Los siguientes casos verifican la exportación a PDF y la eliminación de cotiza
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Exportar PDF con cliente "Ñoño González" y mueble "Diseño Especial", verificando el nombre del archivo. \\
+\textbf{Descripción} & Exportar PDF con cliente 'Ñoño González' y mueble 'Diseño Especial', verificando el nombre del archivo. \\
 \hline
 \textbf{Salida obtenida} & El nombre generado fue cotizacion\_diseno\_especial\_nono\_gonzalez.pdf, sin tildes ni ñ. \\
 \hline
@@ -4501,7 +4501,7 @@ Los siguientes casos verifican la exportación a PDF y la eliminación de cotiza
 \hline
 \textbf{Descripción} & Intentar acceder a una cotización de otro usuario mediante su ID. \\
 \hline
-\textbf{Salida obtenida} & El sistema respondió con error 404 y el mensaje "Cotización no encontrada". \\
+\textbf{Salida obtenida} & El sistema respondió con error 404 y el mensaje 'Cotización no encontrada'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -4571,7 +4571,7 @@ Los siguientes casos verifican la presentación de los materiales en la bibliote
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Filtrar los materiales seleccionando la pestaña de categoría "Materiales". \\
+\textbf{Descripción} & Filtrar los materiales seleccionando la pestaña de categoría 'Materiales'. \\
 \hline
 \textbf{Salida obtenida} & Solo se mostraron los elementos de esa categoría. \\
 \hline
@@ -4594,7 +4594,7 @@ Los siguientes casos verifican la presentación de los materiales en la bibliote
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Filtrar los materiales seleccionando la pestaña de categoría "Accesorios". \\
+\textbf{Descripción} & Filtrar los materiales seleccionando la pestaña de categoría 'Accesorios'. \\
 \hline
 \textbf{Salida obtenida} & Solo se mostraron los accesorios registrados. \\
 \hline
@@ -4617,7 +4617,7 @@ Los siguientes casos verifican la presentación de los materiales en la bibliote
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Filtrar los materiales seleccionando la pestaña de categoría "Tapa Canto". \\
+\textbf{Descripción} & Filtrar los materiales seleccionando la pestaña de categoría 'Tapa Canto'. \\
 \hline
 \textbf{Salida obtenida} & Solo se mostraron los tapa-cantos registrados. \\
 \hline
@@ -4643,7 +4643,7 @@ Los siguientes casos verifican la creación, edición y eliminación de material
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Agregar un material de categoría "material" con nombre "Melamina Blanca", precio \$15.000 y dimensiones 250×183 cm. \\
+\textbf{Descripción} & Agregar un material de categoría 'material' con nombre 'Melamina Blanca', precio \$15.000 y dimensiones 250×183 cm. \\
 \hline
 \textbf{Salida obtenida} & El material fue creado y apareció correctamente en la lista. \\
 \hline
@@ -4666,7 +4666,7 @@ Los siguientes casos verifican la creación, edición y eliminación de material
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Agregar un accesorio con nombre "Riel telescópico", tipo "riel" y precio \$5.000. \\
+\textbf{Descripción} & Agregar un accesorio con nombre 'Riel telescópico', tipo 'riel' y precio \$5.000. \\
 \hline
 \textbf{Salida obtenida} & El accesorio fue creado y apareció correctamente en la lista. \\
 \hline
@@ -4689,7 +4689,7 @@ Los siguientes casos verifican la creación, edición y eliminación de material
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Agregar un tapa-canto con nombre "Tapa canto blanco" y precio \$800. \\
+\textbf{Descripción} & Agregar un tapa-canto con nombre 'Tapa canto blanco' y precio \$800. \\
 \hline
 \textbf{Salida obtenida} & El tapa-canto fue creado y apareció correctamente en la lista. \\
 \hline
@@ -4714,7 +4714,7 @@ Los siguientes casos verifican la creación, edición y eliminación de material
 \hline
 \textbf{Descripción} & Intentar agregar un material sin ingresar nombre. \\
 \hline
-\textbf{Salida obtenida} & El sistema mostró el error "El nombre es obligatorio". \\
+\textbf{Salida obtenida} & El sistema mostró el error 'El nombre es obligatorio'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -4758,7 +4758,7 @@ Los siguientes casos verifican la creación, edición y eliminación de material
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Intentar agregar un material con categoría "otro", que no es válida. \\
+\textbf{Descripción} & Intentar agregar un material con categoría 'otro', que no es válida. \\
 \hline
 \textbf{Salida obtenida} & El sistema indicó que la categoría debe ser material, accesorio o tapa-canto. \\
 \hline
@@ -4781,7 +4781,7 @@ Los siguientes casos verifican la creación, edición y eliminación de material
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Intentar agregar un material de categoría "material" sin ingresar el campo tipo. \\
+\textbf{Descripción} & Intentar agregar un material de categoría 'material' sin ingresar el campo tipo. \\
 \hline
 \textbf{Salida obtenida} & El sistema mostró un error indicando que el tipo de material es obligatorio. \\
 \hline
@@ -4804,7 +4804,7 @@ Los siguientes casos verifican la creación, edición y eliminación de material
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Intentar agregar un material de categoría "material" sin ingresar dimensiones. \\
+\textbf{Descripción} & Intentar agregar un material de categoría 'material' sin ingresar dimensiones. \\
 \hline
 \textbf{Salida obtenida} & El sistema mostró un error indicando que las dimensiones son obligatorias. \\
 \hline
@@ -4827,7 +4827,7 @@ Los siguientes casos verifican la creación, edición y eliminación de material
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Editar el nombre de un material existente a "Melamina Negra". \\
+\textbf{Descripción} & Editar el nombre de un material existente a 'Melamina Negra'. \\
 \hline
 \textbf{Salida obtenida} & El nombre se actualizó correctamente en la lista. \\
 \hline
@@ -4875,7 +4875,7 @@ Los siguientes casos verifican la creación, edición y eliminación de material
 \hline
 \textbf{Descripción} & Intentar editar un material que pertenece a otro usuario mediante la API. \\
 \hline
-\textbf{Salida obtenida} & El sistema respondió con error 404 y el mensaje "Material no encontrado". \\
+\textbf{Salida obtenida} & El sistema respondió con error 404 y el mensaje 'Material no encontrado'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -4944,7 +4944,7 @@ Los siguientes casos verifican la creación, edición y eliminación de material
 \hline
 \textbf{Descripción} & Intentar eliminar un material que pertenece a otro usuario mediante la API. \\
 \hline
-\textbf{Salida obtenida} & El sistema respondió con error 404 y el mensaje "Material no encontrado". \\
+\textbf{Salida obtenida} & El sistema respondió con error 404 y el mensaje 'Material no encontrado'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -4965,7 +4965,7 @@ Los siguientes casos verifican la creación, edición y eliminación de material
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & Agregar un tipo de cajón personalizado con nombre "Cajón económico" y descuento de alto de 2 cm. \\
+\textbf{Descripción} & Agregar un tipo de cajón personalizado con nombre 'Cajón económico' y descuento de alto de 2 cm. \\
 \hline
 \textbf{Salida obtenida} & El tipo de cajón quedó disponible en el selector del módulo cajonera. \\
 \hline
@@ -5037,9 +5037,9 @@ Los siguientes casos verifican la correcta presentación de indicadores clave y 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El KPI "Diseños totales" muestra el conteo correcto para un usuario con 5 diseños guardados. \\
+\textbf{Descripción} & El KPI 'Diseños totales' muestra el conteo correcto para un usuario con 5 diseños guardados. \\
 \hline
-\textbf{Salida obtenida} & El KPI mostró el valor "5". \\
+\textbf{Salida obtenida} & El KPI mostró el valor '5'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -5060,9 +5060,9 @@ Los siguientes casos verifican la correcta presentación de indicadores clave y 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El KPI "Cotizaciones totales" muestra el conteo correcto para un usuario con 3 cotizaciones. \\
+\textbf{Descripción} & El KPI 'Cotizaciones totales' muestra el conteo correcto para un usuario con 3 cotizaciones. \\
 \hline
-\textbf{Salida obtenida} & El KPI mostró el valor "3". \\
+\textbf{Salida obtenida} & El KPI mostró el valor '3'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -5083,9 +5083,9 @@ Los siguientes casos verifican la correcta presentación de indicadores clave y 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El KPI "Monto acumulado" suma correctamente cotizaciones de \$50.000, \$80.000 y \$120.000. \\
+\textbf{Descripción} & El KPI 'Monto acumulado' suma correctamente cotizaciones de \$50.000, \$80.000 y \$120.000. \\
 \hline
-\textbf{Salida obtenida} & El KPI mostró "\$ 250.000". \\
+\textbf{Salida obtenida} & El KPI mostró '\$ 250.000'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -5106,9 +5106,9 @@ Los siguientes casos verifican la correcta presentación de indicadores clave y 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El KPI "Precio promedio" calcula correctamente el promedio de 3 cotizaciones: \$50.000, \$80.000 y \$120.000. \\
+\textbf{Descripción} & El KPI 'Precio promedio' calcula correctamente el promedio de 3 cotizaciones: \$50.000, \$80.000 y \$120.000. \\
 \hline
-\textbf{Salida obtenida} & El KPI mostró "\$ 83.333". \\
+\textbf{Salida obtenida} & El KPI mostró '\$ 83.333'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -5129,9 +5129,9 @@ Los siguientes casos verifican la correcta presentación de indicadores clave y 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El KPI "Módulos totales" cuenta todos los módulos de los diseños guardados (2 diseños con 3 y 2 módulos respectivamente). \\
+\textbf{Descripción} & El KPI 'Módulos totales' cuenta todos los módulos de los diseños guardados (2 diseños con 3 y 2 módulos respectivamente). \\
 \hline
-\textbf{Salida obtenida} & El KPI mostró el valor "5". \\
+\textbf{Salida obtenida} & El KPI mostró el valor '5'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -5152,7 +5152,7 @@ Los siguientes casos verifican la correcta presentación de indicadores clave y 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El gráfico "Diseños por mes" muestra barras para un usuario con diseños en distintos meses. \\
+\textbf{Descripción} & El gráfico 'Diseños por mes' muestra barras para un usuario con diseños en distintos meses. \\
 \hline
 \textbf{Salida obtenida} & El gráfico de barras mostró el conteo de diseños por mes correctamente. \\
 \hline
@@ -5175,7 +5175,7 @@ Los siguientes casos verifican la correcta presentación de indicadores clave y 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El gráfico "Cotizaciones por estado" refleja la distribución correcta con 2 Pendiente, 1 En Proceso y 1 Completado. \\
+\textbf{Descripción} & El gráfico 'Cotizaciones por estado' refleja la distribución correcta con 2 Pendiente, 1 En Proceso y 1 Completado. \\
 \hline
 \textbf{Salida obtenida} & El gráfico mostró los 3 estados con sus conteos correspondientes. \\
 \hline
@@ -5200,7 +5200,7 @@ Los siguientes casos verifican la correcta presentación de indicadores clave y 
 \hline
 \textbf{Descripción} & Acceder al panel de estadísticas sin tener diseños ni cotizaciones registrados. \\
 \hline
-\textbf{Salida obtenida} & Los KPIs mostraron valor 0 y los gráficos mostraron un mensaje de "sin datos". \\
+\textbf{Salida obtenida} & Los KPIs mostraron valor 0 y los gráficos mostraron un mensaje de 'sin datos'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
@@ -5221,7 +5221,7 @@ Los siguientes casos verifican la correcta presentación de indicadores clave y 
 \hline
 \textbf{Rol} & Mueblista \\
 \hline
-\textbf{Descripción} & El gráfico "Tipos de módulos" refleja los módulos usados en diseños con cajoneras, modulares y estantes. \\
+\textbf{Descripción} & El gráfico 'Tipos de módulos' refleja los módulos usados en diseños con cajoneras, modulares y estantes. \\
 \hline
 \textbf{Salida obtenida} & El gráfico mostró las categorías de módulos correctamente. \\
 \hline
@@ -5295,7 +5295,7 @@ Los siguientes casos verifican el filtrado de estadísticas por año.
 \hline
 \textbf{Descripción} & Seleccionar un periodo en el que no existen diseños ni cotizaciones registradas. \\
 \hline
-\textbf{Salida obtenida} & Los KPIs mostraron valor 0 y los gráficos mostraron un mensaje de "sin datos". \\
+\textbf{Salida obtenida} & Los KPIs mostraron valor 0 y los gráficos mostraron un mensaje de 'sin datos'. \\
 \hline
 \textbf{Tipo de prueba} & Caja negra \\
 \hline
