@@ -344,7 +344,7 @@ export default function MisCotizacionesPanel({ onIrACubicacion, userName, showCo
                         }
                       </select>
                       <button
-                        onClick={() => generarPDFCotizacion(cot, userName)}
+                        onClick={() => generarPDFCotizacion(cot, userName).catch(console.error)}
                         style={{
                           padding: '5px 12px',
                           background: 'transparent',

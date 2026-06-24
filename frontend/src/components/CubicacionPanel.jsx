@@ -451,7 +451,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         imagen_diseno,
       }
 
-      const { dataUri, filename } = generarPDFBase64(cotizacionTemp, user)
+      const { dataUri, filename } = await generarPDFBase64(cotizacionTemp, user)
       // dataUri es "data:application/pdf;base64,..."
       const pdf_base64 = dataUri.split(',')[1]
 

@@ -52,7 +52,16 @@ function drawLogo(doc, x, y, size = 5, gap = 1.5) {
   doc.roundedRect(x + size + gap, y + size + gap, size, size, r, r, 'D')
 }
 
-function buildDoc(cotizacion, mueblista) {
+function getImageSize(src) {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => resolve({ w: img.naturalWidth, h: img.naturalHeight })
+    img.onerror = () => resolve({ w: 4, h: 3 })
+    img.src = src
+  })
+}
+
+async function buildDoc(cotizacion, mueblista) {
   const { nombre: nombreMueblista, email: emailMueblista } = resolverMueblista(mueblista)
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
   const W = 210
@@ -155,10 +164,16 @@ function buildDoc(cotizacion, mueblista) {
   // ── IMAGEN DEL DISEÑO ────────────────────────────────────
   if (cotizacion.imagen_diseno) {
     try {
-      const imgMaxH = 65
+      const { w: natW, h: natH } = await getImageSize(cotizacion.imagen_diseno)
+      const maxW = contentW
+      const maxH = 90
+      let dispW = maxW
+      let dispH = dispW * (natH / natW)
+      if (dispH > maxH) { dispH = maxH; dispW = dispH * (natW / natH) }
+      const imgX = margin + (contentW - dispW) / 2
       const imgFmt = cotizacion.imagen_diseno.startsWith('data:image/png') ? 'PNG' : 'JPEG'
-      doc.addImage(cotizacion.imagen_diseno, imgFmt, margin, y, contentW, imgMaxH, undefined, 'FAST')
-      y += imgMaxH + 10
+      doc.addImage(cotizacion.imagen_diseno, imgFmt, imgX, y, dispW, dispH, undefined, 'NONE')
+      y += dispH + 10
     } catch (_) {}
   }
 
@@ -186,35 +201,6 @@ function buildDoc(cotizacion, mueblista) {
       doc.text(m.nombre || '', cols[0].x, y, { maxWidth: cols[0].w - 2 })
       doc.text(String(m.cantidad_planchas ?? ''), cols[1].x + cols[1].w, y, { align: 'right' })
       doc.text(clp(m.subtotal ?? 0), cols[2].x + cols[2].w, y, { align: 'right' })
-      y += 7
-    })
-    y += 7
-  }
-
-  // ── LISTA DE CORTES ─────────────────────────────────────
-  if (cotizacion.lista_cortes?.length > 0) {
-    y = sectionTitle(doc, 'Lista de cortes', y, margin, contentW)
-    const cols = [
-      { label: 'Material',  x: margin,                   w: contentW * 0.5,  align: 'left'  },
-      { label: 'Dimensión', x: margin + contentW * 0.5,  w: contentW * 0.35, align: 'left'  },
-      { label: 'Cant.',     x: margin + contentW * 0.85, w: contentW * 0.15, align: 'right' },
-    ]
-    y = tableHeader(doc, cols, y, margin, contentW)
-    cotizacion.lista_cortes.forEach((c, i) => {
-      if (y > 260) { doc.addPage(); y = 20 }
-      if (i % 2 !== 0) {
-        setFill(doc, C.greyBg)
-        doc.rect(margin, y - 4, contentW, 7, 'F')
-      }
-      setStroke(doc, C.greyLight)
-      doc.setLineWidth(0.15)
-      doc.line(margin, y + 3, W - margin, y + 3)
-      doc.setFont('helvetica', 'normal')
-      doc.setFontSize(9)
-      setFont(doc, C.black)
-      doc.text(c.material || '', cols[0].x, y, { maxWidth: cols[0].w - 2 })
-      doc.text(c.dimension || '', cols[1].x, y, { maxWidth: cols[1].w - 2 })
-      doc.text(String(c.cantidad ?? ''), cols[2].x + cols[2].w, y, { align: 'right' })
       y += 7
     })
     y += 7
@@ -357,13 +343,13 @@ function buildDoc(cotizacion, mueblista) {
 
 // ── exports ──────────────────────────────────────────────
 
-export function generarPDFCotizacion(cotizacion, mueblista) {
-  const { doc, filename } = buildDoc(cotizacion, mueblista)
+export async function generarPDFCotizacion(cotizacion, mueblista) {
+  const { doc, filename } = await buildDoc(cotizacion, mueblista)
   doc.save(filename)
 }
 
-export function generarPDFBase64(cotizacion, mueblista) {
-  const { doc, filename } = buildDoc(cotizacion, mueblista)
+export async function generarPDFBase64(cotizacion, mueblista) {
+  const { doc, filename } = await buildDoc(cotizacion, mueblista)
   return { dataUri: doc.output('datauristring'), filename }
 }
 
