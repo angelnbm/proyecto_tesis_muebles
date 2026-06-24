@@ -1,4 +1,4 @@
-# Carpeta de Pruebas — Tablón
+# Carpeta de Pruebas — Amedida
 
 Estructura de pruebas del proyecto de tesis, organizada en dos subcarpetas según la metodología PXP utilizada.
 

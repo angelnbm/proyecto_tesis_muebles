@@ -374,7 +374,7 @@ const landingMarkup = `
         <div class="detail__bullets">
           <div class="b">
             <div class="n">01</div>
-            <div><strong>Multi-material</strong><span>Distinguí MDF 18mm, MDF 9mm, melamina, contrachapado — cada uno se cubica por separado y suma costos.</span></div>
+            <div><strong>Multi-material</strong><span>Distingue MDF 18mm, MDF 9mm, melamina, contrachapado cada uno se cubica por separado y suma costos.</span></div>
           </div>
           <div class="b">
             <div class="n">02</div>
@@ -529,9 +529,9 @@ const landingMarkup = `
   <div class="shell">
     <div class="quote">
       <div>
-        <q>Antes me demoraba toda una tarde calculando cuántas planchas necesitaba para cada encargo. Ahora lo tengo al instante mientras diseño — y compro exactamente lo que necesito.</q>
+        <q>Antes me demoraba toda una tarde calculando cuántas planchas necesitaba para cada encargo. Ahora lo tengo al instante mientras diseño y compro exactamente lo que necesito.</q>
         <div class="quote__att">
-          <strong>Juan Pérez</strong>
+          <strong>Segundo Bravo</strong>
           Mueblista artesanal · Taller de muebles, Teno
         </div>
       </div>
@@ -543,7 +543,7 @@ const landingMarkup = `
 <section class="shell" id="cta" data-screen-label="CTA">
   <div class="cta">
     <div class="cta__inner">
-      <h2>Deja de calcular en <em>servilleta</em>.</h2>
+      <h2>Deja de calcular en <em>papel</em>.</h2>
       <p>Diseña y cubica en un solo lugar, directo desde el navegador.</p>
       <div class="cta__btns">
         <a href="#" class="btn btn--primary" data-login="true">Crear mi cuenta →</a>
