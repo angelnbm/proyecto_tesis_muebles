@@ -455,7 +455,7 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
       // dataUri es "data:application/pdf;base64,..."
       const pdf_base64 = dataUri.split(',')[1]
 
-      await enviarCotizacionPorEmail({
+      const result = await enviarCotizacionPorEmail({
         to_email: emailForm.to_email.trim(),
         nombre_cliente: emailForm.nombre_cliente.trim(),
         nombre_proyecto: emailForm.nombre_proyecto.trim() || currentDesignName || '',
@@ -466,7 +466,10 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         pdf_filename: filename,
       })
 
-      setEmailStatus({ type: 'success', message: 'Cotización enviada correctamente con el PDF adjunto.' })
+      const msg = result?.preview_url
+        ? `Email de prueba generado. Abrilo en: ${result.preview_url}`
+        : 'Cotización enviada correctamente con el PDF adjunto.'
+      setEmailStatus({ type: 'success', message: msg })
     } catch (error) {
       const errorMessage = error?.message || 'No se pudo enviar la cotización.'
       setEmailStatus({ type: 'error', message: errorMessage })

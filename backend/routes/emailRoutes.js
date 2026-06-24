@@ -8,15 +8,45 @@ function sendError(res, status, message, error) {
   return res.status(status).json({ success: false, message, error })
 }
 
-// Crea el transporter según variables de entorno
-function createTransporter() {
+// Crea el transporter según variables de entorno.
+// Si EMAIL_MODE=ethereal genera una cuenta de prueba automática (no requiere config).
+// Si EMAIL_MODE=mailtrap usa las credenciales de Mailtrap.
+// Por defecto usa SMTP genérico (Gmail, etc.).
+async function createTransporter() {
+  const mode = (process.env.EMAIL_MODE || '').toLowerCase()
+
+  if (mode === 'ethereal') {
+    const testAccount = await nodemailer.createTestAccount()
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false,
+      auth: { user: testAccount.user, pass: testAccount.pass },
+    })
+    transporter._ethereal = true
+    return transporter
+  }
+
   const host = process.env.EMAIL_HOST
   const port = Number(process.env.EMAIL_PORT) || 587
   const user = process.env.EMAIL_USER
   const pass = process.env.EMAIL_PASS
 
   if (!host || !user || !pass) {
-    throw new Error('Configuración de email incompleta (EMAIL_HOST, EMAIL_USER, EMAIL_PASS requeridos)')
+    throw new Error(
+      'Falta configuración de email. Opciones:\n' +
+      '  1) EMAIL_MODE=ethereal  → cuenta de prueba automática (sin registrarse)\n' +
+      '  2) EMAIL_MODE=mailtrap + EMAIL_USER + EMAIL_PASS → bandeja de prueba\n' +
+      '  3) EMAIL_HOST + EMAIL_USER + EMAIL_PASS → SMTP real (Gmail, etc.)'
+    )
+  }
+
+  if (mode === 'mailtrap') {
+    return nodemailer.createTransport({
+      host: 'sandbox.smtp.mailtrap.io',
+      port: 587,
+      auth: { user, pass },
+    })
   }
 
   return nodemailer.createTransport({
@@ -127,10 +157,13 @@ router.post('/cotizacion', authMiddleware, async (req, res) => {
   }
 
   try {
-    const transporter = createTransporter()
+    const transporter = await createTransporter()
 
+    const isEthereal = !!transporter._ethereal
     const fromName = process.env.EMAIL_FROM_NAME || 'Amedida'
-    const fromAddr = process.env.EMAIL_USER
+    const fromAddr = isEthereal
+      ? transporter.options.auth.user
+      : (process.env.EMAIL_USER || 'noreply@amedida.app')
 
     const mailOptions = {
       from: `"${fromName}" <${fromAddr}>`,
@@ -154,9 +187,20 @@ router.post('/cotizacion', authMiddleware, async (req, res) => {
       ],
     }
 
-    await transporter.sendMail(mailOptions)
+    const info = await transporter.sendMail(mailOptions)
 
-    return res.json({ success: true, message: 'Correo enviado correctamente' })
+    const previewUrl = isEthereal ? nodemailer.getTestMessageUrl(info) : null
+    if (previewUrl) {
+      console.log('📧 Email de prueba (Ethereal) — ver en:', previewUrl)
+    }
+
+    return res.json({
+      success: true,
+      message: isEthereal
+        ? `Email de prueba generado. Abrí este link para verlo: ${previewUrl}`
+        : 'Correo enviado correctamente',
+      preview_url: previewUrl,
+    })
   } catch (err) {
     console.error('Error enviando email:', err.message)
     return sendError(res, 500, `Error al enviar el correo: ${err.message}`, 'EMAIL_SEND_ERROR')
