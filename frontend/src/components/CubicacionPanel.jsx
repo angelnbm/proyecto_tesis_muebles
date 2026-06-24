@@ -4,6 +4,8 @@ import {
   optimizePiecesInBoards,
 } from '../services/cubicacion'
 import { parseBoardConfig } from '../services/boardUtils'
+import { enviarCotizacionPorEmail } from '../services/emailService.js'
+import { generarPDFBase64 } from '../services/pdfCotizacion.js'
 
 const clp = (n) => `$ ${Math.round(n).toLocaleString('es-CL')}`
 
@@ -378,9 +380,6 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     event.preventDefault()
     setEmailStatus({ type: null, message: '' })
 
-    const imageDataUrl = exportStageImage ? exportStageImage() : null
-    setPreviewImage(imageDataUrl)
-
     if (!boards || boards.length === 0) {
       setEmailStatus({ type: 'error', message: 'No hay planchas calculadas para enviar la cotización.' })
       return
@@ -397,41 +396,80 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     setIsSending(true)
 
     try {
-      const imageBase64 = await compressImageToFit(imageDataUrl, 40000)
+      // Generar imagen recortada para el PDF
+      const rawImage = exportStageImage ? exportStageImage() : null
+      let imagen_diseno = null
+      if (rawImage) {
+        const rawB64 = rawImage.split(',')[1] || ''
+        if (rawB64.length <= 150000) {
+          imagen_diseno = rawImage
+        } else {
+          const compressed = await compressImageToFit(rawImage, 150000)
+          imagen_diseno = compressed ? `data:image/jpeg;base64,${compressed}` : rawImage
+        }
+      }
+      setPreviewImage(imagen_diseno)
 
-      const templateParams = {
-        nombre_cliente:  emailForm.nombre_cliente.trim(),
-        to_email:        emailForm.to_email.trim(),
-        reply_to:        emailForm.to_email.trim(),
-        from_name:       emailForm.nombre_cliente.trim(),
-        nombre_proyecto: emailForm.nombre_proyecto.trim(),
-        precio_total:    totalCost > 0 ? clp(totalCost) : 'Sin calcular',
+      // Construir cotización temporal para el PDF
+      const cotizacionTemp = {
+        nombre_cliente: emailForm.nombre_cliente.trim(),
+        email_cliente: emailForm.to_email.trim(),
+        mueble_id: { nombre: emailForm.nombre_proyecto.trim() || currentDesignName || 'Sin nombre' },
+        precio_total: totalCost,
+        estado: 'Pendiente',
+        createdAt: new Date().toISOString(),
+        lista_cortes: cubicacionData.allPieces.map(p => ({
+          material: p.materialId ? (materialMap[p.materialId]?.nombre || 'Sin material') : (selectedMaterial?.nombre || 'Sin material'),
+          dimension: `${p.width}×${p.height}cm`,
+          cantidad: p.quantity,
+        })),
+        materiales_resumen: boardGroups
+          .filter(g => g.boards.length > 0 && g.material)
+          .map(g => ({
+            nombre: g.materialName || g.material?.nombre || 'Sin material',
+            cantidad_planchas: g.boards.length,
+            subtotal: (g.material?.precio || 0) * g.boards.length,
+          })),
+        accesorios_resumen: Object.values(hardwareList).map(item => ({
+          nombre: item.nombre,
+          cantidad: item.cantidad,
+          precio_unitario: item.precio,
+          subtotal: item.total,
+        })),
+        tapa_canto_resumen: tapaCantoList.map(item => ({
+          nombre: item.materialName + (item.color ? ` (${item.color})` : ''),
+          metros: item.linealMeters,
+          precio_metro: item.precio,
+          subtotal: item.totalCost,
+        })),
+        cubiertas_resumen: cubiertas.map(item => ({
+          nombre: item.name + (item.materialName ? ` — ${item.materialName}` : ''),
+          metros: item.metros,
+          precio_metro: item.precio,
+          subtotal: item.totalCost,
+        })),
+        imagen_diseno,
+      }
+
+      const { dataUri, filename } = generarPDFBase64(cotizacionTemp, user)
+      // dataUri es "data:application/pdf;base64,..."
+      const pdf_base64 = dataUri.split(',')[1]
+
+      await enviarCotizacionPorEmail({
+        to_email: emailForm.to_email.trim(),
+        nombre_cliente: emailForm.nombre_cliente.trim(),
+        nombre_proyecto: emailForm.nombre_proyecto.trim() || currentDesignName || '',
+        precio_total: totalCost > 0 ? clp(totalCost) : 'Sin calcular',
         planchas_resumen: boardsSummary,
-        extras_resumen:   extrasSummary,
-        imagen_base64:    imageBase64 || '',
-        material_nombre:  selectedMaterial?.nombre || 'Sin material seleccionado',
-        material_precio:  selectedMaterial?.precio != null ? clp(selectedMaterial.precio) : 'Sin definir',
-        planchas_total:   boards?.length || 0,
-        nombre_mueblista: user?.nombre || '',
-        email_mueblista:  user?.email  || '',
-        nombre_empresa:  'Amedida',
-      }
+        extras_resumen: extrasSummary,
+        pdf_base64,
+        pdf_filename: filename,
+      })
 
-      if (!window.emailjs) {
-        throw new Error('EmailJS no está disponible. Revisá el script en index.html')
-      }
-
-      if (!templateParams.imagen_base64) {
-        throw new Error('No se pudo generar la imagen del diseño. Volvé a la pestaña Diseño y probá de nuevo.')
-      }
-
-      window.emailjs.init(emailPublicKey)
-      await window.emailjs.send(emailServiceId, emailTemplateId, templateParams)
-
-      setEmailStatus({ type: 'success', message: 'Cotización enviada correctamente.' })
+      setEmailStatus({ type: 'success', message: 'Cotización enviada correctamente con el PDF adjunto.' })
     } catch (error) {
-      const errorMessage = error?.text || error?.message || 'No se pudo enviar la cotización.'
-      setEmailStatus({ type: 'error', message: `${errorMessage} Revisá el template y los campos requeridos en EmailJS.` })
+      const errorMessage = error?.message || 'No se pudo enviar la cotización.'
+      setEmailStatus({ type: 'error', message: errorMessage })
     } finally {
       setIsSending(false)
     }
