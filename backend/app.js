@@ -96,8 +96,8 @@ app.use(cors((req, callback) => {
 }))
 
 app.use(helmet())
-app.use(express.json({ limit: '10kb' }))
-app.use(express.urlencoded({ limit: '10kb', extended: true }))
+app.use(express.json({ limit: '500kb' }))
+app.use(express.urlencoded({ limit: '500kb', extended: true }))
 app.use(sanitizeInputsWrapper)
 app.use(globalLimiter)
 

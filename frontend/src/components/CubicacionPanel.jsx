@@ -291,10 +291,44 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
         subtotal: (g.material?.precio || 0) * g.boards.length,
       }))
 
+    const rawImage = exportStageImage ? exportStageImage() : null
+    let imagen_diseno = null
+    if (rawImage) {
+      const rawB64 = rawImage.split(',')[1] || ''
+      if (rawB64.length <= 150000) {
+        imagen_diseno = rawImage
+      } else {
+        const compressed = await compressImageToFit(rawImage, 150000)
+        imagen_diseno = compressed ? `data:image/jpeg;base64,${compressed}` : rawImage
+      }
+    }
+
+    const accesorios_resumen = Object.values(hardwareList).map(item => ({
+      nombre: item.nombre,
+      accesorio_tipo: item.accesorio_tipo || '',
+      cantidad: item.cantidad,
+      precio_unitario: item.precio,
+      subtotal: item.total,
+    }))
+
+    const tapa_canto_resumen = tapaCantoList.map(item => ({
+      nombre: item.materialName + (item.color ? ` (${item.color})` : ''),
+      metros: item.linealMeters,
+      precio_metro: item.precio,
+      subtotal: item.totalCost,
+    }))
+
+    const cubiertas_resumen = cubiertas.map(item => ({
+      nombre: item.name + (item.materialName ? ` — ${item.materialName}` : ''),
+      metros: item.metros,
+      precio_metro: item.precio,
+      subtotal: item.totalCost,
+    }))
+
     setIsSavingCot(true)
     setCotStatus({ type: null, message: '' })
     try {
-      await onSaveCotizacion({ mueble_id: currentDesignId, precio_total: totalCost, lista_cortes, materiales_resumen, nombre_cliente: cotCliente, email_cliente: emailForm.to_email })
+      await onSaveCotizacion({ mueble_id: currentDesignId, precio_total: totalCost, lista_cortes, materiales_resumen, nombre_cliente: cotCliente, email_cliente: emailForm.to_email, imagen_diseno, accesorios_resumen, tapa_canto_resumen, cubiertas_resumen })
       setCotStatus({ type: 'success', message: 'Cotización guardada. Puedes verla en "Cotizaciones".' })
       setCotCliente('')
     } catch (err) {

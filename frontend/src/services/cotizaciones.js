@@ -38,10 +38,10 @@ export const listCotizaciones = () => request(BASE_URL)
 
 export const getCotizacion = (id) => request(`${BASE_URL}/${id}`)
 
-export const createCotizacion = ({ mueble_id, precio_total, lista_cortes, materiales_resumen, nombre_cliente, email_cliente }) =>
+export const createCotizacion = ({ mueble_id, precio_total, lista_cortes, materiales_resumen, nombre_cliente, email_cliente, imagen_diseno, accesorios_resumen, tapa_canto_resumen, cubiertas_resumen }) =>
   request(BASE_URL, {
     method: 'POST',
-    body: JSON.stringify({ mueble_id, precio_total, lista_cortes, materiales_resumen, nombre_cliente, email_cliente }),
+    body: JSON.stringify({ mueble_id, precio_total, lista_cortes, materiales_resumen, nombre_cliente, email_cliente, imagen_diseno, accesorios_resumen, tapa_canto_resumen, cubiertas_resumen }),
   })
 
 export const updateEstado = (id, estado) =>

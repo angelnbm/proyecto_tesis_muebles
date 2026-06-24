@@ -152,6 +152,16 @@ function buildDoc(cotizacion, mueblista) {
 
   y += 13
 
+  // ── IMAGEN DEL DISEÑO ────────────────────────────────────
+  if (cotizacion.imagen_diseno) {
+    try {
+      const imgMaxH = 65
+      const imgFmt = cotizacion.imagen_diseno.startsWith('data:image/png') ? 'PNG' : 'JPEG'
+      doc.addImage(cotizacion.imagen_diseno, imgFmt, margin, y, contentW, imgMaxH, undefined, 'FAST')
+      y += imgMaxH + 10
+    } catch (_) {}
+  }
+
   // ── MATERIALES ───────────────────────────────────────────
   if (cotizacion.materiales_resumen?.length > 0) {
     y = sectionTitle(doc, 'Materiales', y, margin, contentW)
@@ -205,6 +215,95 @@ function buildDoc(cotizacion, mueblista) {
       doc.text(c.material || '', cols[0].x, y, { maxWidth: cols[0].w - 2 })
       doc.text(c.dimension || '', cols[1].x, y, { maxWidth: cols[1].w - 2 })
       doc.text(String(c.cantidad ?? ''), cols[2].x + cols[2].w, y, { align: 'right' })
+      y += 7
+    })
+    y += 7
+  }
+
+  // ── ACCESORIOS ──────────────────────────────────────────
+  if (cotizacion.accesorios_resumen?.length > 0) {
+    y = sectionTitle(doc, 'Accesorios', y, margin, contentW)
+    const cols = [
+      { label: 'Accesorio', x: margin,                   w: contentW * 0.5,  align: 'left'  },
+      { label: 'Cant.',     x: margin + contentW * 0.5,  w: contentW * 0.15, align: 'right' },
+      { label: 'P. Unit.',  x: margin + contentW * 0.65, w: contentW * 0.15, align: 'right' },
+      { label: 'Subtotal',  x: margin + contentW * 0.8,  w: contentW * 0.2,  align: 'right' },
+    ]
+    y = tableHeader(doc, cols, y, margin, contentW)
+    cotizacion.accesorios_resumen.forEach((a, i) => {
+      if (y > 260) { doc.addPage(); y = 20 }
+      if (i % 2 !== 0) {
+        setFill(doc, C.greyBg)
+        doc.rect(margin, y - 4, contentW, 7, 'F')
+      }
+      setStroke(doc, C.greyLight)
+      doc.setLineWidth(0.15)
+      doc.line(margin, y + 3, W - margin, y + 3)
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(9)
+      setFont(doc, C.black)
+      doc.text(a.nombre || '', cols[0].x, y, { maxWidth: cols[0].w - 2 })
+      doc.text(String(a.cantidad ?? ''), cols[1].x + cols[1].w, y, { align: 'right' })
+      doc.text(clp(a.precio_unitario ?? 0), cols[2].x + cols[2].w, y, { align: 'right' })
+      doc.text(clp(a.subtotal ?? 0), cols[3].x + cols[3].w, y, { align: 'right' })
+      y += 7
+    })
+    y += 7
+  }
+
+  // ── TAPA CANTO ──────────────────────────────────────────
+  if (cotizacion.tapa_canto_resumen?.length > 0) {
+    y = sectionTitle(doc, 'Tapa canto / enchape', y, margin, contentW)
+    const cols = [
+      { label: 'Material',  x: margin,                   w: contentW * 0.55, align: 'left'  },
+      { label: 'Metros',    x: margin + contentW * 0.55, w: contentW * 0.2,  align: 'right' },
+      { label: 'Subtotal',  x: margin + contentW * 0.75, w: contentW * 0.25, align: 'right' },
+    ]
+    y = tableHeader(doc, cols, y, margin, contentW)
+    cotizacion.tapa_canto_resumen.forEach((t, i) => {
+      if (y > 260) { doc.addPage(); y = 20 }
+      if (i % 2 !== 0) {
+        setFill(doc, C.greyBg)
+        doc.rect(margin, y - 4, contentW, 7, 'F')
+      }
+      setStroke(doc, C.greyLight)
+      doc.setLineWidth(0.15)
+      doc.line(margin, y + 3, W - margin, y + 3)
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(9)
+      setFont(doc, C.black)
+      doc.text(t.nombre || '', cols[0].x, y, { maxWidth: cols[0].w - 2 })
+      doc.text(`${(t.metros ?? 0).toFixed(2)}m`, cols[1].x + cols[1].w, y, { align: 'right' })
+      doc.text(clp(t.subtotal ?? 0), cols[2].x + cols[2].w, y, { align: 'right' })
+      y += 7
+    })
+    y += 7
+  }
+
+  // ── CUBIERTAS ───────────────────────────────────────────
+  if (cotizacion.cubiertas_resumen?.length > 0) {
+    y = sectionTitle(doc, 'Cubiertas', y, margin, contentW)
+    const cols = [
+      { label: 'Cubierta',  x: margin,                   w: contentW * 0.55, align: 'left'  },
+      { label: 'Metros',    x: margin + contentW * 0.55, w: contentW * 0.2,  align: 'right' },
+      { label: 'Subtotal',  x: margin + contentW * 0.75, w: contentW * 0.25, align: 'right' },
+    ]
+    y = tableHeader(doc, cols, y, margin, contentW)
+    cotizacion.cubiertas_resumen.forEach((c, i) => {
+      if (y > 260) { doc.addPage(); y = 20 }
+      if (i % 2 !== 0) {
+        setFill(doc, C.greyBg)
+        doc.rect(margin, y - 4, contentW, 7, 'F')
+      }
+      setStroke(doc, C.greyLight)
+      doc.setLineWidth(0.15)
+      doc.line(margin, y + 3, W - margin, y + 3)
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(9)
+      setFont(doc, C.black)
+      doc.text(c.nombre || '', cols[0].x, y, { maxWidth: cols[0].w - 2 })
+      doc.text(`${(c.metros ?? 0).toFixed(2)}m`, cols[1].x + cols[1].w, y, { align: 'right' })
+      doc.text(clp(c.subtotal ?? 0), cols[2].x + cols[2].w, y, { align: 'right' })
       y += 7
     })
     y += 7

@@ -170,6 +170,18 @@ export default function MisCotizacionesPanel({ onIrACubicacion, userName, showCo
                 {isExpanded && (
                   <div style={{ borderTop: '1px solid var(--color-slate-border)', padding: '14px' }}>
 
+                    {/* Imagen del diseño */}
+                    {cot.imagen_diseno && (
+                      <div style={{ marginBottom: '14px' }}>
+                        <p style={{ fontSize: '10px', color: 'var(--color-faded-grey)', letterSpacing: '0.05em', marginBottom: '6px' }}>DISEÑO</p>
+                        <img
+                          src={cot.imagen_diseno}
+                          alt="Diseño"
+                          style={{ width: '100%', maxHeight: '200px', objectFit: 'contain', borderRadius: '6px', border: '1px solid var(--color-slate-border)', background: '#fff' }}
+                        />
+                      </div>
+                    )}
+
                     {/* Materiales resumen */}
                     {cot.materiales_resumen?.length > 0 && (
                       <div style={{ marginBottom: '14px' }}>
@@ -219,6 +231,81 @@ export default function MisCotizacionesPanel({ onIrACubicacion, userName, showCo
                             </tbody>
                           </table>
                         </div>
+                      </div>
+                    )}
+
+                    {/* Accesorios */}
+                    {cot.accesorios_resumen?.length > 0 && (
+                      <div style={{ marginBottom: '14px' }}>
+                        <p style={{ fontSize: '10px', color: 'var(--color-faded-grey)', letterSpacing: '0.05em', marginBottom: '6px' }}>ACCESORIOS</p>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
+                          <thead>
+                            <tr style={{ color: 'var(--color-faded-grey)' }}>
+                              <th style={{ textAlign: 'left', padding: '3px 0', fontWeight: 400 }}>Accesorio</th>
+                              <th style={{ textAlign: 'right', padding: '3px 0', fontWeight: 400 }}>Cant.</th>
+                              <th style={{ textAlign: 'right', padding: '3px 0', fontWeight: 400 }}>Subtotal</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {cot.accesorios_resumen.map((a, i) => (
+                              <tr key={i} style={{ color: 'var(--color-paper-grey)', borderTop: '1px solid var(--color-slate-border)' }}>
+                                <td style={{ padding: '4px 0' }}>{a.nombre}</td>
+                                <td style={{ textAlign: 'right', padding: '4px 0' }}>{a.cantidad}u</td>
+                                <td style={{ textAlign: 'right', padding: '4px 0' }}>{clp(a.subtotal)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+
+                    {/* Tapa canto */}
+                    {cot.tapa_canto_resumen?.length > 0 && (
+                      <div style={{ marginBottom: '14px' }}>
+                        <p style={{ fontSize: '10px', color: 'var(--color-faded-grey)', letterSpacing: '0.05em', marginBottom: '6px' }}>TAPA CANTO / ENCHAPE</p>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
+                          <thead>
+                            <tr style={{ color: 'var(--color-faded-grey)' }}>
+                              <th style={{ textAlign: 'left', padding: '3px 0', fontWeight: 400 }}>Material</th>
+                              <th style={{ textAlign: 'right', padding: '3px 0', fontWeight: 400 }}>Metros</th>
+                              <th style={{ textAlign: 'right', padding: '3px 0', fontWeight: 400 }}>Subtotal</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {cot.tapa_canto_resumen.map((t, i) => (
+                              <tr key={i} style={{ color: 'var(--color-paper-grey)', borderTop: '1px solid var(--color-slate-border)' }}>
+                                <td style={{ padding: '4px 0' }}>{t.nombre}</td>
+                                <td style={{ textAlign: 'right', padding: '4px 0' }}>{t.metros?.toFixed(2)}m</td>
+                                <td style={{ textAlign: 'right', padding: '4px 0' }}>{clp(t.subtotal)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+
+                    {/* Cubiertas */}
+                    {cot.cubiertas_resumen?.length > 0 && (
+                      <div style={{ marginBottom: '14px' }}>
+                        <p style={{ fontSize: '10px', color: 'var(--color-faded-grey)', letterSpacing: '0.05em', marginBottom: '6px' }}>CUBIERTAS</p>
+                        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px' }}>
+                          <thead>
+                            <tr style={{ color: 'var(--color-faded-grey)' }}>
+                              <th style={{ textAlign: 'left', padding: '3px 0', fontWeight: 400 }}>Cubierta</th>
+                              <th style={{ textAlign: 'right', padding: '3px 0', fontWeight: 400 }}>Metros</th>
+                              <th style={{ textAlign: 'right', padding: '3px 0', fontWeight: 400 }}>Subtotal</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {cot.cubiertas_resumen.map((c, i) => (
+                              <tr key={i} style={{ color: 'var(--color-paper-grey)', borderTop: '1px solid var(--color-slate-border)' }}>
+                                <td style={{ padding: '4px 0' }}>{c.nombre}</td>
+                                <td style={{ textAlign: 'right', padding: '4px 0' }}>{c.metros?.toFixed(2)}m</td>
+                                <td style={{ textAlign: 'right', padding: '4px 0' }}>{clp(c.subtotal)}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     )}
 

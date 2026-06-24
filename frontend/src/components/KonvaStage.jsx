@@ -475,11 +475,34 @@ const KonvaStage = forwardRef(function KonvaStage({
       stage.size({ width: BASE_WIDTH, height: BASE_HEIGHT })
       stage.batchDraw()
 
+      // Calcular bounding box de todos los shapes para recortar el espacio vacío
+      const PAD = 24
+      let cropX = 0, cropY = 0, cropW = BASE_WIDTH, cropH = BASE_HEIGHT
+
+      if (shapes && shapes.length > 0) {
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity
+        shapes.forEach(s => {
+          minX = Math.min(minX, s.x)
+          minY = Math.min(minY, s.y)
+          maxX = Math.max(maxX, s.x + (s.width || 0))
+          maxY = Math.max(maxY, s.y + (s.height || 0))
+        })
+        if (minX < Infinity) {
+          cropX = Math.max(0, minX - PAD)
+          cropY = Math.max(0, minY - PAD)
+          cropW = Math.min(BASE_WIDTH - cropX, maxX - minX + PAD * 2)
+          cropH = Math.min(BASE_HEIGHT - cropY, maxY - minY + PAD * 2)
+        }
+      }
+
       const dataUrl = stage.toDataURL({
         mimeType: 'image/jpeg',
-        quality: 0.7,
-        pixelRatio: 1,
-        backgroundColor: '#ffffff',
+        quality: 0.85,
+        pixelRatio: 1.5,
+        x: cropX,
+        y: cropY,
+        width: cropW,
+        height: cropH,
       })
 
       stage.size(prevSize)
@@ -489,7 +512,7 @@ const KonvaStage = forwardRef(function KonvaStage({
 
       return dataUrl
     },
-  }))
+  }), [shapes])
 
   useEffect(() => {
     const container = containerRef.current

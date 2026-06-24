@@ -76,7 +76,7 @@ router.post('/', authMiddleware, async (req, res) => {
       return sendError(res, 400, validationError, 'INVALID_COTIZACION_PAYLOAD')
     }
 
-    const { mueble_id, precio_total, lista_cortes, materiales_resumen, nombre_cliente, email_cliente } = req.body
+    const { mueble_id, precio_total, lista_cortes, materiales_resumen, nombre_cliente, email_cliente, imagen_diseno, accesorios_resumen, tapa_canto_resumen, cubiertas_resumen } = req.body
 
     // Verificar que el mueble pertenece al usuario
     const furniture = await Furniture.findOne({ _id: mueble_id, userId: req.userId })
@@ -101,6 +101,26 @@ router.post('/', authMiddleware, async (req, res) => {
         cantidad_planchas: Number(m.cantidad_planchas || 0),
         subtotal: Number(m.subtotal || 0),
       })),
+      imagen_diseno: typeof imagen_diseno === 'string' ? imagen_diseno : null,
+      accesorios_resumen: Array.isArray(accesorios_resumen) ? accesorios_resumen.map(a => ({
+        nombre: String(a.nombre || ''),
+        accesorio_tipo: String(a.accesorio_tipo || ''),
+        cantidad: Number(a.cantidad || 0),
+        precio_unitario: Number(a.precio_unitario || 0),
+        subtotal: Number(a.subtotal || 0),
+      })) : [],
+      tapa_canto_resumen: Array.isArray(tapa_canto_resumen) ? tapa_canto_resumen.map(t => ({
+        nombre: String(t.nombre || ''),
+        metros: Number(t.metros || 0),
+        precio_metro: Number(t.precio_metro || 0),
+        subtotal: Number(t.subtotal || 0),
+      })) : [],
+      cubiertas_resumen: Array.isArray(cubiertas_resumen) ? cubiertas_resumen.map(c => ({
+        nombre: String(c.nombre || ''),
+        metros: Number(c.metros || 0),
+        precio_metro: Number(c.precio_metro || 0),
+        subtotal: Number(c.subtotal || 0),
+      })) : [],
     })
 
     await cotizacion.save()
