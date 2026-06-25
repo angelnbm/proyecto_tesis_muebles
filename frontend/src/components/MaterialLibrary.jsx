@@ -684,7 +684,7 @@ export default function MaterialLibrary({
                     <input value={form.color} onChange={handleInputChange('color')} />
                   </label>
                   <label>
-                    Dimensiones
+                    Dimensiones(ej: 250x183)
                     <input value={form.dimensiones} onChange={handleInputChange('dimensiones')} required />
                   </label>
                   <label>
