@@ -44,7 +44,7 @@ router.post('/register', async (req, res, next) => {
 
     // Generar token JWT
     const token = jwt.sign(
-      { id: newUser._id, email: newUser.email },
+      { id: newUser._id, email: newUser.email, nombre: newUser.nombre },
       process.env.JWT_SECRET,
       { expiresIn: '7d' }
     )
