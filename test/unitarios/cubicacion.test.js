@@ -195,6 +195,60 @@ describe('Cálculo de área y planchas necesarias', () => {
   })
 })
 
+// ─── Reimplementación de la lógica de unidad par (hardwareList en CubicacionPanel) ─
+
+/**
+ * Dado una cantidad raw de unidades y la unidad del accesorio,
+ * devuelve la cantidad a mostrar/cobrar.
+ */
+function calcularCantidadAccesorio(cantidadRaw, unidad) {
+  if (unidad === 'par') return Math.ceil(cantidadRaw / 2)
+  return cantidadRaw
+}
+
+function calcularTotalAccesorio(precio, cantidadRaw, unidad) {
+  return precio * calcularCantidadAccesorio(cantidadRaw, unidad)
+}
+
+describe('Lógica de unidad par — Accesorios', () => {
+  test('unidad "unidad" no modifica la cantidad', () => {
+    expect(calcularCantidadAccesorio(6, 'unidad')).toBe(6)
+  })
+
+  test('unidad "par" divide la cantidad entre 2', () => {
+    expect(calcularCantidadAccesorio(6, 'par')).toBe(3)
+  })
+
+  test('unidad "par" con cantidad impar aplica Math.ceil', () => {
+    expect(calcularCantidadAccesorio(5, 'par')).toBe(3)
+    expect(calcularCantidadAccesorio(1, 'par')).toBe(1)
+    expect(calcularCantidadAccesorio(3, 'par')).toBe(2)
+  })
+
+  test('unidad "par" con cantidad 2 devuelve 1', () => {
+    expect(calcularCantidadAccesorio(2, 'par')).toBe(1)
+  })
+
+  test('cantidad 0 siempre devuelve 0', () => {
+    expect(calcularCantidadAccesorio(0, 'par')).toBe(0)
+    expect(calcularCantidadAccesorio(0, 'unidad')).toBe(0)
+  })
+
+  test('total con unidad "unidad" = precio × cantidad', () => {
+    expect(calcularTotalAccesorio(5000, 4, 'unidad')).toBe(20000)
+  })
+
+  test('total con unidad "par" = precio × Math.ceil(cantidad/2)', () => {
+    expect(calcularTotalAccesorio(5000, 4, 'par')).toBe(10000)  // 4/2 = 2 pares × 5000
+    expect(calcularTotalAccesorio(5000, 5, 'par')).toBe(15000)  // ceil(5/2) = 3 pares × 5000
+  })
+
+  test('unidad undefined o vacía se trata como "unidad"', () => {
+    expect(calcularCantidadAccesorio(6, undefined)).toBe(6)
+    expect(calcularCantidadAccesorio(6, '')).toBe(6)
+  })
+})
+
 describe('Utilidad: roundToTenth', () => {
   test('redondea a una decimal correctamente', () => {
     expect(roundToTenth(3.14159)).toBe(3.1)

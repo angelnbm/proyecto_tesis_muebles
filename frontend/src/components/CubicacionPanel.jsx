@@ -182,12 +182,16 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
       // Usar cantidad manual si el usuario la seteó, sino auto-cálculo
       const finalQty = quantity > 0 ? quantity : autoQty
       if (finalQty > 0) {
+        const esPar = acc.unidad === 'par'
+        const cantidadDisplay = esPar ? Math.ceil(finalQty / 2) : finalQty
         result[materialId] = {
           nombre: acc.nombre,
           color: acc.color || '',
           precio: acc.precio,
-          cantidad: finalQty,
-          total: acc.precio * finalQty,
+          unidad: acc.unidad || 'unidad',
+          cantidad: cantidadDisplay,
+          cantidadUnidades: finalQty,
+          total: acc.precio * cantidadDisplay,
           accesorio_tipo: acc.accesorio_tipo || '',
         }
       }
@@ -246,7 +250,8 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
     if (accEntries.length > 0) {
       parts.push('Accesorios:')
       accEntries.forEach(([id, item]) => {
-        parts.push(`  ${item.nombre}${item.color ? ` (${item.color})` : ''}: ${item.cantidad} u x ${clp(item.precio)}/u = ${clp(item.total)}`)
+        const unidLabel = item.unidad === 'par' ? 'par' : 'u'
+        parts.push(`  ${item.nombre}${item.color ? ` (${item.color})` : ''}: ${item.cantidad} ${unidLabel} x ${clp(item.precio)}/${unidLabel} = ${clp(item.total)}`)
       })
     }
 
@@ -617,8 +622,8 @@ export default function CubicacionPanel({ shapes, exportStageImage, selectedMate
             {Object.entries(hardwareList).map(([id, item]) => (
               <div key={id} className="hardware-item">
                 <div className="hardware-label">{item.nombre}{item.color ? ` (${item.color})` : ''}</div>
-                <div className="hardware-value">{item.cantidad} u</div>
-                <div className="hardware-desc">{clp(item.precio)}/u · Total: {clp(item.total)}</div>
+                <div className="hardware-value">{item.cantidad} {item.unidad === 'par' ? 'pares' : 'u'}</div>
+                <div className="hardware-desc">{clp(item.precio)}/{item.unidad === 'par' ? 'par' : 'u'} · Total: {clp(item.total)}</div>
               </div>
             ))}
           </div>

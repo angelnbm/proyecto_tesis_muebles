@@ -43,8 +43,8 @@ function validateMaterialPayload(body = {}) {
 
   if (!body.nombre || !body.nombre.trim())
     return 'El nombre es obligatorio'
-  if (!categoria || !['material', 'accesorio', 'tapa-canto'].includes(categoria))
-    return 'La categoria debe ser material, accesorio o tapa-canto'
+  if (!categoria || !['material', 'accesorio', 'tapa-canto', 'cubierta'].includes(categoria))
+    return 'La categoria debe ser material, accesorio, tapa-canto o cubierta'
   if (body.precio === undefined || body.precio === null || Number.isNaN(Number(body.precio)))
     return 'El precio es obligatorio'
   if (Number(body.precio) < 0)
@@ -201,10 +201,6 @@ describe('Validación — Material (materialRoutes)', () => {
     expect(validateMaterialPayload({ ...validMaterial, nombre: '' })).toBeTruthy()
   })
 
-  test('categoría inválida retorna error', () => {
-    expect(validateMaterialPayload({ ...validMaterial, categoria: 'otro' })).toBeTruthy()
-  })
-
   test('categoría "tapa-canto" es válida', () => {
     const body = { nombre: 'Tapa blanco', categoria: 'tapa-canto', precio: 800 }
     expect(validateMaterialPayload(body)).toBeNull()
@@ -218,6 +214,17 @@ describe('Validación — Material (materialRoutes)', () => {
   test('categoría "accesorio" con accesorio_tipo pasa validación', () => {
     const body = { nombre: 'Riel', categoria: 'accesorio', precio: 5000, accesorio_tipo: 'riel' }
     expect(validateMaterialPayload(body)).toBeNull()
+  })
+
+  test('categoría "cubierta" es válida', () => {
+    const body = { nombre: 'Cubierta mármol', categoria: 'cubierta', precio: 12000 }
+    expect(validateMaterialPayload(body)).toBeNull()
+  })
+
+  test('categoría inválida "otro" retorna error con texto que menciona cubierta', () => {
+    const result = validateMaterialPayload({ ...validMaterial, categoria: 'otro' })
+    expect(result).toBeTruthy()
+    expect(result).toMatch(/cubierta/)
   })
 
   test('precio negativo retorna error', () => {

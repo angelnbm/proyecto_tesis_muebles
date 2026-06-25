@@ -668,10 +668,20 @@ export default function MaterialLibrary({
                 />
               </label>
 
-              <label>
-                Unidad
-                <input value={form.unidad} onChange={handleInputChange('unidad')} />
-              </label>
+              {activeTab === 'accesorio' ? (
+                <label>
+                  Unidad
+                  <select value={form.unidad} onChange={handleInputChange('unidad')}>
+                    <option value="unidad">unidad</option>
+                    <option value="par">par</option>
+                  </select>
+                </label>
+              ) : (
+                <label>
+                  Unidad
+                  <input value={form.unidad} onChange={handleInputChange('unidad')} />
+                </label>
+              )}
 
               {activeTab === 'material' && (
                 <>
