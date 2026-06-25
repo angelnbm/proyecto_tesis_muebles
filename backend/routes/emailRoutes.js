@@ -172,7 +172,7 @@ router.post('/cotizacion', authMiddleware, async (req, res) => {
       html: buildHtml({
         nombre_cliente,
         nombre_mueblista: req.userName || '',
-        email_mueblista: fromAddr,
+        email_mueblista: req.userEmail || fromAddr,
         nombre_proyecto,
         precio_total,
         planchas_resumen,
