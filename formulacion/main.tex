@@ -16,6 +16,16 @@
 %% crea la tapa
 \maketitle
 
+%% resumen
+\begin{resumen}
+El proceso de fabricación de muebles a medida en zonas rurales de Chile todavía depende mucho del trabajo manual. El mueblista tiene que hacer el diseño, calcular cuánto material necesita y preparar la cotización todo a mano, algo que puede tomar entre 4 y 9 horas solo para poder darle un presupuesto al cliente. Esto limita bastante la competitividad frente a tiendas más grandes y deja margen para cometer errores en los cálculos.
+
+Frente a esa realidad, se desarrolló Amedida, una aplicación web que permite al mueblista diseñar muebles en un lienzo 2D modular, calcular automáticamente el material necesario usando el algoritmo de optimización de cortes MAXRECTS y generar cotizaciones en PDF que además se pueden enviar por correo directamente al cliente. La aplicación también incorpora una biblioteca de materiales personalizable y un panel de estadísticas básicas sobre proyectos e ingresos.
+
+El desarrollo se llevó a cabo usando la metodología Personal Extreme Programming (PXP) en ocho iteraciones, logrando implementar todos los módulos planificados. Se realizaron casos de prueba de caja negra al cierre de cada iteración. La evaluación de usabilidad con la encuesta SUS cae en la categoría Aceptable. Además, el sitio fue calificado con nota A en el medidor de huella de carbono Website Carbon Calculator.
+
+\end{resumen}
+
 %% dedicatoria
 \begin{dedicatory}
 Dedicado a ...
@@ -68,6 +78,8 @@ El rubro de mueblería abarca la industria dedicada al diseño, fabricación, co
 \begin{figure}[H]
     \centering
     \includegraphics[width=1\textwidth]{imagenes/Diagrama formulación.png}
+    \caption{Proceso de fabricación de muebles a medida}
+    \label{fig:proceso_fabricacion}
 \end{figure}
 
 \noindent Esta información respalda la pertinencia de desarrollar una plataforma digital que permita al mueblista diseñar muebles a medida en un entorno 2D, visualizando en tiempo real el impacto estético y funcional de sus decisiones, permitiendo además generar una cotización ajustada a materiales, dimensiones y acabados seleccionados.\\
@@ -175,7 +187,7 @@ En esta sección se presentan las etapas del proyecto, tareas más importantes y
     \item Diseño de modelo de base de datos, mockups y arquitecturas.
 \end{itemize}
     
-\item Implementación (19 semanas)
+\item Implementación (18 semanas)
 \begin{itemize}
     \item Configuración inicial de proyecto.
     \item Implementar módulo de diseño de muebles.
@@ -202,7 +214,7 @@ En esta sección se presentan las etapas del proyecto, tareas más importantes y
  \end{itemize}
 
 \end{enumerate}
-Se estima un total de 26 semanas para el desarrollo del proyecto dejando una semana para una revisión exhaustiva del documento, además de ir trabajando en la implementación iteración a iteración. Para mayor detalle de la planificación ver la carta Gantt en el anexo A.
+Se estima un total de 25 semanas para el desarrollo del proyecto dejando una semana para una revisión exhaustiva del documento, además de ir trabajando en la implementación iteración a iteración. Para mayor detalle de la planificación ver la carta Gantt en el anexo A.
 
 \subsection{Tareas para objetivos específicos}
 Para cumplir los objetivos específicos se tiene en cuenta las siguientes
@@ -391,7 +403,7 @@ Aplicable & Proyectos con datos no estructurados o semi-estructurados. & Proyect
 
     \subsection{Konva.js}
     Es una librería de Javascript que extiende las capacidades del 'Canvas' 2D de HTML. Permitiendo crear gráficos 2D interactivos y de alto rendimiento, trabajando con las formas (rectángulos, círculos, etc.) como 'objetos' en un 'escenario' (Stage) y 'capas' (Layers). Facilitando la gestión de eventos (arrastrar, soltar), animaciones y transformaciones de objetos.\\
-    Es por estos motivos que Konva.js~\cite{konva} es de las mejores opciones para usar en comparación de Fabric.js que fue otra opción a utilizar.
+    Es por estos motivos que Konva.js~\cite{konva} es de las mejores opciones para usar en comparación de Fabric.js~\cite{fabricjs} que fue otra opción a utilizar.
 
 \begin{table}[H]
     \centering    
@@ -418,15 +430,15 @@ Aplicable & Proyectos con datos no estructurados o semi-estructurados. & Proyect
     \end{tabular}
 \end{table}
 \subsection{Trello}
-Trello es una aplicación de propiedad de Atlassian que se utiliza en la gestión de proyectos visual y colaborativa. Su interfaz se basa en el método Kanban, empleado en tableros, listas y tarjetas para organizar tareas y flujos de trabajo.\\
+Trello~\cite{trello} es una aplicación de propiedad de Atlassian que se utiliza en la gestión de proyectos visual y colaborativa. Su interfaz se basa en el método Kanban, empleado en tableros, listas y tarjetas para organizar tareas y flujos de trabajo.\\
 En comparación a otras herramientas similares como Jira o Asana, Trello presenta una mejor curva de aprendizaje, por lo que esta es la alternativa seleccionada.
 
 \subsection{Nodemailer}
 Entre las herramientas para el envío de correo automatizado destacan principalmente 2 que son Email.js y nodemailer, los cuales describiremos a continuación:
 \begin{itemize}
-    \item Email.js es un servicio de plataforma que permite enviar correos electrónicos directamente desde las aplicaciones sin necesidad de configurar o mantener un servidor propio. Su funcionamiento se basa en actuar de intermediario seguro. En donde el desarrollador crea plantillas predefinidas dentro del servicio de Email.js
+    \item Email.js~\cite{emailjs} es un servicio de plataforma que permite enviar correos electrónicos directamente desde las aplicaciones sin necesidad de configurar o mantener un servidor propio. Su funcionamiento se basa en actuar de intermediario seguro. En donde el desarrollador crea plantillas predefinidas dentro del servicio de Email.js
 
-    \item Nodemailer es una librería de Node.js de código abierto que permite enviar correos electrónicos desde el servidor backend mediante protocolo SMTP. Su integración es directa con el entorno de Node.js, permitiendo configurar el servidor de correo y construir los mensajes de forma programática sin depender de servicios externos de terceros.
+    \item Nodemailer~\cite{nodemailer} es una librería de Node.js de código abierto que permite enviar correos electrónicos desde el servidor backend mediante protocolo SMTP. Su integración es directa con el entorno de Node.js, permitiendo configurar el servidor de correo y construir los mensajes de forma programática sin depender de servicios externos de terceros.
 
     Por simplicidad de integración con el backend, capacidad de mandar archivos de manera gratuita y mayor tamaño de correo la mejor opción es nodemailer.
     
@@ -434,13 +446,13 @@ Entre las herramientas para el envío de correo automatizado destacan principalm
 
 \subsection{Node.js}
 Dentro del entrono del backen de la propuesta tenemos muchas opciones para que trabajen la lógica y las interaciones que ocurren destrás de la interfaz del usuario. Entre las opciones tenemos Node.js~\cite{nodejs} con JavaScript, Spring Boot con Java, Laravel con PHP, Flask con python, entre otros. Estas tecnologías permiten relizar las mismas funciones, pero lo que hace la diferencia es la sintaxis de cada lenguaje.\\
-Teniendo en cuenta lo anterior y que la propuesta se basa en trabajar con JavaScript la mejor elección es Node.js~\cite{nodejs} con Express por su compatibilidad con la propuesta.
+Teniendo en cuenta lo anterior y que la propuesta se basa en trabajar con JavaScript la mejor elección es Node.js~\cite{nodejs} con Express~\cite{express} por su compatibilidad con la propuesta.
 
 \subsection{Docker}
 Docker~\cite{docker} es una plataforma que ofrece el servicio de contendores para desarrolladores mediante imágenes de software para poder construir un programa en un espacio controlado y poder traspasarlo a otro dispositivo sin correr con errores de versiones en las instalaciones que suelen dar problemas. Es por eso que se utiliza Docker al ser un contenedor se puede crear un progama con sus versiones correspondientes y compartirlo sin correr riegos de que pueda fallar.
 
-\subsection{Gloogle Cloud}
-Es una plataforma que ofrece servicios en la nube para desarrollar y alojar aplicaciones. Entre sus servicios destacan el alojamiento web, bases de datos, almacenamiento y análisis de datos.\\
+\subsection{Vercel}
+Vercel~\cite{vercel} es una plataforma de despliegue en la nube especializada en aplicaciones frontend y frameworks modernos como React, Next.js y Vue. Permite desplegar aplicaciones directamente desde un repositorio de GitHub con integración continua, generando automáticamente una URL de producción en cada push a la rama principal. Su plan gratuito incluye despliegues ilimitados y es suficiente para proyectos de pequeña y mediana escala, lo que lo convierte en la opción seleccionada para el despliegue.\\
 
 \section{Estado del arte}
 En cuanto al estado del arte del proyecto, existen distintos tipos de herramientas tanto de pago como gratuitas, a continuación, se mencionan y decriben algunas herramientas reconocidas que estan relacionadas con el proyecto.\\
@@ -547,7 +559,7 @@ Aplicabilidad & Alta. Se enfoca en la ejecución de un proyecto con requisitos d
     \centering
     \includegraphics[width=0.5\textwidth]{imagenes/PXP-process-phases.png}
     \caption{Diagrama de las fases de metodología Personal Extreme Programming (PXP)~\cite{img_pxp}}
-    \label{fig: diagrama}
+    \label{fig:pxp_fases}
 \end{figure}
 \subsection{Metodología de evaluación}
     \subsubsection{ Prueba de caja negra}
@@ -556,7 +568,7 @@ Las pruebas de caja negra se centran en evaluar el comportamiento funcional de l
     \centering
     \includegraphics[width=0.6\textwidth]{imagenes/caja_negra.png}
     \caption{Proceso de Prueba de Caja Negra}
-    \label{fig: diagrama}
+    \label{fig:proceso_caja_negra}
 \end{figure}
 \subsubsection{Prueba de usabilidad}
 Las pruebas de usabilidad permiten validar la experiencia del usuario final con la aplicación desarrollada. Para este propósito, se aplicará la técnica System Usability Scale (SUS), una herramienta creada por John Brooke en 1986 y ampliamente utilizada en la industria del software. Esta prueba consiste en un cuestionario de 10 afirmaciones evaluadas mediante la Escala de Likert, donde los participantes expresan su nivel de acuerdo. A partir de estas respuestas, se calcula un puntaje total entre 0 y 100 que refleja la percepción de usabilidad: valores inferiores a 50 indican una experiencia inaceptable, entre 50 y 68 se consideran deficientes o mediocres, y puntuaciones superiores a 68 reflejan una aceptación adecuada del sistema por parte del usuario.~\cite{SUS}
@@ -655,8 +667,8 @@ A continuación, se presenta la clasificación MuSCoW para la prioridad de desar
     \centering
     % --- La \caption va primero para que aparezca arriba ---
     \caption{Clasificación MuSCoW y estimación de esfuerzo de las historias de usuario}
-    \label{tab:Clasificación_historias_de_usuario} 
-    
+    \label{tab:moscow_estimacion}
+
     % --- INICIO DE LA TABLA ---
     \begin{tabular}{|p{2cm}|p{2cm}|p{3cm}|} 
         \hline % Línea horizontal superior
@@ -939,7 +951,7 @@ Justificación: Una vez cargado el bundle inicial de la aplicación, la interacc
 Sostenibilidad: Estas tecnologías cuentan con documentación extensa y comunidades activas, asegurando la mantenibilidad del código a largo plazo.
 
 
-Portabilidad: El uso de Docker  para la contenerización permite que el sistema sea agnóstico a la infraestructura del servidor, garantizando que la aplicación pueda migrarse entre distintos proveedores de nube (Google Cloud, AWS, o servidores locales) sin conflictos de dependencias ni reescritura de código.
+Portabilidad: El uso de Docker  para la contenerización permite que el sistema sea agnóstico a la infraestructura del servidor, garantizando que la aplicación pueda migrarse entre distintos proveedores de nube (Vercel, AWS, Google Cloud u otros) sin conflictos de dependencias ni reescritura de código.
 
 Conclusión Técnica: En base a lo expuesto, el proyecto es técnicamente factible. No requiere hardware especializado por parte del usuario final, se adapta a las condiciones de conectividad de zonas rurales gracias a su arquitectura SPA y utiliza tecnologías estándar de la industria que aseguran su viabilidad operativa y escalabilidad futura.
 
@@ -970,13 +982,14 @@ La factibilidad económica evalúa los costos necesarios para la propuesta.\\
         \hline
         Control de versiones & GitHub & \$0\\
         \hline
-        Contenedor & Docker & \$0\\    
+        Contenedor & Docker & \$0\\
+        \hline
+        Despliegue & Vercel & \$0\\
         \hline % Línea horizontal inferior
     \end{tabular}
 \end{table}
 Teniendo esta tabla de costos 4.1 se obtiene que el gasto de licencias de software es de \$0 pesos chilenos, ya que todas las herramientas tecnológicas que componen esta propuesta son gratuitas o de código abierto por lo que a nivel de gastos esta propuesta es muy viable ya que cuando empiece a escalar y se requiera de planes de pago a mayor escala el mismo proyecto ya lo podrá sustentar.  \\
-Teniendo en cuenta el despliegue de la aplicación en un servidor en la nube, se puede considerar el uso de servicios como Google Cloud Platform (GCP), Amazon Web Services (AWS) o Microsoft Azure. Estos servicios ofrecen planes gratuitos con ciertas limitaciones que podrían ser suficientes para un proyecto inicial o de pequeña escala.\\
-Pero si se requiere de un plan pago, los costos pueden variar dependiendo del proveedor y los recursos utilizados. Por ejemplo, una instancia básica de propósito general con 2vCPU y 4 GB de RAM en un servidor de Google Cloud puede costar alrededor de \$57 USD, dependiendo de la configuración y el uso.\\
+Teniendo en cuenta el despliegue de la aplicación, se optó por Vercel~\cite{vercel} como plataforma de hosting. Su plan gratuito incluye despliegues ilimitados conectados directamente al repositorio de GitHub, lo que cubre con holgura las necesidades del proyecto. En caso de requerir mayor capacidad, el plan Pro tiene un costo de \$20 USD mensuales.\\
 
 
 \section{Diseño de software}
@@ -1156,17 +1169,17 @@ En esta etapa, se crean y registran las tareas acordes a las historias de usuari
 \begin{table}[H]
     \centering
     % --- La \caption va primero para que aparezca arriba ---
-    \caption{Tareas asociadas a historias de usuario}
-    \label{tab:tareas_historias_de_usuario} 
-    
+    \caption{Tareas asociadas a historias de usuario — Iteración 2}
+    \label{tab:tareas_it2}
+
     % --- INICIO DE LA TABLA ---
-    \begin{tabular}{|p{2cm}|p{2cm}|p{7cm}|} 
+    \begin{tabular}{|p{2cm}|p{2cm}|p{7cm}|}
         \hline % Línea horizontal superior
-        
+
         % Encabezados en negrita
         \textbf{HU } & \textbf{Tarea} & \textbf{Descripción}\\
         \hline % Línea de separación
-        
+
         % --- Filas con \hline después de CADA una ---
 HU02, HU03, HU04, HU05, HU6 & T01 & Crear diagrama de secuencia\\
 \hline
@@ -1311,12 +1324,12 @@ En esta etapa se diseña el diagrama de secuencia de las funcionalidades de la i
 \subsubsection{Implementación}
 Para la implementación de este módulo se realizó una búsqueda de algoritmos para el ordenamiento de piezas en las dimensiones que para este proyecto se toman por defecto las de una plancha de melamina (250x183cm), que de igual manera se puede cambiar según se desee en la aplicación y con una separación de 3mm entre cortes ya que es la medida estándar de discos para melamina.\\
 
-Entre la búsqueda de algoritmos para poder cubicar los cortes en la dimensión de la plancha de melamina destacaron 2:
+Entre la búsqueda de algoritmos para poder cubicar los cortes en la dimensión de la plancha de melamina destacaron 2~\cite{maxrects}:
 \begin{itemize}
     \item Algoritmo Guillotine: es un algoritmo que divide la plancha en cortes rectos y continuos, o sea, cada vez que se coloca un corte el espacio restante se divide en 2 rectángulos.
-    \item Algoritmo Maxrects: es un algoritmo que mantiene una lista dinámica de todos los rectángulos disponibles en la plancha y cada vez que se coloca un corte en la plancha los rectángulos que se solapan con el corte se recortan y se subdividen.
+    \item Algoritmo MAXRECTS: es un algoritmo que mantiene una lista dinámica de todos los rectángulos disponibles en la plancha y cada vez que se coloca un corte en la plancha los rectángulos que se solapan con el corte se recortan y se subdividen.
 \end{itemize}
-Dado que se busca una optimización de los cortes en la plancha se opto por el algoritmo Macrects que optimiza dinámicamente los cortes teniendo menos desperdicio que el algoritmo GUillotine.\\
+Dado que se busca una optimización de los cortes en la plancha se optó por el algoritmo MAXRECTS que optimiza dinámicamente los cortes teniendo menos desperdicio que el algoritmo Guillotine.\\
 
 En la siguiente figura se muestra el algoritmo encargado de generar las piezas para el módulo de cajonera, en donde a partir de las dimensiones del módulo se calculan automáticamente el techo/piso, los laterales, el fondo y el frente según la cantidad de cajones configurada.
 \begin{figure}[H]
@@ -1413,7 +1426,7 @@ En la siguiente figura se muestra la ruta DELETE para eliminar una cotización, 
    \caption{Ruta DELETE para eliminar cotización}
 \end{figure}
 
-En la siguiente figura se muestra la sección del servicio de generación de PDF que construye la tabla de materiales, en donde se recorre el resumen de materiales de la cotización y se agregan las filas con nombre, cantidad y precio unitario usando la librería jsPDF.
+En la siguiente figura se muestra la sección del servicio de generación de PDF que construye la tabla de materiales, en donde se recorre el resumen de materiales de la cotización y se agregan las filas con nombre, cantidad y precio unitario usando la librería jsPDF~\cite{jspdf}.
 \begin{figure}[H]
    \includegraphics[width=1\linewidth]{imagenes/it4 4.png}
    \caption{Tabla de materiales en la generación del PDF}
@@ -1668,6 +1681,8 @@ En esta etapa, se crean y registran las tareas de integración a ejecutar, las c
 — & T04 & Adaptar el layout para dispositivos móviles\\
 \hline
 — & T05 & Verificar que ningún módulo previo presenta regresiones al navegar\\
+\hline
+— & T06 & Desplegar la aplicación en Vercel\\
         \hline
     \end{tabular}
 \end{table}
@@ -1688,6 +1703,8 @@ En la siguiente figura se muestra el listener de resize implementado en App.jsx,
    \caption{Listener de resize para layout responsivo en App.jsx}
 \end{figure}
 
+Una vez finalizada la integración de todos los módulos, la aplicación fue desplegada en Vercel~\cite{vercel}. El despliegue se realizó conectando el repositorio de GitHub directamente con la plataforma, de modo que cada push a la rama principal genera de forma automática una nueva versión en producción. Vercel gestiona la compilación del bundle de React y lo distribuye a través de su red de entrega de contenido, entregando la aplicación desde el servidor más cercano al usuario final.\\
+
 \subsubsection{Sistema de pruebas}
 Después de la implementación, se continúa con las pruebas de la iteración en donde se evalúan los siguientes casos:
 \begin{itemize}
@@ -1702,7 +1719,7 @@ Después de la implementación, se continúa con las pruebas de la iteración en
 \end{itemize}
 
 \subsubsection{Retrospectiva}
-Al final de esta iteración se revisó el peso asignado y el esfuerzo fue menor al estimado, ya que todos los módulos habían sido diseñados como componentes aislados con interfaces claras. El principal desafío fue coordinar el layout responsivo. La iteración se completó sin pendientes, cerrando el ciclo de desarrollo de todos los módulos de la aplicación.
+Al final de esta iteración se revisó el peso asignado y el esfuerzo fue menor al estimado, ya que todos los módulos habían sido diseñados como componentes aislados con interfaces claras. El principal desafío fue coordinar el layout responsivo. Adicionalmente, el despliegue en Vercel se realizó sin inconvenientes gracias a la integración continua con GitHub, lo que permitió publicar la aplicación en producción de forma rápida y sin configuración adicional de servidores. La iteración se completó sin pendientes, cerrando el ciclo de desarrollo y despliegue de todos los módulos de la aplicación.
 
 \section{Análisis de Sostenibilidad}
 Para evaluar el impacto ambiental de la aplicación se utilizó la herramienta Website Carbon Calculator~\cite{websitecarbon}. Esta herramienta estima la huella de carbono de una página web a partir del peso de los recursos transferidos, el número de solicitudes al servidor y la fuente de energía del hosting donde está alojada la aplicación, entregando un estimado en gramos de CO\textsubscript{2} por visita.
@@ -1719,7 +1736,7 @@ Al evaluar la página principal de Amedida, la herramienta entregó una califica
 Este resultado tiene bastante sentido si se consideran las decisiones técnicas tomadas durante el desarrollo. Al ser una aplicación de página única construida con React, la mayor parte de la lógica se ejecuta directamente en el navegador del usuario y no en el servidor, lo que significa que una vez cargada la aplicación las interacciones no generan peticiones constantes al backend. Además, el módulo de cubicación procesa todos los cálculos en el cliente mediante el algoritmo MAXRECTS sin necesidad de llamadas adicionales a la API, lo que reduce el tráfico de red por cada operación y contribuye directamente a esta baja huella de carbono.
 
 \section{Análisis de Accesibilidad}
-Para evaluar la accesibilidad de la interfaz de Amedida se utilizó la herramienta WAVE (Web Accessibility Evaluation Tool)~\cite{wave}. Esta herramienta analiza la página web directamente en el navegador e identifica problemas según las pautas WCAG 2.1 (Web Content Accessibility Guidelines), clasificando los hallazgos en errores críticos, alertas, elementos de accesibilidad positivos, elementos estructurales, atributos ARIA y errores de contraste de color.
+Para evaluar la accesibilidad de la interfaz de Amedida se utilizó la herramienta WAVE (Web Accessibility Evaluation Tool)~\cite{wave}. Esta herramienta analiza la página web directamente en el navegador e identifica problemas según las pautas WCAG 2.1~\cite{wcag} (Web Content Accessibility Guidelines), clasificando los hallazgos en errores críticos, alertas, elementos de accesibilidad positivos, elementos estructurales, atributos ARIA y errores de contraste de color.
 
 Se evaluaron las siguientes vistas del sistema: el landing page, el formulario de inicio de sesión, el canvas de diseño, el panel de cubicación, la biblioteca de materiales, el módulo de cotizaciones y el panel de estadísticas. Los resultados obtenidos se resumen en la tabla a continuación:
 
@@ -1751,15 +1768,15 @@ Estadísticas  & 0 & 33 & 14 & 4{,}3 / 10 \\
 
 A partir de los resultados de la tabla es posible identificar 2 patrones principales que se repiten en todas las vistas del sistema.
 
-El primero y más significativo son los errores de contraste de color, que representan la mayor cantidad de hallazgos en prácticamente todas las vistas. Esto se explica directamente por el uso del tema oscuro en la interfaz de Amedida, en donde los íconos y textos de colores sobre fondos negros o gris muy oscuro no siempre alcanzan la relación de contraste mínima de 4.5:1 que exige el estándar WCAG 2.1.\\
+El primero y más significativo son los errores de contraste de color, que representan la mayor cantidad de hallazgos en prácticamente todas las vistas. Esto se explica directamente por el uso del tema oscuro en la interfaz de Amedida, en donde los íconos y textos de colores sobre fondos negros o gris muy oscuro no siempre alcanzan la relación de contraste mínima de 4.5:1 que exige el estándar WCAG 2.1~\cite{wcag}.\\
 
 El segundo patrón son las etiquetas de formulario faltantes, que se concentran en las vistas con campos de entrada.Donde no tienen un elemento '<label>' explícitamente asociado mediante el atributo 'for', lo que puede afectar la experiencia de usuarios que utilizan lectores de pantalla.
 
-Las capturas individuales de la evaluación WAVE para cada vista del sistema se encuentran en el Anexo B.
+Las capturas individuales de la evaluación WAVE para cada vista del sistema se encuentran en el Anexo C.
 
 \chapter{Pruebas}
 \label{cap:pruebas}
-En este capítulo se presentan los resultados de las pruebas aplicadas al sistema Amedida a lo largo de las ocho iteraciones de desarrollo. Se distinguen dos tipos de evaluación: pruebas unitarias automatizadas ejecutadas con el framework Jest, que validan la lógica interna de cada módulo, y pruebas de caja negra, que verifican el comportamiento funcional del sistema desde la perspectiva del usuario final. Los casos de prueba unitaria PU-01 a PU-27 corresponden a las iteraciones 1 y 2; los casos PU-28 a PU-71 se encuentran en el Anexo A. Los casos de prueba de caja negra PCN-01 a PCN-60 cubren la totalidad de las iteraciones.
+En este capítulo se presentan los resultados de las pruebas aplicadas al sistema Amedida a lo largo de las ocho iteraciones de desarrollo. Se presentan pruebas de caja negra, que verifican el comportamiento funcional del sistema desde la perspectiva del usuario final, junto con pruebas de aceptación y la evaluación de usabilidad. Los 60 casos de prueba de caja negra PCN-01 a PCN-60 cubren la totalidad de las iteraciones.
 
 
 \section{Pruebas de Caja Negra}
@@ -2079,7 +2096,7 @@ Para calcular el puntaje, a cada ítem impar se le resta 1 y cada ítem par se d
 El resultado fue de 85 puntos, lo que corresponde a la categoría \textit{Aceptable} de la escala SUS (mayor a 68), validando que la interfaz es intuitiva para el perfil del mueblista artesanal y cumpliendo así el OE8.
 
 \section{Resumen del capítulo}
-Las pruebas cubrieron cuatro categorías. Los casos PU-01 a PU-27 verifican la lógica interna de autenticación y diseño de muebles en las iteraciones 1 y 2; los casos PU-28 a PU-71 están en el Anexo A. Los 60 casos de caja negra PCN-01 a PCN-60 evaluaron el sistema desde la perspectiva del mueblista en cada iteración. Las ocho pruebas de aceptación PA-01 a PA-08 recorrieron los flujos completos al cierre de cada iteración. Finalmente, la prueba de usabilidad SUS arrojó un puntaje de 85 puntos, confirmando que la interfaz es aceptable para el usuario objetivo. Todos los casos fueron aprobados.
+Las pruebas cubrieron tres categorías. Los 60 casos de caja negra PCN-01 a PCN-60 evaluaron el sistema desde la perspectiva del mueblista en cada iteración. Las ocho pruebas de aceptación PA-01 a PA-08 recorrieron los flujos completos al cierre de cada iteración. Finalmente, la prueba de usabilidad SUS arrojó un puntaje de 85 puntos, confirmando que la interfaz es aceptable para el usuario objetivo. Todos los casos fueron aprobados.
 
 \chapter{Conclusiones y trabajo futuro}
 En este capítulo se abarcan las conclusiones obtenidas del trabajo realizado y de lo que queda por realizar en el proyecto.
@@ -2129,6 +2146,362 @@ Como trabajo futuro queda pendiente:
   \includegraphics[width=1\linewidth]{imagenes/gantt.png}
   \caption{carta Gantt}
 \end{figure}
+
+\appendix{Historias de Usuario}
+A continuación se presentan las historias de usuario definidas para el sistema Amedida, con su descripción, clasificación de prioridad MuSCoW, estimación de esfuerzo en puntos Fibonacci y criterios de aceptación.
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU01}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU01 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero iniciar sesión en el sistema. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Must Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 3 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El sistema acepta credenciales válidas y genera un token JWT que mantiene la sesión activa.\newline
+El sistema rechaza credenciales incorrectas y muestra un mensaje de error.\newline
+La sesión persiste hasta que el mueblista cierre sesión explícitamente. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU02}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU02 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero un canvas 2D para poder hacer diseños. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Must Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 5 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El lienzo 2D se muestra en la vista de diseño al iniciar sesión.\newline
+El mueblista puede agregar módulos predefinidos al canvas mediante la interfaz.\newline
+Los módulos se representan visualmente con sus dimensiones relativas en el lienzo. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU03}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU03 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero crear, guardar, cargar y eliminar el diseño de un mueble. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Must Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 3 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El mueblista puede guardar el diseño actual con un nombre identificador.\newline
+El sistema almacena el diseño en la base de datos y lo lista en la sección de diseños recientes.\newline
+El mueblista puede cargar un diseño guardado y el canvas se restablece al estado previo.\newline
+El mueblista puede eliminar un diseño de la lista de diseños guardados. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU04}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU04 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero que el diseño se pueda hacer modular. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Must Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 8 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El mueblista puede agregar distintos tipos de módulos: cajonera, modular, estante, base, divisor y cubierta.\newline
+Los módulos pueden combinarse y apilarse dentro del canvas.\newline
+Cada módulo se renderiza con su forma y proporciones correspondientes. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU05}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU05 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero que las medidas de los módulos agregados puedan ser editables. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Must Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 3 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El mueblista puede seleccionar un módulo y editar sus dimensiones (ancho, alto, profundidad).\newline
+El canvas actualiza la representación visual del módulo al confirmar los nuevos valores.\newline
+Las dimensiones editadas se reflejan correctamente en el cálculo de cubicación. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU06}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU06 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero que los módulos sean móviles para acomodarlos según la necesidad. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Must Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 3 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El mueblista puede arrastrar módulos dentro del canvas y soltarlos en la posición deseada.\newline
+La posición de cada módulo se actualiza en tiempo real durante el arrastre.\newline
+Los módulos no se desplazan fuera de los límites del lienzo. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU07}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU07 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero que el sistema me calcule la cantidad de material. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Must Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 13 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El sistema calcula automáticamente las piezas necesarias a partir del diseño del canvas.\newline
+Se utiliza el algoritmo MAXRECTS para optimizar la disposición de piezas en los tableros.\newline
+El resultado indica el número de tableros necesarios y el porcentaje de aprovechamiento del material. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU08}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU08 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero que se muestre un listado de las piezas que se van a utilizar. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Must Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 3 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El sistema muestra una lista con todas las piezas resultantes de la cubicación.\newline
+Cada pieza indica sus dimensiones y a qué tablero pertenece.\newline
+La lista se actualiza al modificar el diseño y recalcular la cubicación. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU09}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU09 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero que el sistema pueda generar cotizaciones a partir del diseño. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Should Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 5 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El sistema genera una cotización con el desglose de materiales, mano de obra y precio total.\newline
+La cotización toma los datos del diseño activo y los materiales de la biblioteca.\newline
+El mueblista puede ingresar los datos del cliente antes de generar la cotización. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU10}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU10 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero que se vea una previsualización de la cotización. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Should Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 2 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El mueblista puede ver una previsualización de la cotización antes de exportarla o enviarla.\newline
+La previsualización muestra el desglose de costos y los datos del cliente.\newline
+La previsualización refleja el contenido exacto que tendrá el documento PDF generado. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU11}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU11 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero que las cotizaciones se puedan exportar como PDF. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Should Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 2 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El mueblista puede descargar la cotización como archivo PDF con un solo clic.\newline
+El PDF incluye los datos del cliente, el desglose de materiales y el precio total.\newline
+El archivo generado está correctamente formateado para su presentación al cliente. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU12}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU12 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero que el sistema permita enviar cotizaciones por correo. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Won't Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 3 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El mueblista puede ingresar el correo del cliente y enviar la cotización directamente desde la aplicación.\newline
+El sistema confirma el envío exitoso con un mensaje de notificación.\newline
+El cliente recibe un correo con la cotización generada en el cuerpo del mensaje. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU13}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU13 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero disponer de una biblioteca de materiales. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Should Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 2 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El mueblista puede ver la lista completa de materiales registrados con sus precios y atributos.\newline
+Los materiales están disponibles para ser seleccionados durante la generación de cotizaciones.\newline
+La biblioteca persiste entre sesiones y está vinculada al mueblista autenticado. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU14}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU14 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero poder agregar, editar y eliminar materiales de la biblioteca. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Should Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 3 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El mueblista puede agregar un nuevo material especificando nombre, precio y atributos.\newline
+El mueblista puede editar los datos de un material existente y guardar los cambios.\newline
+El mueblista puede eliminar un material y este desaparece de la biblioteca y de las cotizaciones futuras. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU15}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU15 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero ver estadísticas básicas. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Could Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 5 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El mueblista puede ver un panel de estadísticas con indicadores clave como total de diseños y cotizaciones generadas.\newline
+El panel muestra gráficos de barras con el historial de actividad del mueblista.\newline
+Las estadísticas se calculan a partir de los datos reales almacenados en la base de datos. \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Historia de Usuario — HU16}
+\begin{tabular}{|p{4.5cm}|p{9.5cm}|}
+\hline
+\textbf{ID} & HU16 \\
+\hline
+\textbf{Actor} & Mueblista \\
+\hline
+\textbf{Historia de usuario} & Como usuario quiero que se puedan filtrar las estadísticas por periodos. \\
+\hline
+\textbf{Prioridad (MuSCoW)} & Could Have \\
+\hline
+\textbf{Estimación (Fibonacci)} & 2 puntos \\
+\hline
+\textbf{Criterios de aceptación} & El mueblista puede seleccionar un período de tiempo (semana, mes, año) para filtrar las estadísticas.\newline
+Los gráficos e indicadores se actualizan automáticamente al cambiar el filtro seleccionado.\newline
+El filtro refleja correctamente solo los datos correspondientes al rango de tiempo indicado. \\
+\hline
+\end{tabular}
+\end{table}
 
 \appendix{Resultados de Evaluación WAVE}
 A continuación se presentan las capturas de la evaluación de accesibilidad realizada con la herramienta WAVE para cada vista del sistema Amedida.
