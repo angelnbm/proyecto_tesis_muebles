@@ -118,7 +118,7 @@ Optimizar el proceso de diseño y cubicación en la fabricación de muebles a me
 
 \item Implementar una biblioteca de materiales, colores, grosores y accesorios que permita y facilite la personalización de los diseños.
 
-\item Automatizar la generación y envío de cotizaciones detalladas e interactivas para que el cliente o mueblista elija entre un abanico de posibilidades.
+\item Automatizar la generación y envío de cotizaciones.
 
 \item Reducir el tiempo en el proceso de fabricación de muebles a medida en un 15\% respecto al método manual.  
 
@@ -134,7 +134,7 @@ Optimizar el proceso de diseño y cubicación en la fabricación de muebles a me
 \begin{itemize}
 \item La plataforma se diseña para ser utilizada en entorno web responsive.
 
-\item No se considera la implemetación de una aplicación nativa móvil debido a que nativa móvil, debido a que módulos como el de cotizaciones para generar el presupuesto está más pensado para trabajarse en un computador antes que en un teléfono.
+\item No se considera la implemetación de una aplicación nativa móvil, debido a que módulos como el de cotizaciones para generar el presupuesto está más pensado para trabajarse en un computador antes que en un teléfono.
 
 \item Los requerimientos se capturan a partir de entrevistas con un mueblista artesanal de la localidad de Teno.
 
@@ -232,8 +232,7 @@ diseños previamente realizados.
 \item Etapa 3: Implementar módulo de biblioteca de materiales.
 \end{enumerate}
 
-\item OE5: Automatizar la generación y envío de cotizaciones detalladas e interactivas para que
-el cliente o mueblista elija entre un abanico de posibilidades.
+\item OE5: Automatizar la generación y envío de cotizaciones.
 \begin{enumerate}
 \item Etapa 3: Implementar módulo gestión de cotizaciones.
 \end{enumerate}
@@ -422,14 +421,14 @@ Aplicable & Proyectos con datos no estructurados o semi-estructurados. & Proyect
 Trello es una aplicación de propiedad de Atlassian que se utiliza en la gestión de proyectos visual y colaborativa. Su interfaz se basa en el método Kanban, empleado en tableros, listas y tarjetas para organizar tareas y flujos de trabajo.\\
 En comparación a otras herramientas similares como Jira o Asana, Trello presenta una mejor curva de aprendizaje, por lo que esta es la alternativa seleccionada.
 
-\subsection{Email.js}
-Entre las herramientas para el envío de correo automatizado destacan principalmente 2 que son Email.js y Sengrid, los cuales describiremos a continuación:
+\subsection{Nodemailer}
+Entre las herramientas para el envío de correo automatizado destacan principalmente 2 que son Email.js y nodemailer, los cuales describiremos a continuación:
 \begin{itemize}
     \item Email.js es un servicio de plataforma que permite enviar correos electrónicos directamente desde las aplicaciones sin necesidad de configurar o mantener un servidor propio. Su funcionamiento se basa en actuar de intermediario seguro. En donde el desarrollador crea plantillas predefinidas dentro del servicio de Email.js
 
-    \item Sengrid es una plataforma de comunicación como servicio basada en la nube, diseñada para la entrega de correos a gran escala. Esta plataforma gestiona una compleja infraesctrucctura de envío, la reputación de las direcciones IP y la escalabilidad, con el objetivo de maximizar la tasa de entrega evitando que estos correos sean marcados como spam.
+    \item Nodemailer es una librería de Node.js de código abierto que permite enviar correos electrónicos desde el servidor backend mediante protocolo SMTP. Su integración es directa con el entorno de Node.js, permitiendo configurar el servidor de correo y construir los mensajes de forma programática sin depender de servicios externos de terceros.
 
-    Por simplicidad y funcionalidades del plan gratuito, se selecciona Email.js ya que da 2 template y 200 correos mensuales en el plan gratis para usar con cualquier cuenta de correo y viendo las dimesiones y requisitos del proyecto no veo que se requiera más.
+    Por simplicidad de integración con el backend, capacidad de mandar archivos de manera gratuita y mayor tamaño de correo la mejor opción es nodemailer.
     
 \end{itemize}
 
@@ -614,19 +613,17 @@ HU09 & Mueblista & Como usuario quiero que el sistema pueda generar cotizaciones
 \hline
 HU10 & Mueblista & Como usuario quiero que se vea una previsualización de la cotización.\\
 \hline
-HU11 & Mueblista & Como usuario quiero que en la previsualización de la cotización se puedan personalizar.\\
+HU11 & Mueblista & Como usuario quiero que las cotizaciones se puedan exportar como pdf\\
 \hline
-HU12 & Mueblista & Como usuario quiero que las cotizaciones se puedan exportar como pdf\\
+HU12 & Mueblista & Como usario quiero que el sistema permita enviar cotizaciones por correo\\
 \hline
-HU13 & Mueblista & Como usario quiero que el sistema permita enviar cotizaciones por correo\\
+HU13 & Mueblista & Como usuario quiero disponer de una biblioteca de materiales\\
 \hline
-HU14 & Mueblista & Como usuario quiero disponer de una biblioteca de materiales\\
+HU14 & Mueblista & Como ususario quiero poder agregar, editar y eliminar materiales de la biblioteca\\
 \hline
-HU15 & Mueblista & Como ususario quiero poder agregar, editar y eliminar materiales de la biblioteca\\
+HU15 & Mueblista & Como usuario quiero ver estadíscas básicas \\
 \hline
-HU16 & Mueblista & Como usuario quiero ver estadíscas básicas \\
-\hline
-HU17 & Mueblista & Como usuario quiero que se puedan filtrar las estadísticas por periodos\\
+HU16 & Mueblista & Como usuario quiero que se puedan filtrar las estadísticas por periodos\\
         \hline % Línea horizontal inferior
     \end{tabular}
 \end{table}
@@ -689,19 +686,17 @@ HU09 & Should & 5\\
 \hline
 HU10 & Should & 2\\
 \hline
-HU11 & Could & 5\\
+HU11 & Should & 2\\
 \hline
-HU12 & Should & 2\\
+HU12 & Won't & 3\\
 \hline
-HU13 & Won't & 3\\
+HU13 & Should & 2\\
 \hline
-HU14 & Should & 2\\
+HU14 & Should & 3 \\
 \hline
-HU15 & Should & 3 \\
+HU15 & Could & 5 \\
 \hline
-HU16 & Could & 5 \\
-\hline
-HU17 & Could & 2\\
+HU16 & Could & 2\\
         \hline % Línea horizontal inferior
     \end{tabular}
 \end{table}
@@ -727,13 +722,13 @@ OE02: Implementar el módulo de cubicación & HU07, HU08\\
 \hline
 OE03: Gestionar diseños realizados & HU03\\
 \hline
-OE04: Biblioteca de materiales & HU14, HU15\\
+OE04: Biblioteca de materiales & HU13, HU14\\
 \hline
-OE05: Automatizar cotizaciones & HU09, HU10, HU12, HU11, HU13\\
+OE05: Automatizar cotizaciones & HU09, HU10, HU12, HU11\\
 \hline
 OE06: Reducir el tiempo del proceso de fabricación de muebles & Este objetivo es el resultado de OE01, OE02 y OE05. Se logra principalmente con HU02, HU04, HU07, HU09.\\
 \hline
-OE07: Implementar estadísticas & HU16, HU17\\
+OE07: Implementar estadísticas & HU15, HU16\\
 \hline
 OE08: Evaluar la satisfacción y usabilidad & Aplicando encusta SUS sobre las interfaces principalmente en: HU02, HU05, HU09 y HU014\\
 \hline
@@ -764,15 +759,15 @@ Iteración 2 &  HU02, HU03, HU04, HU05, HU06 & Construir el diseñador 2D modula
 \hline
 Iteración 3 & HU07, HU08 & Implementar el algoritmo de cubicación y mostrar la lista de piezas. \\
 \hline
-Iteración 4 & HU09, HU10, HU12, HU14, HU15 & Generar cotizaciones en PDF y su personalización.\\
+Iteración 4 & HU09, HU10, HU11, HU13, HU14 & Generar cotizaciones en PDF y su personalización.\\
 \hline
-Iteración 5 & HU14, HU15 & Gestionar biblioteca de materiales.\\
+Iteración 5 & HU13, HU14 & Gestionar biblioteca de materiales.\\
 \hline
-Iteración 6 & HU16, HU17 & Implementar estádisticas generales.\\
+Iteración 6 & HU15, HU16 & Implementar estádisticas generales.\\
 \hline
-Iteración 7 & HU13 & Implementar notificaciones por correo.\\
+Iteración 7 & HU12 & Implementar notificaciones por correo.\\
 \hline
-Iteración 8 & HU03 & Implementar biblioteca de muebles\\
+Iteración 8 & — & Integrar todos los módulos e implementar la navegación global de la aplicación sin regresiones.\\
         \hline % Línea horizontal inferior
     \end{tabular}
 \end{table}
@@ -887,7 +882,7 @@ A continuación, se presentan los objetivos específicos con sus resultados espe
     \item Pruebas para lograr resultado esperado: Pruebas de caja negra de ingreso y edición de datos.
 \end{itemize}
 
-\item OE5: Automatizar la generación y envío de cotizaciones detalladas e interactivas para que el cliente o mueblista elija entre un abanico de posibilidades.
+\item OE5: Automatizar la generación y envío de cotizaciones.
 \begin{itemize}
     \item Resultado esperado: La capacidad del sistema para generar un documento formal en formato PDF con los valores correctos de precio y material.
     \item Pruebas para lograr resultado esperado: Pruebas de caja negra revisando los valores del PDF generado.
@@ -971,7 +966,7 @@ La factibilidad económica evalúa los costos necesarios para la propuesta.\\
         \hline
         Base de datos & MongoDB & \$0\\
         \hline 
-        Servicio de correo & Email.js &\$0\\
+        Servicio de correo & Nodemailer &\$0\\
         \hline
         Control de versiones & GitHub & \$0\\
         \hline
@@ -999,11 +994,27 @@ La arquitectura física propuesta sigue el modelo cliente-servidor, el cual se i
 La arquitectura lógica propuesta sigue el patrón Modelo-Vista-Controlador (MVC). En la figura 4.2 se ilustra la comunicación bidireccional entre sus componentes. La capa 'Vistas' se encarga de mostrar la información al usuario a través de las interfaces, según los datos recibidos de la capa 'Controladores', la cual se encarga de manejar la lógica del sistema, procesando las peticiones POST, GET, PUT y DELETE que provienen de la vista. La capa 'Modelos' se usa para gestionar la estructura de datos y las reglas del sistema, permitiendo la gestión de información. Finalmente, la capa 'Base de datos' se encarga de guardar y entregar la información correctamente.
 \begin{figure}[H]
   \vspace*{1cm}
-  \includegraphics[ width=.9\linewidth]{imagenes/diagramaFormulacionlogico.drawio.png}
+  \includegraphics[ width=.9\linewidth]{imagenes/vistacontrolador.png}
   \vspace*{1cm}
   \caption{Arquitectura lógica}
 \end{figure}
-
+Breve aclaración del diagrama:
+\begin{itemize}
+    \item Vista Landing: Pantalla de bienvenida de la aplicación.
+    \item Vista Login: Formulario que permite al mueblista registrarse o iniciar sesión.
+    \item Vista Canvas: Área principal de diseño donde el mueblista agrega y configura los módulos del mueble en un lienzo 2D.
+    \item Vista Cubicación: Panel que calcula automáticamente el material necesario según el diseño actual.(No guarda datos, ni realiza peticiones al backend)
+    \item Vista Estadística: Panel con indicadores y gráficos que resumen la actividad del mueblista.(No guarda datos, ni realiza peticiones al backend)
+    \item Vista Materiales: Biblioteca donde el mueblista administra los materiales, accesorios, tapa-cantos y tipos de cajón disponibles.
+    \item Vista Cotización: Listado de cotizaciones generadas, permite cambiar su estado.
+    \\
+    \item Controlador de autenticación: Maneja el registro, inicio de sesión y verificación del mueblista.
+    \item Controlador de diseños: Gestiona la creación, actualización, carga y eliminación de los diseños de muebles.
+    \item Controlador de materiales: Permite agregar, editar y eliminar materiales, accesorios y tipos de cajón de la biblioteca.
+    \item Controlador de cotización: Administra las cotizaciones del mueblista, incluyendo creación, cambio de estado y eliminación.
+    \item Controlador de correo: Recibe los datos de la cotización y gestiona el envío del correo.
+    \item Controlador de Tipos de cajón: Permite agregar, editar y eliminar tipos de cajones para usarse en la biblioteca.
+\end{itemize}
 \subsection{Modelo de datos}
 Como se mencionó anteriormente el esquema de base de datos a utilizar no es SQL por lo que hacer un diagrama ER no es la mejor representación, por lo que mediante la herramienta 'Hackolade', que es una herramienta de modelado de datos pude representar el funcionamiento de la base de datos NoSQL de una manera más visual y familiar entiendiéndose como similar a un diagrama ER.
 
@@ -1120,6 +1131,11 @@ Una vez creado el Frontend, el Backend y el modelo de la base de datos procedemo
   \includegraphics[width=1\linewidth]{imagenes/ruta_jwt.png}
   \caption{Ruta login (verificación token)}
 \end{figure}
+En la siguiente figura se muestra el resutados de los metodos anteriormente mencionados utilizando Jest ~\cite{jest} que es un framework de pruebas de javascript para validar las respuestas de las rutas creadas.  
+\begin{figure}[H]
+  \includegraphics[width=1\linewidth]{imagenes/pruebas login.png}
+  \caption{resultado pruebas Jest login}
+\end{figure}
 \subsubsection{Sistema de pruebas}
 Después de la implementación, se continua con las pruebas de la iteración en donde se evaluan los siguientes casos:
 \begin{itemize}
@@ -1178,7 +1194,7 @@ HU02, HU03, HU04, HU05, HU6 & T011 & Creación y testeo de pruebas unitarias\\
 \end{table}
 
 \subsubsection{Diseño}
-En esta etapa, se diseña  diagrama de secuencia de la funcionalidad de la iteración. A continuación, en la figura 4.7 se ilustra el flujo del inicio de sesión 
+En esta etapa, se diseña  diagrama de secuencia de la funcionalidad de la iteración. A continuación, en la figura 4.7 se ilustra el flujo del diseño en el canvas o módulo de diseño.
 
 \begin{figure}[H]
   \includegraphics[width=1\linewidth]{imagenes/canvas.drawio.png}
@@ -1252,9 +1268,12 @@ Después de la implementación, se continua con las pruebas de la iteración en 
     \item Eliminar diseños de muebles.
     \item Guardar diseños de muebles con el mismo nombre.
 \end{itemize}
-
+\begin{figure}[H]
+  \includegraphics[width=1\linewidth]{imagenes/pruebas diseño.png}
+  \caption{resultado pruebas unitarias módulo de diseño}
+\end{figure}
 \subsubsection{Retrospectiva}
-Al final esta iteración, se revisa el peso asignado a las historias de usuario, en esta iteración fue subestimado y no se ha terminado completamente la iteración.
+Al final esta iteración, se revisa el peso asignado a las historias de usuario, el tiempo en esta iteración fue subestimado ya que en donde hubo mayor complejidad fue en las colisiones que requirieron mucha prueba y error. Se termina la iteración sin pendientes.
 
 \subsection{Iteración 3}
 En esta iteración las historias de usuario a trabajar son HU07: Como usuario quiero que el sistema me calcule la cantidad de material, y HU08: Como usuario quiero que se muestre un listado de las piezas que se van a utilizar. Esta iteración corresponde al módulo de cubicación, que es uno de los más importantes del sistema ya que automatiza el cálculo de materiales a partir del diseño realizado en el canvas.
@@ -1284,37 +1303,59 @@ HU07, HU08 & T05 & Creación y testeo de pruebas unitarias\\
 \end{table}
 
 \subsubsection{Diseño}
-En esta etapa se diseña el diagrama de secuencia de las funcionalidades de la iteración. El flujo principal comienza cuando el mueblista solicita calcular el material desde el canvas, el frontend recorre todas las figuras del diseño, genera la lista de piezas por módulo y calcula cuántas planchas de melamina se requieren para cubrir el área total de cortes.
-
+En esta etapa se diseña el diagrama de secuencia de las funcionalidades de la iteración. El flujo principal comienza cuando el mueblista solicita calcular el material desde el canvas, el frontend recorre todas las figuras del diseño, genera la lista de piezas por módulo y calcula cuántas planchas de melamina se requieren para cubrir el área total de cortes. A continuación, en la figura 4.25 se ilustra el flujo de la cubicación.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/diagrama secuencia iteracion 3.png}
+   \caption{diagrama de secuencia HU07, HU08: Cubicación}
+\end{figure}
 \subsubsection{Implementación}
-Para la implementación de este módulo se desarrolló el archivo \texttt{cubicacion.js} en el frontend, el cual contiene toda la lógica de cálculo. Lo primero que se realizó fue implementar la función \texttt{generateStructuredCuts}, que recorre cada figura del canvas y según su tipo de módulo (cajonera, modular, estante, etc.) genera las piezas correspondientes con sus dimensiones de ancho, alto y cantidad.\\
+Para la implementación de este módulo se realizó una búsqueda de algoritmos para el ordenamiento de piezas en las dimensiones que para este proyecto se toman por defecto las de una plancha de melamina (250x183cm), que de igual manera se puede cambiar según se desee en la aplicación y con una separación de 3mm entre cortes ya que es la medida estándar de discos para melamina.\\
 
-En el caso de la cajonera, la función calcula automáticamente las piezas de Techo/Piso, Laterales, Frente (uno por cajón) y Fondo a partir de las dimensiones del módulo y la cantidad de cajones configurada. Para el módulo modular, que es el más complejo, calcula adicionalmente las piezas de estantes, divisores y puertas según los parámetros de configuración. Las puertas descuentan 3 mm del ancho y del alto para dejar holgura de montaje.\\
+Entre la búsqueda de algoritmos para poder cubicar los cortes en la dimensión de la plancha de melamina destacaron 2:
+\begin{itemize}
+    \item Algoritmo Guillotine: es un algoritmo que divide la plancha en cortes rectos y continuos, o sea, cada vez que se coloca un corte el espacio restante se divide en 2 rectángulos.
+    \item Algoritmo Maxrects: es un algoritmo que mantiene una lista dinámica de todos los rectángulos disponibles en la plancha y cada vez que se coloca un corte en la plancha los rectángulos que se solapan con el corte se recortan y se subdividen.
+\end{itemize}
+Dado que se busca una optimización de los cortes en la plancha se opto por el algoritmo Macrects que optimiza dinámicamente los cortes teniendo menos desperdicio que el algoritmo GUillotine.\\
 
-Una vez generadas todas las piezas, se ejecuta el algoritmo de cálculo de planchas \texttt{boardsNeeded}, el cual estima la cantidad de planchas de melamina de 250$\times$183 cm necesarias para fabricar el mueble usando el área total de las piezas. El resultado se despliega en el componente \texttt{CubicacionPanel}, que lista las piezas agrupadas por módulo con su cantidad y dimensiones, y muestra al final el total de planchas requeridas.\\
+En la siguiente figura se muestra el algoritmo encargado de generar las piezas para el módulo de cajonera, en donde a partir de las dimensiones del módulo se calculan automáticamente el techo/piso, los laterales, el fondo y el frente según la cantidad de cajones configurada.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it3 1.png}
+   \caption{Listado de piezas para cajonera}
+\end{figure}
 
-% NOTA: Agregar captura de la vista del CubicacionPanel con el listado de piezas
-% \begin{figure}[H]
-%   \includegraphics[width=1\linewidth]{imagenes/cubicacion_panel.png}
-%   \caption{Panel de cubicación con listado de piezas}
-% \end{figure}
+De manera similar, en la siguiente figura se muestra el algoritmo que genera las piezas para el módulo modular, en donde se calculan el techo/piso, los laterales, el fondo, los estantes y las puertas según los valores configurados por el mueblista.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it3 2.png}
+   \caption{Listado de piezas para modular}
+\end{figure}
 
+Una vez generadas las piezas de todos los módulos del diseño, en la siguiente figura se muestra la función encargada de evaluar la mejor estrategia de ordenamiento para ingresarlas al algoritmo MAXRECTS, en donde se prueba colocarlas sin rotación, con rotación y con una rotación inteligente que prioriza la pieza con el lado más largo alineado al espacio disponible, para así minimizar el desperdicio de material.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it3 3.png}
+   \caption{Algoritmo que evalua la estrategia de orden}
+\end{figure}
+
+En la siguiente figura se muestra la función central del algoritmo MAXRECTS que posiciona cada pieza dentro de la plancha, en donde se utiliza el criterio BSSF (Best Short Side Fit) para seleccionar el rectángulo libre con el mejor ajuste, para así reducir al máximo el espacio que queda inutilizado en la plancha.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it3 4.png}
+   \caption{Algoritmo que posiciona las piezas}
+\end{figure}
 \subsubsection{Sistema de pruebas}
 Después de la implementación, se continúa con las pruebas de la iteración en donde se evalúan los siguientes casos:
 \begin{itemize}
     \item Cajonera genera exactamente 4 tipos de piezas (Techo/Piso, Frente, Laterales y Fondo).
     \item La pieza Frente de una cajonera tiene cantidad igual al número de cajones configurado.
-    \item Las dimensiones de los Laterales corresponden a la profundidad y al alto del mueble.
-    \item El Techo/Piso utiliza el ancho y la profundidad del mueble.
-    \item Módulo sin estantes ni puertas genera 3 tipos de piezas.
-    \item Módulo con estantes genera la pieza Estantes con la cantidad correcta.
-    \item Las puertas descuentan correctamente 3 mm del ancho y del alto.
+    \item Las dimensiones de los Laterales corresponden a la profundidad y al alto del módulo.
+    \item El Techo/Piso utiliza el ancho y la profundidad del módulo.
+    \item Modular sin estantes ni puertas genera 3 tipos de piezas (Techo/Piso, Laterales y Fondo).
+    \item Modular con estantes genera la pieza Estantes con la cantidad correcta.
+    \item Las puertas descuentan correctamente 3 mm del ancho y del alto (para dar espacio al moviemiento de abrir y cerrar la puerta).
     \item El área total de las piezas no supera el área teórica de las planchas calculadas.
-    \item Una sola pieza pequeña requiere exactamente 1 plancha.
-\end{itemize}
-
+    \item Una sola pieza pequeña requiere exactamente 1 plancha. 
+\end{itemize}   
 \subsubsection{Retrospectiva}
-Al final de esta iteración se revisó el peso asignado y la estimación fue ajustada, ya que el algoritmo de generación de piezas requirió más casos de borde de los previstos inicialmente. La iteración se completó con todas las funcionalidades operativas.
+Al final de esta iteración se revisó el peso asignado y la estimación fue ajustada, ya que el algoritmo de generación de piezas requirió más casos de prueba de los previstos inicialmente. La iteración se completó con todas las funcionalidades.
 
 \subsection{Iteración 4}
 En esta iteración las historias de usuario a trabajar son HU09: Como usuario quiero que el sistema pueda generar cotizaciones a partir del diseño, HU10: Como usuario quiero que se vea una previsualización de la cotización, y HU12: Como usuario quiero que las cotizaciones se puedan exportar como PDF. Esta iteración corresponde al módulo de gestión de cotizaciones, que permite al mueblista generar, visualizar y exportar una cotización formal a partir de un diseño con su cubicación ya calculada.
@@ -1346,21 +1387,43 @@ HU09, HU10, HU12 & T06 & Creación y testeo de pruebas unitarias\\
 \end{table}
 
 \subsubsection{Diseño}
-El flujo del módulo de cotizaciones comienza cuando el mueblista ha completado el diseño y la cubicación. A partir de los datos calculados en el frontend (lista de cortes, resumen de materiales y precio total), se envía una petición POST al backend para crear y persistir la cotización en la base de datos. Luego el sistema permite previsualizarla y exportarla como PDF.
-
+El flujo del módulo de cotizaciones comienza cuando el mueblista ha completado el diseño y la cubicación. A partir de los datos calculados (lista de cortes, resumen de materiales y precio total), se envía una petición al backend para crear la cotización en la base de datos. Luego el sistema permite previsualizarla y exportarla como PDF.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/diagrama secuencia teracion 4.png}
+   \caption{diagrama de secuencia HU07, HU08: Cubicación}
+\end{figure}
 \subsubsection{Implementación}
-Para el backend se creó el modelo de datos \texttt{cotizacion.js} en MongoDB, el cual almacena el identificador del mueblista, la referencia al diseño de mueble, el nombre y correo del cliente, el precio total, la lista de cortes y el resumen de materiales usados. También se registra el estado de la cotización, que puede ser Pendiente, En Proceso o Completado.\\
+Para este módulo se almacena el identificador del mueblista, la referencia al diseño de mueble, el nombre y correo del cliente, el precio total, la lista de cortes y el resumen de materiales usados. También se registra el estado de la cotización, que puede ser Pendiente, En Proceso o Completado.\\
 
-Se implementó el archivo \texttt{cotizacionRoutes.js} con las rutas correspondientes: GET para listar las cotizaciones del usuario autenticado ordenadas por fecha, GET por ID para obtener una cotización específica, POST para crear una nueva cotización validando que el diseño de mueble exista y pertenezca al usuario, PATCH para actualizar el estado de la cotización y DELETE para eliminarla. Todas las rutas están protegidas por el middleware de autenticación JWT.\\
+En la siguiente figura se muestra la ruta POST encargada de crear una nueva cotización, en donde se valida que el diseño de mueble pertenezca al mueblista autenticado antes de guardarlo en la base de datos con estado inicial Pendiente.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it4 1.png}
+   \caption{Ruta POST para crear cotización}
+\end{figure}
 
-Para la exportación a PDF se implementó el servicio \texttt{pdfCotizacion.js} en el frontend usando la librería jsPDF. El documento generado incluye encabezado con logo, datos del mueblista y del cliente, tabla con el listado de cortes, resumen de materiales con sus costos y el precio total de la cotización. El estado de la cotización se representa visualmente con un color distintivo según sea Pendiente, En Proceso o Completado.\\
+En la siguiente figura se muestra la ruta PATCH para cambiar el estado de una cotización, en donde se validan los estados permitidos (Pendiente, En Proceso y Completado) y se registra la fecha de término cuando se alcanza el estado Completado.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it4 2.png}
+   \caption{Ruta PATCH para actualizar estado de cotización}
+\end{figure}
 
-% NOTA: Agregar captura de la previsualización de la cotización y/o del PDF generado
-% \begin{figure}[H]
-%   \includegraphics[width=1\linewidth]{imagenes/cotizacion_preview.png}
-%   \caption{Previsualización de cotización}
-% \end{figure}
+En la siguiente figura se muestra la ruta DELETE para eliminar una cotización, en donde se verifica que el documento exista y pertenezca al usuario antes de proceder con la eliminación.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it4 3.png}
+   \caption{Ruta DELETE para eliminar cotización}
+\end{figure}
 
+En la siguiente figura se muestra la sección del servicio de generación de PDF que construye la tabla de materiales, en donde se recorre el resumen de materiales de la cotización y se agregan las filas con nombre, cantidad y precio unitario usando la librería jsPDF.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it4 4.png}
+   \caption{Tabla de materiales en la generación del PDF}
+\end{figure}
+
+Como prueba de las rutas de las cotizaciones también utilizamos Jest para ver el correcto funcionamiento de rutas y no hayan problemas en la carga y descarga de información.
+\begin{figure}[H]
+  \includegraphics[width=1\linewidth]{imagenes/pruebas cotizacion.png}
+  \caption{resultado pruebas rutas cotizaciones}
+\end{figure}
 \subsubsection{Sistema de pruebas}
 Después de la implementación, se continúa con las pruebas de la iteración en donde se evalúan los siguientes casos:
 \begin{itemize}
@@ -1375,7 +1438,7 @@ Después de la implementación, se continúa con las pruebas de la iteración en
 \end{itemize}
 
 \subsubsection{Retrospectiva}
-Al final de esta iteración se revisó el peso asignado y el esfuerzo fue el esperado. La iteración se completó sin pendientes, con todas las funcionalidades del módulo de cotizaciones operativas.
+Al final de esta iteración se revisó el peso asignado y el esfuerzo fue el esperado. La iteración se completó sin pendientes.
 
 \subsection{Iteración 5}
 En esta iteración las historias de usuario a trabajar son HU14: Como usuario quiero disponer de una biblioteca de materiales y HU15: Como usuario quiero poder agregar, editar y eliminar materiales de la biblioteca. Esta iteración corresponde al módulo de gestión de la biblioteca de materiales, que permite al mueblista administrar los materiales con sus precios y atributos para que sean utilizados en el cálculo de cotizaciones.
@@ -1405,21 +1468,30 @@ HU14, HU15 & T05 & Creación y testeo de pruebas unitarias\\
 \end{table}
 
 \subsubsection{Diseño}
-El módulo de biblioteca de materiales permite al mueblista mantener un catálogo digital propio. Cada material tiene un nombre, categoría, precio y atributos específicos según la categoría. Las categorías disponibles son: \textbf{material} (planchas como melamina, con tipo y dimensiones), \textbf{accesorio} (herrajes, con tipo de accesorio), \textbf{tapa-canto} (cantos de PVC o aluminio) y \textbf{cubierta}. Estos materiales quedan vinculados al cálculo de costos en el módulo de cotizaciones.
-
+El módulo de biblioteca de materiales permite al mueblista mantener un catálogo digital propio. Cada material tiene un nombre, categoría, precio y atributos específicos según la categoría. Las categorías disponibles son: material (planchas como melamina, con tipo y dimensiones), accesorio (accesorios, con tipo de accesorio como visagras o correderas), tapa-canto (cantos de PVC o aluminio) y cubierta. Estos materiales quedan vinculados al cálculo de costos en el módulo de cotizaciones.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/diagrama secuencia iteracion 5.png}
+   \caption{diagrama de secuencia HU14, HU15: Biblioteca de materiales}
+\end{figure}
 \subsubsection{Implementación}
 Se creó el modelo de datos \texttt{material.js} en MongoDB, que almacena para cada material el identificador del usuario, el nombre, la categoría, el precio, la unidad de medida, el grosor, el tipo y los atributos específicos de cada categoría.\\
 
-En el backend se implementó el archivo \texttt{materialRoutes.js} con las rutas para listar, crear, actualizar y eliminar materiales, todas protegidas con el middleware de autenticación. El listado soporta filtros por categoría y tipo, lo que permite al frontend cargar solo los materiales necesarios para cada contexto. Se implementó también la función de validación \texttt{validateMaterialPayload} que verifica que los campos obligatorios estén presentes según la categoría del material, por ejemplo que un material de tipo 'accesorio' tenga el campo \texttt{accesorio\_tipo}.\\
+En la siguiente figura se muestra la función de validación del payload que se ejecuta antes de guardar un material, en donde se verifica que los campos obligatorios estén presentes y que los atributos específicos de cada categoría coincidan con lo requerido, como el tipo de accesorio para accesorios o el ancho y alto para materiales de plancha.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it5 1.png}
+   \caption{Validación del payload de material por categoría}
+\end{figure}
 
-En el frontend se creó el componente \texttt{MaterialLibrary.jsx}, que muestra los materiales agrupados por categoría, con opciones para agregar nuevos materiales mediante un formulario, editar los existentes y eliminarlos con un diálogo de confirmación.\\
-
-% NOTA: Agregar captura de la vista de la biblioteca de materiales
-% \begin{figure}[H]
-%   \includegraphics[width=1\linewidth]{imagenes/material_library.png}
-%   \caption{Biblioteca de materiales}
-% \end{figure}
-
+En la siguiente figura se muestra la inicialización del componente MaterialLibrary, en donde se definen las props que recibe desde el componente padre y el estado inicial que controla el formulario de creación, la selección activa y el modo de edición.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it5 2.png}
+   \caption{Estado inicial y props del componente MaterialLibrary}
+\end{figure}
+Como prueba de las rutas de los materiales también utilizamos Jest para ver el correcto funcionamiento de estas rutas y que no cuenten con errores en los métodos.
+\begin{figure}[H]
+  \includegraphics[width=1\linewidth]{imagenes/pruebas material.png}
+  \caption{resultado pruebas de rutas del módulo de materiales}
+\end{figure}
 \subsubsection{Sistema de pruebas}
 Después de la implementación, se continúa con las pruebas de la iteración en donde se evalúan los siguientes casos:
 \begin{itemize}
@@ -1438,7 +1510,7 @@ Después de la implementación, se continúa con las pruebas de la iteración en
 Al final de esta iteración se revisó el peso asignado y el esfuerzo fue el esperado. La iteración se completó sin pendientes.
 
 \subsection{Iteración 6}
-En esta iteración las historias de usuario a trabajar son HU16: Como usuario quiero ver estadísticas básicas y HU17: Como usuario quiero que se puedan filtrar las estadísticas por periodos. Esta iteración corresponde al módulo de estadísticas, que permite al mueblista visualizar indicadores clave y gráficos sobre el historial de diseños y cotizaciones.
+En esta iteración las historias de usuario a trabajar son HU15: Como usuario quiero ver estadísticas básicas y HU16: Como usuario quiero que se puedan filtrar las estadísticas por periodos. Esta iteración corresponde al módulo de estadísticas, que permite al mueblista visualizar indicadores clave y gráficos sobre el historial de diseños y cotizaciones.
 
 \subsubsection{Inicio de Iteración}
 En esta etapa, se crean y registran las tareas acordes a las historias de usuario a trabajar, en donde en el cuadro 4.6 se ilustran las tareas resultantes para la iteración.
@@ -1451,32 +1523,47 @@ En esta etapa, se crean y registran las tareas acordes a las historias de usuari
         \hline
         \textbf{HU} & \textbf{Tarea} & \textbf{Descripción}\\
         \hline
-HU16, HU17 & T01 & Crear diagrama de secuencia del módulo de estadísticas\\
+HU15, HU16 & T01 & Crear diagrama de secuencia del módulo de estadísticas\\
 \hline
-HU16 & T02 & Implementar los KPIs del panel de estadísticas\\
+HU15 & T02 & Implementar los KPIs del panel de estadísticas\\
 \hline
-HU16 & T03 & Implementar los gráficos del panel de estadísticas\\
+HU15 & T03 & Implementar los gráficos del panel de estadísticas\\
 \hline
-HU17 & T04 & Implementar el filtro por año\\
+HU16 & T04 & Implementar el filtro por año\\
 \hline
-HU16, HU17 & T05 & Creación y testeo de pruebas de caja negra\\
+HU15, HU16 & T05 & Creación y testeo de pruebas de caja negra\\
         \hline
     \end{tabular}
 \end{table}
 
 \subsubsection{Diseño}
 El módulo de estadísticas obtiene los datos directamente de las cotizaciones y diseños ya guardados del usuario. Al cargar el panel, se hace una petición al endpoint de cotizaciones y se procesan los datos en el cliente para construir los indicadores y gráficos. Se implementó un selector de año para filtrar los datos por periodo, actualizando todos los indicadores y gráficos en tiempo real al cambiar el año seleccionado.
-
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/diagrama secuencia iteracion 6.png}
+   \caption{diagrama de secuencia HU15, HU16: Estadísticas}
+\end{figure}
 \subsubsection{Implementación}
 Se implementó el componente \texttt{StatsPanel.jsx} en el frontend, que es el encargado de centralizar toda la lógica y visualización de estadísticas. Al cargar el componente se obtienen las cotizaciones del usuario mediante el servicio \texttt{listCotizaciones} y los diseños mediante el servicio de muebles. A partir de estos datos se calculan los siguientes KPIs: total de diseños guardados, total de cotizaciones, monto acumulado de cotizaciones, precio promedio y total de módulos usados.\\
 
-Para la visualización se implementaron gráficos de barras horizontales para mostrar los diseños creados por mes, la distribución de cotizaciones por estado (Pendiente, En Proceso, Completado) y los tipos de módulos más utilizados en los diseños. Cuando el usuario no tiene datos registrados, los KPIs muestran el valor 0 y los gráficos muestran un mensaje de 'Sin datos'. El filtro de año permite al mueblista comparar su desempeño entre distintos periodos.\\
+Para la visualización se implementaron gráficos de barras horizontales para mostrar los diseños creados por mes, la distribución de cotizaciones por estado (Pendiente, En Proceso, Completado) y los tipos de módulos más utilizados en los diseños.\\
 
-% NOTA: Agregar captura del panel de estadísticas con KPIs y gráficos
-% \begin{figure}[H]
-%   \includegraphics[width=1\linewidth]{imagenes/stats_panel.png}
-%   \caption{Panel de estadísticas}
-% \end{figure}
+En la siguiente figura se muestra el componente BarChart, en donde se implementa la visualización de barras horizontales que es reutilizado para mostrar distintas distribuciones de datos en el panel de estadísticas.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it6 1.png}
+   \caption{Componente BarChart para visualización de estadísticas}
+\end{figure}
+
+En la siguiente figura se muestra la lógica del filtro por período, en donde a partir del año seleccionado se filtran las cotizaciones y diseños para que todos los indicadores y gráficos del panel muestren únicamente los datos del período elegido.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it6 2.png}
+   \caption{Lógica de filtro por período en StatsPanel}
+\end{figure}
+
+En la siguiente figura se muestra el cálculo de los KPIs agrupados por mes, en donde se recorren las cotizaciones filtradas y se acumulan los valores de precio, estado y tipo de módulo para construir los datos que alimentan los gráficos del panel.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it6 3.png}
+   \caption{Cálculo de KPIs por mes en StatsPanel}
+\end{figure}
 
 \subsubsection{Sistema de pruebas}
 Después de la implementación, se continúa con las pruebas de la iteración en donde se evalúan los siguientes casos:
@@ -1493,12 +1580,11 @@ Después de la implementación, se continúa con las pruebas de la iteración en
     \item Filtrar por año anterior muestra solo los datos del año anterior.
     \item Seleccionar un periodo sin datos muestra los KPIs en 0.
 \end{itemize}
-
 \subsubsection{Retrospectiva}
 Al final de esta iteración se revisó el peso asignado y el esfuerzo fue el esperado. El módulo de estadísticas quedó operativo con todas sus funcionalidades.
 
 \subsection{Iteración 7}
-En esta iteración la historia de usuario a trabajar es HU13: Como usuario quiero que el sistema permita enviar cotizaciones por correo. Esta iteración corresponde a la implementación del envío de cotizaciones por correo electrónico al cliente, integrando el servicio Email.js directamente desde el frontend.
+En esta iteración la historia de usuario a trabajar es HU13: Como usuario quiero que el sistema permita enviar cotizaciones por correo. Esta iteración corresponde a la implementación del envío de cotizaciones por correo electrónico al cliente, integrando el servicio Nodemailer directamente desde el frontend.
 
 \subsubsection{Inicio de Iteración}
 En esta etapa, se crean y registran las tareas acordes a las historias de usuario a trabajar, en donde en el cuadro 4.7 se ilustran las tareas resultantes para la iteración.
@@ -1511,7 +1597,7 @@ En esta etapa, se crean y registran las tareas acordes a las historias de usuari
         \hline
         \textbf{HU} & \textbf{Tarea} & \textbf{Descripción}\\
         \hline
-HU13 & T01 & Configurar plantilla de correo en Email.js\\
+HU13 & T01 & Configurar plantilla de correo en Nodemailer\\
 \hline
 HU13 & T02 & Implementar lógica de envío desde el frontend\\
 \hline
@@ -1523,19 +1609,30 @@ HU13 & T04 & Testeo del envío de correo\\
 \end{table}
 
 \subsubsection{Diseño}
-El flujo de envío de correo comienza cuando el mueblista ingresa el correo del cliente en la vista de cotización y presiona el botón de enviar. El frontend llama al servicio Email.js con los datos de la cotización usando una plantilla predefinida en la plataforma de Email.js, la cual incluye el resumen de la cotización y el precio total. No se requiere configurar ni mantener un servidor de correo propio ya que Email.js actúa como intermediario.
-
+El flujo de envío de correo comienza cuando el mueblista ingresa el correo del cliente en la vista de cotización y presiona el botón de enviar. El frontend llama al servicio Nodemailer con los datos de la cotización, la cual incluye el resumen de la cotización y el precio total.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/diagrama secuencia iteracion 7.png}
+   \caption{diagrama de secuencia HU13: Envío de correo}
+\end{figure}
 \subsubsection{Implementación}
-Para la implementación de esta funcionalidad se utilizó la librería \texttt{@emailjs/browser} en el frontend. Se creó una plantilla de correo en la plataforma de Email.js que incluye los datos del cliente, el detalle del mueble cotizado, el listado de materiales y el precio total. Desde la vista de cotizaciones, cuando el mueblista ingresa el correo del cliente y confirma el envío, se llama a la función \texttt{emailjs.send} con los parámetros correspondientes de la plantilla. En caso de éxito se notifica al usuario con un mensaje de confirmación, y en caso de error se muestra el mensaje correspondiente.\\
+Para la implementación de esta funcionalidad se instaló la librería Nodemailer en el backend mediante npm. Se creó un módulo de servicio de correo que configura el transporter con las credenciales SMTP y construye el mensaje con los datos del cliente, el detalle del mueble cotizado, el listado de materiales y el precio total.\\
 
-Se eligió Email.js ya que su plan gratuito incluye 200 correos mensuales con 2 plantillas, lo cual es suficiente para las dimensiones del proyecto y no requiere configuración de servidor.\\
+En la siguiente figura se muestra la configuración del transporter de Nodemailer, en donde se implementaron dos modos de operación: uno con credenciales SMTP reales para producción y otro con una cuenta de prueba de Ethereal para el ambiente de desarrollo, para así no depender de credenciales reales durante el testeo.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it7 1.png}
+   \caption{Configuración del transporter Nodemailer con modos SMTP}
+\end{figure}
 
-% NOTA: Agregar captura de la funcionalidad de envío de correo desde la cotización
-% \begin{figure}[H]
-%   \includegraphics[width=1\linewidth]{imagenes/email_envio.png}
-%   \caption{Envío de cotización por correo}
-% \end{figure}
-
+En la siguiente figura se muestra la ruta POST encargada de construir y enviar el correo con la cotización adjunta, en donde se recibe el PDF codificado en base64 desde el frontend y se adjunta al mensaje junto con el nombre del proyecto y el precio total antes de enviarlo mediante el transporter configurado.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it7 2.png}
+   \caption{Ruta POST para envío de correo con PDF adjunto}
+\end{figure}
+Como prueba de las rutas del correo también utilizamos Jest para ver el correcto funcionamiento de estas.
+\begin{figure}[H]
+  \includegraphics[width=1\linewidth]{imagenes/pruebas correo.png}
+  \caption{resultado pruebas de rutas del correo}
+\end{figure}
 \subsubsection{Sistema de pruebas}
 Después de la implementación, se continúa con las pruebas de la iteración en donde se evalúan los siguientes casos:
 \begin{itemize}
@@ -1546,13 +1643,13 @@ Después de la implementación, se continúa con las pruebas de la iteración en
 \end{itemize}
 
 \subsubsection{Retrospectiva}
-Al final de esta iteración se revisó el peso asignado y el esfuerzo fue menor al estimado, ya que Email.js simplificó bastante la integración. La iteración se completó sin pendientes.
+Al final de esta iteración se revisó el peso asignado y el esfuerzo fue el esperado. La integración de Nodemailer resultó directa, la mayor complicación fue la configuración de las credenciales SMTP y el ajuste del contenido HTML del correo para que se visualizara correctamente. La iteración se completó sin pendientes.
 
 \subsection{Iteración 8}
-En esta iteración la historia de usuario a trabajar es HU03: Como usuario quiero crear, guardar, cargar y eliminar el diseño de un mueble. Si bien las rutas del backend para guardar y cargar muebles fueron implementadas en la Iteración 2, en esta iteración se desarrolló la vista dedicada de biblioteca de muebles, que permite al mueblista acceder de forma centralizada a todos sus diseños guardados, cargarlos en el canvas o eliminarlos.
+En esta iteración no hay una historia de usuario específica, el objetivo es la unión de todos los módulos previamente implementados, de modo que el mueblista pueda navegar entre ellos a través del frontend sin romper ninguna vista ni perder el estado de trabajo.
 
 \subsubsection{Inicio de Iteración}
-En esta etapa, se crean y registran las tareas acordes a las historias de usuario a trabajar, en donde en el cuadro 4.8 se ilustran las tareas resultantes para la iteración.
+En esta etapa, se crean y registran las tareas de integración a ejecutar, las cuales se ilustran en el cuadro 4.8.
 
 \begin{table}[H]
     \centering
@@ -1562,51 +1659,433 @@ En esta etapa, se crean y registran las tareas acordes a las historias de usuari
         \hline
         \textbf{HU} & \textbf{Tarea} & \textbf{Descripción}\\
         \hline
-HU03 & T01 & Diseñar la vista de biblioteca de muebles\\
+— & T01 & Implementar el sistema de navegación por pestañas\\
 \hline
-HU03 & T02 & Implementar la vista con listado de diseños guardados\\
+— & T02 & Configurar el estado compartido entre módulos (diseños, materiales, accesorios)\\
 \hline
-HU03 & T03 & Implementar la carga de un diseño desde la biblioteca al canvas\\
+— & T03 & Implementar callbacks de navegación cruzada entre Cotizaciones y Cubicación\\
 \hline
-HU03 & T04 & Implementar la eliminación de diseños desde la biblioteca\\
+— & T04 & Adaptar el layout para dispositivos móviles\\
 \hline
-HU03 & T05 & Creación y testeo de pruebas de caja negra\\
+— & T05 & Verificar que ningún módulo previo presenta regresiones al navegar\\
         \hline
     \end{tabular}
 \end{table}
 
 \subsubsection{Diseño}
-La biblioteca de muebles es una vista que lista todos los diseños guardados por el mueblista, mostrando el nombre y la fecha de creación de cada uno. Desde esta vista el mueblista puede seleccionar un diseño para cargarlo en el canvas y continuar editándolo, o eliminarlo con un diálogo de confirmación. La integración con el backend reutiliza las rutas de diseños ya implementadas en la Iteración 2 (GET para listar, DELETE para eliminar).
+La arquitectura de integración centraliza toda la orquestación. La navegación entre módulos se implementa mediante un estado que identifica las dimensiones de la pantalla con cinco pestañas: Diseño, Cubicación, Biblioteca, Estadísticas y Cotizaciones.\\
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/diagrama secuencia iteracion 8.png}
+   \caption{diagrama de secuencia integración de todos los módulos}
+\end{figure}
 
 \subsubsection{Implementación}
-Para esta iteración se integró la vista de biblioteca de muebles en la interfaz principal de la aplicación. Al acceder a esta sección, se hace una petición GET al endpoint de diseños del usuario, obteniendo el listado completo ordenado por fecha de creación. Cada diseño se muestra como una tarjeta con el nombre del mueble y la fecha en que fue guardado.\\
+Se modificó para centralizar la orquestación de todos los módulos. El estado que controla qué panel se muestra, las pestañas se renderizan como botones en la barra superior de la vista de escritorio y como fila de botones compactos en móvil.\\
 
-Al presionar el botón de cargar, las figuras del diseño seleccionado se deserializan y se cargan en el canvas de Konva, reemplazando el diseño actual. Para la eliminación se muestra un diálogo de confirmación antes de ejecutar la petición DELETE al backend, para evitar eliminaciones accidentales. Una vez eliminado el diseño, la biblioteca se actualiza automáticamente.\\
-
-% NOTA: Agregar captura de la vista de biblioteca de muebles
-% \begin{figure}[H]
-%   \includegraphics[width=1\linewidth]{imagenes/biblioteca_muebles.png}
-%   \caption{Vista de biblioteca de muebles}
-% \end{figure}
+En la siguiente figura se muestra el listener de resize implementado en App.jsx, en donde se detecta el ancho del viewport y se actualiza el estado para activar el layout móvil cuando el ancho es igual o menor a 600 píxeles, para así adaptar la interfaz al dispositivo del mueblista.
+\begin{figure}[H]
+   \includegraphics[width=1\linewidth]{imagenes/it8 1.png}
+   \caption{Listener de resize para layout responsivo en App.jsx}
+\end{figure}
 
 \subsubsection{Sistema de pruebas}
 Después de la implementación, se continúa con las pruebas de la iteración en donde se evalúan los siguientes casos:
 \begin{itemize}
-    \item Cargar la biblioteca con diseños guardados y verificar que se listan correctamente.
-    \item Seleccionar un diseño y cargarlo en el canvas.
-    \item Verificar que el canvas muestra correctamente el diseño cargado.
-    \item Eliminar un diseño confirmando la acción.
-    \item Cancelar la eliminación de un diseño.
-    \item Verificar que la biblioteca se actualiza tras una eliminación.
-    \item Acceder a la biblioteca con el usuario sin diseños guardados.
+    \item Navegar a cada pestaña y verificar que el módulo correspondiente se muestra correctamente.
+    \item Agregar módulos al canvas, cambiar a Cubicación y verificar que las figuras están disponibles.
+    \item Seleccionar un material en Biblioteca, cambiar a Diseño y verificar que el material sigue activo.
+    \item Navegar a Cotizaciones y usar el botón de ir a Cubicación, verificando que la pestaña cambia.
+    \item Cargar un diseño desde Diseños recientes y verificar que el canvas se actualiza.
+    \item Reducir el viewport a 400 px de ancho y verificar que se muestra el layout móvil.
+    \item Iniciar sesión y verificar que todos los módulos cargan sus datos correctamente.
+    \item Cerrar sesión y verificar que el estado se limpia al volver a la pantalla de inicio.
 \end{itemize}
 
 \subsubsection{Retrospectiva}
-Al final de esta iteración se revisó el peso asignado y el esfuerzo fue el esperado, ya que la mayor parte de la lógica de backend ya estaba implementada. La iteración se completó sin pendientes, cerrando así el ciclo de desarrollo de los módulos principales de la aplicación.
+Al final de esta iteración se revisó el peso asignado y el esfuerzo fue menor al estimado, ya que todos los módulos habían sido diseñados como componentes aislados con interfaces claras. El principal desafío fue coordinar el layout responsivo. La iteración se completó sin pendientes, cerrando el ciclo de desarrollo de todos los módulos de la aplicación.
 
+\section{Análisis de Sostenibilidad}
+Para evaluar el impacto ambiental de la aplicación se utilizó la herramienta Website Carbon Calculator~\cite{websitecarbon}. Esta herramienta estima la huella de carbono de una página web a partir del peso de los recursos transferidos, el número de solicitudes al servidor y la fuente de energía del hosting donde está alojada la aplicación, entregando un estimado en gramos de CO\textsubscript{2} por visita.
+
+Al evaluar la página principal de Amedida, la herramienta entregó una calificación \textbf{A}, posicionando al sitio como \textbf{más limpio que el 92\% de las páginas web analizadas a nivel global}. Este resultado es bastante positivo si se considera que el promedio mundial se ubica cerca de la categoría E en la escala de clasificación de la herramienta, como se puede observar en la figura a continuación.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.85\linewidth]{imagenes/huella_carbono.png}
+  \caption{Resultado de la evaluación de huella de carbono de Amedida — Website Carbon Calculator}
+  \label{fig:huella_carbono}
+\end{figure}
+
+Este resultado tiene bastante sentido si se consideran las decisiones técnicas tomadas durante el desarrollo. Al ser una aplicación de página única construida con React, la mayor parte de la lógica se ejecuta directamente en el navegador del usuario y no en el servidor, lo que significa que una vez cargada la aplicación las interacciones no generan peticiones constantes al backend. Además, el módulo de cubicación procesa todos los cálculos en el cliente mediante el algoritmo MAXRECTS sin necesidad de llamadas adicionales a la API, lo que reduce el tráfico de red por cada operación y contribuye directamente a esta baja huella de carbono.
+
+\section{Análisis de Accesibilidad}
+Para evaluar la accesibilidad de la interfaz de Amedida se utilizó la herramienta WAVE (Web Accessibility Evaluation Tool)~\cite{wave}. Esta herramienta analiza la página web directamente en el navegador e identifica problemas según las pautas WCAG 2.1 (Web Content Accessibility Guidelines), clasificando los hallazgos en errores críticos, alertas, elementos de accesibilidad positivos, elementos estructurales, atributos ARIA y errores de contraste de color.
+
+Se evaluaron las siguientes vistas del sistema: el landing page, el formulario de inicio de sesión, el canvas de diseño, el panel de cubicación, la biblioteca de materiales, el módulo de cotizaciones y el panel de estadísticas. Los resultados obtenidos se resumen en la tabla a continuación:
+
+\begin{table}[H]
+\centering
+\small
+\caption{Resumen de resultados WAVE por vista del sistema}
+\label{tab:wave_resultados}
+\begin{tabular}{|p{2.6cm}|p{1.4cm}|p{2.2cm}|p{1.4cm}|p{2.5cm}|}
+\hline
+\textbf{Vista} & \textbf{Errores} & \textbf{Errores de contraste} & \textbf{Alertas} & \textbf{Puntaje AIM} \\
+\hline
+Landing       & 0 & 80 & 70 & 1{,}8 / 10 \\
+\hline
+Login         & 2 & 4  & 4  & 6{,}0 / 10 \\
+\hline
+Diseño        & 0 & 15 & 14 & 5{,}5 / 10 \\
+\hline
+Cubicación    & 4 & 60 & 17 & 3{,}7 / 10 \\
+\hline
+Biblioteca    & 1 & 25 & 14 & 4{,}3 / 10 \\
+\hline
+Cotizaciones  & 0 & 20 & 16 & 4{,}9 / 10 \\
+\hline
+Estadísticas  & 0 & 33 & 14 & 4{,}3 / 10 \\
+\hline
+\end{tabular}
+\end{table}
+
+A partir de los resultados de la tabla es posible identificar 2 patrones principales que se repiten en todas las vistas del sistema.
+
+El primero y más significativo son los errores de contraste de color, que representan la mayor cantidad de hallazgos en prácticamente todas las vistas. Esto se explica directamente por el uso del tema oscuro en la interfaz de Amedida, en donde los íconos y textos de colores sobre fondos negros o gris muy oscuro no siempre alcanzan la relación de contraste mínima de 4.5:1 que exige el estándar WCAG 2.1.\\
+
+El segundo patrón son las etiquetas de formulario faltantes, que se concentran en las vistas con campos de entrada.Donde no tienen un elemento '<label>' explícitamente asociado mediante el atributo 'for', lo que puede afectar la experiencia de usuarios que utilizan lectores de pantalla.
+
+Las capturas individuales de la evaluación WAVE para cada vista del sistema se encuentran en el Anexo B.
+
+\chapter{Pruebas}
+\label{cap:pruebas}
+En este capítulo se presentan los resultados de las pruebas aplicadas al sistema Amedida a lo largo de las ocho iteraciones de desarrollo. Se distinguen dos tipos de evaluación: pruebas unitarias automatizadas ejecutadas con el framework Jest, que validan la lógica interna de cada módulo, y pruebas de caja negra, que verifican el comportamiento funcional del sistema desde la perspectiva del usuario final. Los casos de prueba unitaria PU-01 a PU-27 corresponden a las iteraciones 1 y 2; los casos PU-28 a PU-71 se encuentran en el Anexo A. Los casos de prueba de caja negra PCN-01 a PCN-60 cubren la totalidad de las iteraciones.
+
+
+\section{Pruebas de Caja Negra}
+Al término de cada iteración se ejecutaron pruebas de caja negra sobre el sistema desplegado, evaluando su comportamiento desde la perspectiva del mueblista sin acceder al código fuente. Los 60 casos PCN-01 a PCN-60 se agrupan por iteración y registran la acción realizada, la respuesta del sistema y si ese resultado coincide con lo esperado.
+
+\subsection{Iteración 1 — Autenticación (HU01)}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/PN it1.png}
+  \caption{Pruebas de Caja Negra Iteración 1}
+  \label{fig:PN-IT1}
+\end{figure}
+
+\subsection{Iteración 2 — Canvas y Diseño (HU02 -- HU06)}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/PN it2.png}
+  \caption{Pruebas de Caja Negra Iteración 2}
+  \label{fig:PN-IT2}
+\end{figure}
+
+\subsection{Iteración 3 — Cubicación (HU07, HU08)}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/PN it3.png}
+  \caption{Pruebas de Caja Negra Iteración 3}
+  \label{fig:PN-IT3}
+\end{figure}
+
+\subsection{Iteración 4 — Cotizaciones (HU09, HU10, HU12)}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/PN it4.png}
+  \caption{Pruebas de Caja Negra Iteración 4}
+  \label{fig:PN-IT4}
+\end{figure}
+
+\subsection{Iteración 5 — Biblioteca de Materiales (HU14, HU15)}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/PN it5.png}
+  \caption{Pruebas de Caja Negra Iteración 5}
+  \label{fig:PN-IT5}
+\end{figure}
+
+\subsection{Iteración 6 — Estadísticas (HU15, HU16)}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/PN it6.png}
+  \caption{Pruebas de Caja Negra Iteración 6}
+  \label{fig:PN-IT6}
+\end{figure}
+
+\subsection{Iteración 7 — Envío de Correo (HU13)}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/PN it7.png}
+  \caption{Pruebas de Caja Negra Iteración 7}
+  \label{fig:PN-IT7}
+\end{figure}
+
+\subsection{Iteración 8 — Navegación e Integración}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/PN it8.png}
+  \caption{Pruebas de Caja Negra Iteración 8}
+  \label{fig:PN-IT8}
+\end{figure}
+
+\section{Pruebas de Aceptación}
+Las pruebas de aceptación se ejecutaron sobre el sistema desplegado al cierre de cada iteración, recorriendo flujos reales del mueblista. Para cada caso se registran los pasos seguidos, el resultado esperado y lo que efectivamente ocurrió.
+
+\begin{table}[H]
+\centering
+\caption{Prueba de aceptación PA-01 — Iteración 1: Autenticación}
+\label{tab:pa01}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Test Case ID} & PA-01 \\
+\hline
+\textbf{Descripción} & Registro e inicio de sesión de mueblista en la plataforma. \\
+\hline
+\textbf{Pasos de prueba} &
+1) Ingresar a la aplicación web Amedida. \newline
+2) Completar el formulario de registro con nombre, email y contraseña válidos. \newline
+3) Enviar el formulario y verificar la creación de la cuenta. \newline
+4) Iniciar sesión con las credenciales recién registradas. \newline
+5) Verificar que el sistema redirige al panel principal. \\
+\hline
+\textbf{Resultado esperado} & El sistema crea la cuenta, autentica al usuario y muestra el panel principal con el nombre del mueblista. \\
+\hline
+\textbf{Resultado obtenido} & El sistema registró la cuenta e inició sesión correctamente, redirigiendo al panel principal sin errores. \\
+\hline
+\textbf{Estado} & {[X]} Aprobado \quad {[ ]} Fallido \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de aceptación PA-02 — Iteración 2: Canvas y Diseño}
+\label{tab:pa02}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Test Case ID} & PA-02 \\
+\hline
+\textbf{Descripción} & Creación, edición y almacenamiento de un diseño de mueble en el canvas. \\
+\hline
+\textbf{Pasos de prueba} &
+1) Iniciar sesión como mueblista. \newline
+2) Agregar módulos al canvas (por ej., una cajonera y un modular). \newline
+3) Editar las dimensiones de uno de los módulos. \newline
+4) Asignar un nombre al diseño y guardar. \newline
+5) Recargar la página, cargar el diseño desde Diseños recientes y verificar que las figuras se restauran. \\
+\hline
+\textbf{Resultado esperado} & Los módulos se agregan y editan correctamente; el diseño persiste en la base de datos y se puede recargar con las mismas figuras y dimensiones. \\
+\hline
+\textbf{Resultado obtenido} & El diseño se guardó y se recuperó con todas las figuras y dimensiones correctas. \\
+\hline
+\textbf{Estado} & {[X]} Aprobado \quad {[ ]} Fallido \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de aceptación PA-03 — Iteración 3: Cubicación}
+\label{tab:pa03}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Test Case ID} & PA-03 \\
+\hline
+\textbf{Descripción} & Verificación del listado de piezas y del conteo de planchas generados a partir de un diseño con dos módulos en el canvas. \\
+\hline
+\textbf{Pasos de prueba} &
+1) Cargar un diseño con al menos dos módulos en el canvas. \newline
+2) Seleccionar un material de plancha desde la biblioteca. \newline
+3) Navegar a la pestaña Cubicación. \newline
+4) Revisar el listado de piezas con sus nombres, cantidades y dimensiones. \newline
+5) Confirmar que el número de planchas calculado no supera el área total de las piezas. \\
+\hline
+\textbf{Resultado esperado} & Cada pieza aparece con su nombre, cantidad y dimensiones. El número de planchas es coherente con el área total calculada. \\
+\hline
+\textbf{Resultado obtenido} & El listado mostró las piezas esperadas para cada módulo con las dimensiones ingresadas en el canvas. El conteo de planchas fue consistente con el área calculada. \\
+\hline
+\textbf{Estado} & {[X]} Aprobado \quad {[ ]} Fallido \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de aceptación PA-04 — Iteración 4: Cotizaciones}
+\label{tab:pa04}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Test Case ID} & PA-04 \\
+\hline
+\textbf{Descripción} & Creación de una cotización, cambio de su estado y descarga del PDF resultante. \\
+\hline
+\textbf{Pasos de prueba} &
+1) Con un diseño cubicado, navegar a la pestaña Cotizaciones. \newline
+2) Ingresar los datos del cliente y el precio, luego generar la cotización. \newline
+3) Verificar que la cotización aparece con estado Pendiente. \newline
+4) Cambiar el estado a En Proceso y verificar que el cambio queda guardado. \newline
+5) Exportar la cotización a PDF y revisar que el archivo contiene los datos del proyecto. \\
+\hline
+\textbf{Resultado esperado} & La cotización aparece como Pendiente al crearse. El cambio a En Proceso queda guardado. El PDF contiene los datos del proyecto y el precio total. \\
+\hline
+\textbf{Resultado obtenido} & La cotización quedó en estado Pendiente. El cambio a En Proceso se reflejó de inmediato y el PDF descargado incluyó los datos del proyecto. \\
+\hline
+\textbf{Estado} & {[X]} Aprobado \quad {[ ]} Fallido \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de aceptación PA-05 — Iteración 5: Biblioteca de Materiales}
+\label{tab:pa05}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Test Case ID} & PA-05 \\
+\hline
+\textbf{Descripción} & Flujo completo de gestión de un material: agregar una plancha, editar su precio y eliminarlo de la biblioteca. \\
+\hline
+\textbf{Pasos de prueba} &
+1) Navegar a la pestaña Materiales. \newline
+2) Agregar una plancha de MDF con nombre, dimensiones y precio. \newline
+3) Verificar que el material aparece en el listado. \newline
+4) Editar el precio del material y guardar. \newline
+5) Eliminar el material, confirmar en el diálogo y verificar que desaparece del listado. \\
+\hline
+\textbf{Resultado esperado} & Cada acción actualiza el listado visible sin necesidad de recargar la página. \\
+\hline
+\textbf{Resultado obtenido} & El material apareció en el listado al crearlo, el precio se actualizó al editarlo y desapareció del listado al confirmar la eliminación. \\
+\hline
+\textbf{Estado} & {[X]} Aprobado \quad {[ ]} Fallido \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de aceptación PA-06 — Iteración 6: Estadísticas}
+\label{tab:pa06}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Test Case ID} & PA-06 \\
+\hline
+\textbf{Descripción} & Revisión de KPIs y gráficos del panel de estadísticas con cambio de filtro de año. \\
+\hline
+\textbf{Pasos de prueba} &
+1) Con diseños y cotizaciones existentes, navegar a la pestaña Estadísticas. \newline
+2) Verificar los KPIs de diseños totales, cotizaciones totales y monto acumulado. \newline
+3) Revisar el gráfico de diseños por mes y el de cotizaciones por estado. \newline
+4) Cambiar el filtro al año anterior. \newline
+5) Verificar que KPIs y gráficos muestran solo los datos del año seleccionado. \\
+\hline
+\textbf{Resultado esperado} & Los contadores coinciden con los datos del usuario y los gráficos cambian al seleccionar un año distinto. \\
+\hline
+\textbf{Resultado obtenido} & Los KPIs mostraron los valores esperados. Al cambiar el año, los gráficos se actualizaron con los datos de ese período. \\
+\hline
+\textbf{Estado} & {[X]} Aprobado \quad {[ ]} Fallido \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de aceptación PA-07 — Iteración 7: Envío de Correo}
+\label{tab:pa07}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Test Case ID} & PA-07 \\
+\hline
+\textbf{Descripción} & Envío de la cotización en PDF al correo del cliente desde la interfaz del sistema. \\
+\hline
+\textbf{Pasos de prueba} &
+1) Abrir una cotización existente en la pestaña Cotizaciones. \newline
+2) Exportar la cotización a PDF. \newline
+3) Ingresar el correo del cliente en el formulario de envío. \newline
+4) Confirmar el envío. \newline
+5) Verificar que la interfaz muestra un aviso de confirmación. \\
+\hline
+\textbf{Resultado esperado} & El correo llega al destinatario con el PDF adjunto y la interfaz muestra un aviso de confirmación. \\
+\hline
+\textbf{Resultado obtenido} & El correo llegó con el PDF de la cotización adjunto. La interfaz mostró el aviso de confirmación. \\
+\hline
+\textbf{Estado} & {[X]} Aprobado \quad {[ ]} Fallido \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Prueba de aceptación PA-08 — Iteración 8: Navegación e Integración}
+\label{tab:pa08}
+\begin{tabular}{|p{4cm}|p{9.5cm}|}
+\hline
+\textbf{Test Case ID} & PA-08 \\
+\hline
+\textbf{Descripción} & Revisión de la integración entre módulos: estado compartido entre pestañas, layout móvil y cierre de sesión. \\
+\hline
+\textbf{Pasos de prueba} &
+1) Iniciar sesión y navegar entre las pestañas del sistema. \newline
+2) Dibujar módulos en el canvas y cambiar a Cubicación; verificar que las figuras están disponibles. \newline
+3) Seleccionar un material en Biblioteca, cambiar a Diseño y verificar que el material persiste. \newline
+4) Reducir el viewport a menos de 600 px y verificar que se activa el layout móvil. \newline
+5) Cerrar sesión y verificar que el sistema redirige al login. \\
+\hline
+\textbf{Resultado esperado} & Las figuras del canvas están disponibles en Cubicación al cambiar de pestaña. El material seleccionado persiste en Diseño. El layout móvil se activa bajo 600 px y el cierre de sesión redirige al login. \\
+\hline
+\textbf{Resultado obtenido} & El canvas estuvo disponible en Cubicación, el material persistió en Diseño y el layout móvil se activó. El cierre de sesión redirigió a la pantalla de inicio. \\
+\hline
+\textbf{Estado} & {[X]} Aprobado \quad {[ ]} Fallido \\
+\hline
+\end{tabular}
+\end{table}
+
+% ─────────────────────────────────────────────────────────────────────────────
+\section{Prueba de Usabilidad (SUS)}
+\label{sec:sus}
+Para evaluar la usabilidad del sistema se le aplicó la encuesta SUS (System Usability Scale) al mueblista al término del desarrollo. La encuesta consta de 10 afirmaciones con puntaje del 1 al 5, en donde las afirmaciones impares se califican de forma positiva y las pares de forma negativa, para así obtener un puntaje entre 0 y 100 que clasifica el sistema como Inaceptable (0--49), Mediocre (50--68) o Aceptable (69--100).
+
+A continuación se muestran las respuestas del mueblista:
+
+\begin{enumerate}
+    \item Creo que me gustaría utilizar este sistema con frecuencia = 5
+    \item Encontré el sistema innecesariamente complejo = 2
+    \item Pensé que el sistema era fácil de usar = 4
+    \item Creo que necesitaría el apoyo de un técnico para poder utilizar este sistema = 1
+    \item Encontré que las diversas funciones de este sistema estaban bien integradas = 3
+    \item Pensé que había demasiada inconsistencia en este sistema = 1
+    \item Me imagino que la mayoría de la gente aprendería a utilizar este sistema muy rápidamente = 5
+    \item Encontré el sistema muy complicado de usar = 1
+    \item Me sentí muy seguro usando el sistema = 4
+    \item Necesitaba aprender muchas cosas antes de empezar con este sistema = 2
+\end{enumerate}
+
+Para calcular el puntaje, a cada ítem impar se le resta 1 y cada ítem par se descuenta de 5, para luego sumar ambos grupos y multiplicar el resultado por 2,5:
+
+\begin{itemize}
+    \item Suma de ítems impares: (5 + 4 + 3 + 5 + 4) -- 5 = 16
+    \item Suma de ítems pares: 25 -- (2 + 1 + 1 + 1 + 2) = 18
+    \item \textbf{Puntaje SUS: (16 + 18) $\times$ 2{,}5 = 85}
+\end{itemize}
+
+El resultado fue de 85 puntos, lo que corresponde a la categoría \textit{Aceptable} de la escala SUS (mayor a 68), validando que la interfaz es intuitiva para el perfil del mueblista artesanal y cumpliendo así el OE8.
+
+\section{Resumen del capítulo}
+Las pruebas cubrieron cuatro categorías. Los casos PU-01 a PU-27 verifican la lógica interna de autenticación y diseño de muebles en las iteraciones 1 y 2; los casos PU-28 a PU-71 están en el Anexo A. Los 60 casos de caja negra PCN-01 a PCN-60 evaluaron el sistema desde la perspectiva del mueblista en cada iteración. Las ocho pruebas de aceptación PA-01 a PA-08 recorrieron los flujos completos al cierre de cada iteración. Finalmente, la prueba de usabilidad SUS arrojó un puntaje de 85 puntos, confirmando que la interfaz es aceptable para el usuario objetivo. Todos los casos fueron aprobados.
 
 \chapter{Conclusiones y trabajo futuro}
 En este capítulo se abarcan las conclusiones obtenidas del trabajo realizado y de lo que queda por realizar en el proyecto.
+
+
+
 \section{Cumplimiento de Objetivos}
 Al término del desarrollo se completaron las 8 iteraciones planificadas, implementando la totalidad de los módulos del sistema. A continuación se detalla el estado de cumplimiento de cada objetivo específico:
 
@@ -1625,48 +2104,22 @@ Al término del desarrollo se completaron las 8 iteraciones planificadas, implem
 
     \item \textbf{OE7 — Estadísticas:} Cumplido. Se implementó el panel de estadísticas con KPIs de diseños, cotizaciones, monto acumulado y precio promedio, además de gráficos filtrables por año.
 
-    \item \textbf{OE8 — Evaluación de usabilidad:} Se cuenta con el siguiente resultado en la encuesta SUS aplicada al mueblista:
+    \item \textbf{OE8 — Evaluación de usabilidad:} Cumplido. Se aplicó la encuesta SUS al mueblista al término del desarrollo, obteniendo un puntaje de 85 puntos, categoría \textit{Aceptable}. El detalle de la prueba se encuentra en la Sección~\ref{sec:sus}.
 \end{itemize}
-
-\begin{enumerate}
-    \item Creo que me gustaría utilizar este sistema con frecuencia = 5
-    \item Encontré el sistema innecesariamente complejo = 2
-    \item Pensé que el sistema era fácil de usar = 4
-    \item Creo que necesitaría el apoyo de un técnico para poder utilizar este sistema = 1
-    \item Encontré que las diversas funciones de este sistema estaban bien integradas = 3
-    \item Pensé que había demasiada inconsistencia en este sistema = 1
-    \item Me imagino que la mayoría de la gente aprendería a utilizar este sistema muy rápidamente = 5
-    \item Encontré el sistema muy complicado de usar = 1
-    \item Me sentí muy seguro usando el sistema = 4
-    \item Necesitaba aprender muchas cosas antes de empezar con este sistema = 2
-\end{enumerate}
-
-Suma de ítems impares: (5 + 4 + 3 + 5 + 4) – 5 = 16\\
-Suma de ítems pares: 25 – (2 + 1 + 1 + 1 + 2) = 18\\
-\textbf{Puntaje SUS: (16 + 18) × 2{,}5 = 85}\\
-
-El puntaje obtenido de 85 puntos se ubica en la categoría \textit{Aceptable} de la escala SUS (mayor a 68), lo que valida que la interfaz es intuitiva y adecuada para el perfil del mueblista artesanal, cumpliendo así el OE8.
 
 \section{Reflexión Final del Proyecto}
 Este proyecto fue un desafío que puso a prueba lo aprendido durante el desarrollo de la carrera, desde el planteamiento del problema, el cómo solucionarlo y el método para hacerlo, además de toda la aplicación de conocimientos técnicos que van de la mano con el desarrollo. Trabajar con la metodología PXP permitió avanzar de forma ordenada e iterativa, identificando en cada retrospectiva los ajustes necesarios para la siguiente iteración. El resultado final es una aplicación web funcional que cubre el flujo completo de trabajo del mueblista artesanal, desde el diseño hasta la entrega de la cotización al cliente.
 
 \section{Trabajo Futuro}
 Como trabajo futuro queda pendiente:
-\begin{itemize}
-    \item Mejorar el comportamiento de la detección de colisiones entre figuras del canvas, especialmente para módulos como puertas y cubiertas que tienen lógica de posicionamiento distinta.
-    \item Explorar un algoritmo de optimización de corte más avanzado (por ejemplo, un algoritmo de bin packing 2D) para reducir el desperdicio de material en el cálculo de planchas.
+\begin{itemize}.
     \item Mejorar la interfaz visual de la aplicación con iconografía más representativa del rubro.
     \item Implementar la recuperación de contraseña por correo electrónico para el mueblista.
-    \item Evaluar la escalabilidad del sistema para soportar múltiples usuarios de forma simultánea.
+    \item Evaluar la escalabilidad del sistema.
 \end{itemize}
 
 \bibliography{refs}
-
-
-
-
-
-
+\appendixpart
 \appendix{Carta Gantt}
 \begin{figure}[H]
   \includegraphics[width=1\linewidth]{imagenes/carta.png}
@@ -1675,6 +2128,58 @@ Como trabajo futuro queda pendiente:
 \begin{figure}[H]
   \includegraphics[width=1\linewidth]{imagenes/gantt.png}
   \caption{carta Gantt}
+\end{figure}
+
+\appendix{Resultados de Evaluación WAVE}
+A continuación se presentan las capturas de la evaluación de accesibilidad realizada con la herramienta WAVE para cada vista del sistema Amedida.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/wave landing.png}
+  \caption{Evaluación WAVE — Landing page de Amedida}
+  \label{fig:wave_landing}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/wave login.png}
+  \caption{Evaluación WAVE — Vista de inicio de sesión}
+  \label{fig:wave_login}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/wave diseño.png}
+  \caption{Evaluación WAVE — Vista de diseño (canvas)}
+  \label{fig:wave_diseno}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/wave cubicacion.png}
+  \caption{Evaluación WAVE — Vista de cubicación}
+  \label{fig:wave_cubicacion}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/wave biblioteca.png}
+  \caption{Evaluación WAVE — Vista de biblioteca de materiales}
+  \label{fig:wave_biblioteca}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/wave cotizaciones.png}
+  \caption{Evaluación WAVE — Vista de cotizaciones}
+  \label{fig:wave_cotizaciones}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\linewidth]{imagenes/wave estadisticas.png}
+  \caption{Evaluación WAVE — Vista de estadísticas}
+  \label{fig:wave_estadisticas}
 \end{figure}
 
 %% fin
