@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1782545795.62014 "main.aux" "main.bbl" "main" 1782545796.2531 2
-  "./refs.bib" 1782507561 8199 c0a590f5b7ef5aa9339f51789b94b6bd ""
+["bibtex main"] 1782697893.07208 "main.aux" "main.bbl" "main" 1782697893.40129 2
+  "./refs.bib" 1782585535 10342 ffed6c2e747a998f0ac5a4835a586f8e ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/plain.bst" 1291864736 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1782545787 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "main.aux" 1782697885 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1782545784.45481 "c:/Users/nicob/OneDrive/Documentos/proyecto_tesis_muebles/formulacion/main.tex" "main.pdf" "main" 1782545794.21851 2
+["pdflatex"] 1782697882.39073 "c:/Users/nicob/OneDrive/Documentos/proyecto_tesis_muebles/formulacion/main.tex" "main.pdf" "main" 1782697892.10171 2
   "C:/Users/nicob/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1774309011 80909 eab91d9745dd2edfd62a31d53cd5fe15 ""
   "C:/Users/nicob/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1095.pk" 1762834405 12668 3c8206f93de52e1ead3ae09638895dca ""
   "C:/Users/nicob/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/tcrm1200.pk" 1762834407 14064 80ea61e996b1242720d668c6569fe575 ""
@@ -16,6 +16,7 @@
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/tfm/jknappen/ec/tcrm1200.tfm" 993062508 1444 95ffe0f19b974d50849790c8225c7ef7 ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmbx10.tfm" 1136765053 1328 c834bbb027764024c09d3d2bf908b5f0 ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmbx12.tfm" 1136765053 1324 c910af8c371558dc20f2d7822f66fe64 ""
+  "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmbx8.tfm" 1136765053 1332 1fde11373e221473104d6cc5993f046e ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmcsc10.tfm" 1136765053 1300 63a6111ee6274895728663cf4b4e7e81 ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmmi10.tfm" 1136765053 1528 abec98dbc43e172678c11b3b9031252a ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmmi12.tfm" 1136765053 1524 4414a8315f39513458b80dfc63bff03a ""
@@ -36,6 +37,7 @@
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/tfm/public/cm/cmtt12.tfm" 1136765053 772 9a936b7f5e2ff0557fce0f62822f0bbf ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb" 1247596666 34811 78b52f49e893bcba91bd7581cdc144c0 ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx12.pfb" 1247596666 32080 340ef9bf63678554ee606688e7b5339d ""
+  "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx8.pfb" 1247596666 32166 b0c356b15f19587482a9217ce1d8fa67 ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmcsc10.pfb" 1247596667 32001 6aeea3afe875097b1eb0da29acd61e28 ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb" 1247596667 35752 024fb6c41858982481f6968b5fc26508 ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb" 1247596667 32722 d7379af29a190c3f453aba36302ff5a9 ""
@@ -99,7 +101,7 @@
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/tex/latex/tools/array.sty" 1761901070 15651 9d7c62df82cb29a555c00550babfe364 ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/tex/latex/tools/tabularx.sty" 1761901070 7243 a2c17f18e2c9b702b84fad03d5f9c78b ""
   "C:/Users/nicob/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
-  "c:/Users/nicob/OneDrive/Documentos/proyecto_tesis_muebles/formulacion/main.tex" 1782545783 143788 b65d0be5fba417340ce40836fd576a96 ""
+  "c:/Users/nicob/OneDrive/Documentos/proyecto_tesis_muebles/formulacion/main.tex" 1782697882 164276 5e89803d747f8e069e1c78937faefb44 ""
   "iccmemoria.cls" 1782084250 11784 11a206c00abbdcbf1748d7fd1736f7eb ""
   "imagenes/Diagrama fisico.drawio.png" 1782084250 207264 c9296edab814bebe8f65d7206831ac4a ""
   "imagenes/Diagrama formulación.png" 1782084250 43357 980c6fab5461150c94731c8f24005a6c ""
@@ -175,12 +177,12 @@
   "imagenes/wave estadisticas.png" 0 -1 0 ""
   "imagenes/wave landing.png" 0 -1 0 ""
   "imagenes/wave login.png" 0 -1 0 ""
-  "main.aux" 1782545787 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
-  "main.bbl" 1782545796 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
+  "main.aux" 1782697885 32 3985256e7290058c681f74d7a3565a19 "pdflatex"
+  "main.bbl" 1782697893 0 d41d8cd98f00b204e9800998ecf8427e "bibtex main"
   "main.lof" 0 -1 0 "pdflatex"
   "main.lot" 0 -1 0 "pdflatex"
   "main.out" 0 -1 0 "pdflatex"
-  "main.tex" 1782545783 143788 b65d0be5fba417340ce40836fd576a96 ""
+  "main.tex" 1782697882 164276 5e89803d747f8e069e1c78937faefb44 ""
   "main.toc" 0 -1 0 "pdflatex"
   "utalca1.eps" 1782084250 24156 8f72e012c722137f544613f8aa6a301b ""
   (generated)
