@@ -1,4 +1,4 @@
-# Tablón — Aplicación web para diseño y cotización de muebles a medida
+# Amedida — Aplicación web para diseño y cotización de muebles a medida
 
 Tablón es una aplicación web MERN que permite a mueblistas diseñar muebles modulares en un canvas 2D, calcular automáticamente el material necesario (cubicación), generar cotizaciones en PDF y enviarlas por correo, gestionar una biblioteca de materiales y consultar estadísticas de su actividad.
 
